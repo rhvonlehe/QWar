@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <assert.h>
 
 Player::Player(const std::string name)
     : _name(name)
@@ -6,17 +7,26 @@ Player::Player(const std::string name)
 
 }
 
+// pre-condition: at least one card available in Player's piles
+//
 Card Player::playCard()
 {
-    Card card = _currentDeck.nextCard();
-
     // Shuffle played deck and make it current deck if needed
     //
     if (_currentDeck.isEmpty())
     {
-        _playedDeck.shuffle();
-        movePlayedToCurrent();
+        if (!_playedDeck.isEmpty())
+        {
+            _playedDeck.shuffle();
+            movePlayedToCurrent();
+        }
+        else
+        {
+            assert(1);
+        }
     }
+
+    Card card = _currentDeck.nextCard();
 
     return card;
 }

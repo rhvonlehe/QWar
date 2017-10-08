@@ -41,6 +41,7 @@ void Game::play()
         Round round(_activePlayers);
         round.play();
 
+        cullPlayerList();
     }
 }
 
@@ -67,6 +68,21 @@ void Game::deal()
                 break;
             }
         }
+    }
+}
+
+void Game::cullPlayerList()
+{
+    _activePlayers.erase(std::remove_if(
+                             _activePlayers.begin(), _activePlayers.end(),
+                             [](const Player& x)
+    {
+        return x.outOfCards();
+    }), _activePlayers.end());
+
+    if (_activePlayers.size() == 1)
+    {
+        std::cout << "Player " << _activePlayers[0].name() << " has won!" << std::endl;
     }
 }
 

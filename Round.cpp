@@ -85,7 +85,9 @@ std::vector<Player*> Round::findWinner(std::vector<WarHand> &played)
     for (auto pair : played)
     {
         std::cout << "Player " << pair.player->name();
-        std::cout << " played " << pair.downCard.str() << std::endl;
+        std::cout << " played " << pair.downCard.str() << " down" << std::endl;
+
+        std::cout << "and " << pair.upCard.str() << " up" << std::endl;
     }
 
     // Iterate until the first card that is a lower value and truncate from
@@ -143,14 +145,18 @@ std::vector<Player*> Round::playNormal()
 std::vector<Player*> Round::playWar(std::vector<Player*>& players)
 {
     // NOTE: in this function, potentially only a subset of all active
-    // players are involved.  When a player can not lay enough cards,
-    // they must still be removed from the overall player list, but
-    // it is somewhat harder to do this
+    // players are involved.  Remove a player from the local player
+    // list when they can't complete a way due to lack of cards.
+    // Let the game determine who has dropped out after the round
+    // has finished playing.
     //
     std::vector<WarHand> played;
 
-    for (Player* player : players)
+    std::vector<Player*>::iterator it = std::begin(players);
+
+    while (it != std::end(players))
     {
+        auto player = *it;
         if (player->hasTwoCards())
         {
             Card downCard = player->playCard();
@@ -159,13 +165,18 @@ std::vector<Player*> Round::playWar(std::vector<Player*>& players)
             _cardsInRound.push_back(downCard);
             _cardsInRound.push_back(upCard);
             played.push_back(hand);
+            it++;
         }
         else
         {
-            // TODO: remove this player from the active player list,
+            // Remove this player from the active player list,
             // but force him to forfeit any single card he may still have
             //
-            removePlayer(player);
+            if (!player->outOfCards())
+            {
+                _cardsInRound.push_back(player->playCard());
+            }
+            it = players.erase(it);  // remove from local vector
         }
     }
 
@@ -176,7 +187,12 @@ std::vector<Player*> Round::playWar(std::vector<Player*>& players)
 
 void Round::removePlayer(Player* player)
 {
-    _players.erase(std::remove(_players.begin(), _players.end(), *player), _players.end());
+    auto it = std::find(_players.begin(), _players.end(), *player);
+    if (it != _players.end())
+    {
+        _players.erase(it);
+    }
+//    _players.erase(std::remove(_players.begin(), _players.end(), *player), _players.end());
 }
 
 

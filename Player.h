@@ -25,7 +25,7 @@ public:
     }
     bool outOfCards(void) const
     {
-        return _currentDeck.isEmpty();
+        return (_currentDeck.isEmpty() && _playedDeck.isEmpty());
     }
     std::string name(void) const
     {

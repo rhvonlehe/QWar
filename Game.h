@@ -21,6 +21,7 @@ public:
 private:
     void initDeck();
     void deal();
+    void cullPlayerList();
 
     std::vector<Player> _activePlayers;
     Deck                _deck;
