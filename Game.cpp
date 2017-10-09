@@ -37,6 +37,9 @@ void Game::play()
     while (!isOver())
     {
         _roundNumber++;
+        std::cout << "Round: " << _roundNumber << std::endl;
+        std::cout << "Press enter" << std::endl;
+        std::cin.get();
 
         Round round(_activePlayers);
         round.play();
