@@ -5,7 +5,7 @@ project(QWar)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5Core CONFIG REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui REQUIRED)
 
 add_executable(${PROJECT_NAME}
     main.cpp
@@ -13,6 +13,11 @@ add_executable(${PROJECT_NAME}
     Deck.cpp
     Player.cpp
     Round.cpp
-    Game.cpp)
+    Game.cpp
+    )
 
-target_link_libraries(${PROJECT_NAME} Qt5::Core)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    Qt5::Core
+    Qt5::Gui
+    )

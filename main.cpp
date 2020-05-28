@@ -1,5 +1,5 @@
 #include <Game.h>
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <time.h>
 #include <vector>
 
@@ -8,11 +8,11 @@
 int main(int argc, char *argv[])
 {
     srand(static_cast<unsigned int>(time(nullptr)));
-    QCoreApplication a(argc, argv);
+    QGuiApplication app(argc, argv);
 
     std::vector<Player> playerList;
 
-    QStringList arguments = a.arguments();
+    QStringList arguments = app.arguments();
     arguments.pop_front(); // remove program name
 
     for (QString item : arguments)
@@ -24,5 +24,5 @@ int main(int argc, char *argv[])
     Game game(playerList);
     game.play();
 
-    return a.exec();
+    return app.exec();
 }
