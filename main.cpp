@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-    srand(time(NULL));
+    srand(static_cast<unsigned int>(time(nullptr)));
     QCoreApplication a(argc, argv);
 
     std::vector<Player> playerList;
@@ -23,9 +23,6 @@ int main(int argc, char *argv[])
 
     Game game(playerList);
     game.play();
-
-
-
 
     return a.exec();
 }
