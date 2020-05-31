@@ -1,5 +1,4 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
 #include <Deck.h>
 #include <Card.h>
@@ -46,4 +45,3 @@ private:
 
 };
 
-#endif // PLAYER_H

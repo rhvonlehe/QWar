@@ -1,5 +1,4 @@
-#ifndef ROUND_H
-#define ROUND_H
+#pragma once
 
 #include <Player.h>
 #include <vector>
@@ -34,5 +33,3 @@ private:
     std::vector<Card>    _cardsInRound;
 
 };
-
-#endif // ROUND_H

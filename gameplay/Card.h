@@ -1,5 +1,4 @@
-#ifndef CARD_H
-#define CARD_H
+#pragma once
 
 #include <string>
 
@@ -65,4 +64,3 @@ private:
     Value _value;
 };
 
-#endif // CARD_H

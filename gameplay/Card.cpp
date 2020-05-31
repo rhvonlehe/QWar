@@ -1,7 +1,5 @@
 #include "Card.h"
 
-#include <QDebug>
-#include <QString>
 #include <iostream>
 #include <map>
 

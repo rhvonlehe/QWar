@@ -1,5 +1,4 @@
-#ifndef DECK_H
-#define DECK_H
+#pragma once
 
 #include <Card.h>
 #include <deque>
@@ -29,4 +28,3 @@ private:
     std::deque<Card> _cards;
 };
 
-#endif // DECK_H

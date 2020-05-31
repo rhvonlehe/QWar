@@ -1,5 +1,4 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 #include <Player.h>
 #include <Deck.h>
@@ -28,4 +27,3 @@ private:
     int                 _roundNumber;
 };
 
-#endif // GAME_H
