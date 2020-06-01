@@ -1,5 +1,5 @@
 #include <Game.h>
-#include <QGuiApplication>
+#include <QWarApplication.h>
 #include <time.h>
 #include <vector>
 
@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
     srand(static_cast<unsigned int>(time(nullptr)));
-    QGuiApplication app(argc, argv);
+    QWarApplication app(argc, argv);
 
     std::vector<Player> playerList;
 

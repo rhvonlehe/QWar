@@ -8,11 +8,17 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 COMPONENTS Core Gui REQUIRED)
 
-add_executable(${PROJECT_NAME}
+add_executable(QWar)
+
+target_include_directories(QWar PUBLIC  .)
+
+target_sources(QWar
+    PRIVATE
     main.cpp
+    QWarApplication.cpp
     )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(QWar
     PRIVATE
     Qt5::Core
     Qt5::Gui
