@@ -17,12 +17,19 @@ ApplicationWindow {
         }
 
         ComboBox {
+            id: playerCount
             model: [1, 2, 3, 4, 5]
+        }
 
-            onAccepted: {
+        Button {
+            id: countOk
+            text: "Ok"
+
+            onClicked: {
 
             }
         }
+
     }
 
 }
