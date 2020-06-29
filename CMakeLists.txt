@@ -5,7 +5,7 @@ project(QWar)
 add_subdirectory(gameplay)
 
 set(CMAKE_AUTOMOC ON)
-set(QML_IMPORT_PATH )
+set(QML_IMPORT_PATH ${CMAKE_PREFIX_PATH}/qml CACHE PATH "qml import path")
 
 find_package(Qt5 COMPONENTS Core Gui Quick Qml QuickCompiler REQUIRED)
 
