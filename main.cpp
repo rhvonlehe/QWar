@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
     srand(static_cast<unsigned int>(time(nullptr)));
     QWarApplication app(argc, argv);
 
+#if 0
     std::vector<Player> playerList;
 
     QStringList arguments = app.arguments();
@@ -23,6 +24,6 @@ int main(int argc, char *argv[])
 
     Game game(playerList);
     game.play();
-
+#endif
     return app.exec();
 }

@@ -8,9 +8,12 @@ ApplicationWindow {
     minimumWidth:   Math.min(215 * Screen.pixelDensity, Screen.width)
     minimumHeight:  Math.min(120 * Screen.pixelDensity, Screen.height)
     visible:        true
+    color:          "turquoise"
 
     RowLayout {
-        anchors.top: parent
+        anchors.top: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+
 
         Label {
             text: "Enter number of players"
