@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: root
-    property int playerCount: 0
+    property int playerCount: 2
 
     RowLayout {
         id: layout
@@ -18,22 +18,23 @@ Item {
 
         ComboBox {
             id: playerCountSelect
-            model: [1, 2, 3, 4]
+            model: [2, 3, 4]
 
             onAccepted: {
                 playerCount = currentValue
             }
         }
+    }
 
-        Repeater {
-            model: playerCount
+    Repeater {
+        model: playerCount
 
+        Rectangle {
             TextEdit {
                 text: "Player " + index + " name"
             }
         }
-
-
     }
+
 
 }
