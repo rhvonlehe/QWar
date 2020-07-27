@@ -19,10 +19,6 @@ Item {
         ComboBox {
             id: playerCountSelect
             model: [2, 3, 4]
-
-//            onAccepted: {
-//                playerCount = currentValue
-//            }
         }
     }
 
