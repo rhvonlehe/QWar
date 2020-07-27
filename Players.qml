@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: root
-    property int playerCount: 2
+    property int playerCount: playerCountSelect.currentValue
 
     RowLayout {
         id: layout
@@ -20,18 +20,24 @@ Item {
             id: playerCountSelect
             model: [2, 3, 4]
 
-            onAccepted: {
-                playerCount = currentValue
-            }
+//            onAccepted: {
+//                playerCount = currentValue
+//            }
         }
     }
 
-    Repeater {
-        model: playerCount
+    Column {
+        anchors.centerIn: parent
+        spacing: 3
+        Repeater {
+            model: root.playerCount
 
-        Rectangle {
-            TextEdit {
-                text: "Player " + index + " name"
+            Rectangle {
+                width: 120
+                height: 32
+                TextEdit {
+                    text: "Player " + (index+1) + " name"
+                }
             }
         }
     }
