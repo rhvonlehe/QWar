@@ -10,29 +10,16 @@ ApplicationWindow {
     visible:        true
     color:          "turquoise"
 
-    RowLayout {
-        anchors.top: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
 
 
-        Label {
-            text: "Enter number of players"
+    Loader {
+        id:             dynamicLoader
+        anchors.fill:   parent
+        source:         "Players.qml"
+        onLoaded: {
+
         }
-
-        ComboBox {
-            id: playerCount
-            model: [1, 2, 3, 4, 5]
-        }
-
-        Button {
-            id: countOk
-            text: "Ok"
-
-            onClicked: {
-
-            }
-        }
-
     }
+
 
 }
