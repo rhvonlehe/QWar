@@ -24,19 +24,35 @@ Item {
 
     Column {
         anchors.centerIn: parent
+        anchors.horizontalCenter: parent.horizontalCenter
         spacing: 3
         Repeater {
             model: root.playerCount
 
             Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
                 width: 120
                 height: 32
                 TextEdit {
+                    font.pointSize: 12
                     text: "Player " + (index+1) + " name"
                 }
             }
         }
-    }
 
+        RowLayout {
+            RoundButton {
+                text: "Play"
+                radius: 2
+                font.pointSize: 12
+//                onClicked:
+            }
+            RoundButton {
+                text: "Quit"
+                radius: 2
+                font.pointSize: 12
+            }
+        }
+    }
 
 }
