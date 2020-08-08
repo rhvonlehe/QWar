@@ -9,6 +9,7 @@ Item {
     RowLayout {
         id: layout
         anchors.top: parent.top
+        anchors.topMargin: 5
         spacing: 6
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -22,37 +23,45 @@ Item {
         }
     }
 
-    Column {
+    RowLayout {
+        id: mainRow
         anchors.centerIn: parent
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 3
-        Repeater {
-            model: root.playerCount
+        spacing: 6
 
-            Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: 120
-                height: 32
-                TextEdit {
-                    font.pointSize: 12
-                    text: "Player " + (index+1) + " name"
+        RoundButton {
+            text: "Play"
+            width: 40
+            radius: 2
+            font.pointSize: 12
+            //                onClicked:
+        }
+
+        Column {
+            spacing: 6
+            Repeater {
+                model: root.playerCount
+
+                Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: 120
+                    height: 32
+
+                    TextEdit {
+                        font.pointSize: 12
+                        text: "Player " + (index+1) + " name"
+                    }
                 }
             }
         }
 
-        RowLayout {
-            RoundButton {
-                text: "Play"
-                radius: 2
-                font.pointSize: 12
-//                onClicked:
-            }
-            RoundButton {
-                text: "Quit"
-                radius: 2
-                font.pointSize: 12
-            }
+        RoundButton {
+            text: "Quit"
+            width: 40
+            radius: 2
+            font.pointSize: 12
         }
     }
 
 }
+
