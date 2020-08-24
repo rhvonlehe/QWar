@@ -9,4 +9,11 @@ QWarApplication::QWarApplication(int argc, char *argv[])
     _qmlAppEngine->load(QUrl("qrc:/qml/RootWindow.qml"));
 
     _qmlAppEngine->rootContext()->setContextProperty("game", &_game);
+
+    QObject::connect(&_game, &QGame::gameQuit, this, &QWarApplication::onGameQuit);
+}
+
+void QWarApplication::onGameQuit(void)
+{
+    QCoreApplication::exit();
 }

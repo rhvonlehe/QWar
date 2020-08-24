@@ -71,6 +71,9 @@ Item {
             width: 40
             radius: 2
             font.pointSize: 12
+            onClicked: {
+                game.quit()
+            }
         }
     }
 }
