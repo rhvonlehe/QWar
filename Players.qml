@@ -34,12 +34,19 @@ Item {
             width: 40
             radius: 2
             font.pointSize: 12
-            //                onClicked:
+            onClicked: {
+                for (var i =0; i < playerList.count; i++) {
+                    console.log(playerList.itemAt(i).playerName)
+                    game.addPlayer(playerList.itemAt(i).playerName)
+                }
+                game.start()
+            }
         }
 
         Column {
             spacing: 6
             Repeater {
+                id: playerList
                 model: root.playerCount
 
                 Rectangle {
@@ -47,7 +54,11 @@ Item {
                     width: 120
                     height: 32
 
+                    // Expose the player name
+                    property alias playerName: textField.text
+
                     TextEdit {
+                        id: textField
                         font.pointSize: 12
                         text: "Player " + (index+1) + " name"
                     }
@@ -62,6 +73,5 @@ Item {
             font.pointSize: 12
         }
     }
-
 }
 

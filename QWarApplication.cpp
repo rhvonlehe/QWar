@@ -1,9 +1,12 @@
 #include "QWarApplication.h"
+#include <QQmlContext>
+#include <memory>
 
 QWarApplication::QWarApplication(int argc, char *argv[])
     : QGuiApplication(argc, argv)
 {
-    _qmlAppEngine = new QQmlApplicationEngine(this);
+    _qmlAppEngine = std::make_unique<QQmlApplicationEngine>(this);
     _qmlAppEngine->load(QUrl("qrc:/qml/RootWindow.qml"));
 
+    _qmlAppEngine->rootContext()->setContextProperty("game", &_game);
 }

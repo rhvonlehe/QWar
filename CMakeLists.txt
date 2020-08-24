@@ -20,6 +20,7 @@ target_sources(QWar
     ${RESOURCES}
     main.cpp
     QWarApplication.cpp
+    QGame.cpp
     )
 
 target_link_libraries(QWar
