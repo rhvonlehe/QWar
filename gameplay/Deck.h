@@ -3,15 +3,16 @@
 #include <Card.h>
 #include <deque>
 #include <vector>
+#include <memory>
 
 class Deck
 {
 public:
     Deck();
     void shuffle(void);
-    Card nextCard(void);
-    void addBack(const Card& card);
-    void addBack(const std::vector<Card> cards);
+    std::shared_ptr<Card> nextCard(void);
+    void addBack(const std::shared_ptr<Card> card);
+    void addBack(const std::vector<std::shared_ptr<Card>> cards);
     void print(void) const;
     int size(void) const
     {
@@ -25,6 +26,6 @@ public:
 private:
     void swap(const int r1, const int r2);
 
-    std::deque<Card> _cards;
+    std::deque<std::shared_ptr<Card>> _cards;
 };
 

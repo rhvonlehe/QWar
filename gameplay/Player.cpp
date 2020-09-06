@@ -9,7 +9,7 @@ Player::Player(const std::string name)
 
 // pre-condition: at least one card available in Player's piles
 //
-Card Player::playCard()
+std::shared_ptr<Card> Player::playCard()
 {
     // Shuffle played deck and make it current deck if needed
     //
@@ -26,19 +26,19 @@ Card Player::playCard()
         }
     }
 
-    Card card = _currentDeck.nextCard();
+    auto card = _currentDeck.nextCard();
 
     return card;
 }
 
-void Player::acceptNewCards(const Pile pile, const std::vector<Card>& cards)
+void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
 {
     Deck& deck = (CURRENT == pile) ? _currentDeck : _playedDeck;
 
     deck.addBack(cards);
 }
 
-void Player::acceptNewCard(const Pile pile, const Card card)
+void Player::acceptNewCard(const Pile pile, const std::shared_ptr<Card> card)
 {
     CURRENT == pile ? _currentDeck.addBack(card) :
                       _playedDeck.addBack(card);

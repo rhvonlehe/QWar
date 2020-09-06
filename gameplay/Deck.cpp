@@ -21,37 +21,38 @@ void Deck::shuffle(void)
     }
 }
 
-Card Deck::nextCard()
+std::shared_ptr<Card> Deck::nextCard()
 {
-    Card card = _cards.front();
+    auto card = _cards.front();
     _cards.pop_front();
     return card;
 }
 
-void Deck::addBack(const Card &card)
+void Deck::addBack(const std::shared_ptr<Card> card)
 {
     _cards.push_back(card);
 }
 
-void Deck::addBack(const std::vector<Card> cards)
+void Deck::addBack(const std::vector<std::shared_ptr<Card>> cards)
 {
-    for (auto& card : cards)
-    {
-        addBack(card);
-    }
+    _cards.insert(_cards.end(), cards.begin(), cards.end());
+//    for (auto& card : cards)
+//    {
+//        addBack(card);
+//    }
 }
 
 void Deck::print(void) const
 {
     for (auto card : _cards)
     {
-        card.print();
+        card->print();
     }
 }
 
 void Deck::swap(const int r1, const int r2)
 {
-    Card temp = _cards[r1];
+    auto temp = _cards[r1];
     _cards[r1] = _cards[r2];
     _cards[r2] = temp;
 }

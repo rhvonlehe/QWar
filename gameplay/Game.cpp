@@ -50,11 +50,13 @@ void Game::play()
 
 void Game::initDeck(void)
 {
+    // This is the only place a Card is created on the heap.  Everywhere
+    // else it's using an already-created card via s-ptr.
     for (auto value : cardValues)
     {
         for (auto suit : cardSuits)
         {
-            _deck.addBack(Card(suit, value));
+            _deck.addBack(std::make_shared<Card>(suit, value));
         }
     }
 }
@@ -65,7 +67,7 @@ void Game::deal()
     {
         for (auto& player : _activePlayers)
         {
-            player.acceptNewCard(Player::CURRENT,_deck.nextCard());
+            player.acceptNewCard(Player::CURRENT, _deck.nextCard());
             if (_deck.isEmpty())
             {
                 break;

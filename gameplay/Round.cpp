@@ -4,9 +4,10 @@
 
 struct
 {
-    bool operator()(std::pair<Player*, Card> a, std::pair<Player*, Card> b) const
+    bool operator()(std::pair<Player*, std::shared_ptr<Card>> a,
+                    std::pair<Player*, std::shared_ptr<Card>> b) const
     {
-        return a.second > b.second;
+        return *(a.second) > *(b.second);
     }
 
 } greaterPair;
@@ -15,7 +16,7 @@ struct
 {
     bool operator()(WarHand a, WarHand b) const
     {
-        return a.downCard > b.downCard;
+        return *(a.downCard) > *(b.downCard);
     }
 } greaterWarHand;
 
@@ -42,7 +43,7 @@ void Round::play()
     winners[0]->acceptNewCards(Player::PLAYED, _cardsInRound);
 }
 
-std::vector<Player*> Round::findWinner(std::vector<std::pair<Player*, Card>>& played)
+std::vector<Player*> Round::findWinner(std::vector<std::pair<Player*, std::shared_ptr<Card>>>& played)
 {
     std::vector<Player*> winners;
 
@@ -51,7 +52,7 @@ std::vector<Player*> Round::findWinner(std::vector<std::pair<Player*, Card>>& pl
     for (auto pair : played)
     {
         std::cout << "Player " << pair.first->name();
-        std::cout << " played " << pair.second.str() << std::endl;
+        std::cout << " played " << pair.second->str() << std::endl;
     }
 
 
@@ -59,7 +60,7 @@ std::vector<Player*> Round::findWinner(std::vector<std::pair<Player*, Card>>& pl
     // there on, return the results which will be all Players with the
     // highest card value
     //
-    std::pair<Player*, Card> highest = played[0];
+    auto highest = played[0];
 
     for (auto& item : played)
     {
@@ -76,7 +77,7 @@ std::vector<Player*> Round::findWinner(std::vector<std::pair<Player*, Card>>& pl
     return winners;
 }
 
-std::vector<Player*> Round::findWinner(std::vector<WarHand> &played)
+std::vector<Player*> Round::findWinner(std::vector<WarHand>& played)
 {
     std::vector<Player*> winners;
 
@@ -85,9 +86,9 @@ std::vector<Player*> Round::findWinner(std::vector<WarHand> &played)
     for (auto pair : played)
     {
         std::cout << "Player " << pair.player->name();
-        std::cout << " played " << pair.downCard.str() << " down" << std::endl;
+        std::cout << " played " << pair.downCard->str() << " down" << std::endl;
 
-        std::cout << "and " << pair.upCard.str() << " up" << std::endl;
+        std::cout << "and " << pair.upCard->str() << " up" << std::endl;
     }
 
     // Iterate until the first card that is a lower value and truncate from
@@ -117,7 +118,7 @@ std::vector<Player*> Round::playNormal()
     // so when one player can't lay a card, he can be removed
     // from the global list easily.
     //
-    std::vector<std::pair<Player*, Card>> played;
+    std::vector<std::pair<Player*, std::shared_ptr<Card>>> played;
 
     std::vector<Player>::iterator it = std::begin(_players);
 
@@ -126,7 +127,7 @@ std::vector<Player*> Round::playNormal()
         Player* player = &(*it);
         if (!player->outOfCards())
         {
-            Card card = player->playCard();
+            auto card = player->playCard();
             _cardsInRound.push_back(card);
             played.push_back(std::make_pair(player, card));
         }
@@ -159,8 +160,8 @@ std::vector<Player*> Round::playWar(std::vector<Player*>& players)
         auto player = *it;
         if (player->hasTwoCards())
         {
-            Card downCard = player->playCard();
-            Card upCard = player->playCard();
+            auto downCard = player->playCard();
+            auto upCard = player->playCard();
             WarHand hand(player, downCard, upCard);
             _cardsInRound.push_back(downCard);
             _cardsInRound.push_back(upCard);

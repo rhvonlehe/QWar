@@ -15,9 +15,9 @@ public:
     };
 
     Player(const std::string name);
-    void acceptNewCards(const Pile pile, const std::vector<Card>& cards);
-    void acceptNewCard(const Pile pile, const Card card);
-    Card playCard(void);
+    void acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
+    void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
+    std::shared_ptr<Card> playCard(void);
     bool hasTwoCards(void) const
     {
         return ((_currentDeck.size() + _playedDeck.size()) >= 2);
