@@ -10,16 +10,23 @@ ApplicationWindow {
     visible:        true
     color:          "turquoise"
 
-
+    property string currentScreen: "Players.qml"
 
     Loader {
         id:             dynamicLoader
         anchors.fill:   parent
-        source:         "Players.qml"
+        source:         currentScreen
+
         onLoaded: {
 
         }
     }
 
-
+    Connections {
+        target: dynamicLoader.item
+        onPlayGame: {
+            currentScreen = "GamePlay.qml"
+            console.log("currentScreen: ", currentScreen)
+        }
+    }
 }

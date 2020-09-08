@@ -2,5 +2,6 @@
     <qresource prefix="/qml">
         <file>RootWindow.qml</file>
         <file>Players.qml</file>
+        <file>GamePlay.qml</file>
     </qresource>
 </RCC>

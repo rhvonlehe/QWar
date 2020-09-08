@@ -3,8 +3,9 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 Item {
-    id: root
+    id: playersRoot
     property int playerCount: playerCountSelect.currentValue
+    signal playGame
 
     RowLayout {
         id: layout
@@ -39,6 +40,8 @@ Item {
                     console.log(playerList.itemAt(i).playerName)
                     game.addPlayer(playerList.itemAt(i).playerName)
                 }
+                playersRoot.playGame()
+
                 game.start()
             }
         }
@@ -47,7 +50,7 @@ Item {
             spacing: 6
             Repeater {
                 id: playerList
-                model: root.playerCount
+                model: playersRoot.playerCount
 
                 Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
