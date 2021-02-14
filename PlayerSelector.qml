@@ -9,36 +9,38 @@ Control {
     RowLayout {
         id: mainRow
         anchors.topMargin: 5
+        anchors.horizontalCenter: parent.horizontalCenter
         spacing: 6
 
-        Label {
-            text: "Enter number of players"
+        ColumnLayout {
+            Label {
+                text: "Enter number of players"
+            }
+
+            ComboBox {
+                id: playerCountSelect
+                model: [2, 3, 4]
+            }
         }
+        Column {
+            spacing: 6
+            Repeater {
+                id: playerList
+                model: playerSelector.playerCount
 
-        ComboBox {
-            id: playerCountSelect
-            model: [2, 3, 4]
-        }
-    }
+                Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: 120
+                    height: 32
 
-    Column {
-        spacing: 6
-        Repeater {
-            id: playerList
-            model: playerSelector.playerCount
+                    // Expose the player name
+                    property alias playerName: textField.text
 
-            Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: 120
-                height: 32
-
-                // Expose the player name
-                property alias playerName: textField.text
-
-                TextEdit {
-                    id: textField
-                    font.pointSize: 12
-                    text: "Player " + (index+1) + " name"
+                    TextEdit {
+                        id: textField
+                        font.pointSize: 12
+                        text: "Player " + (index+1) + " name"
+                    }
                 }
             }
         }

@@ -10,6 +10,7 @@ Item {
 
     PlayerSelector {
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
     }
 }
 
