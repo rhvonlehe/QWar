@@ -5,11 +5,11 @@ import QtQuick.Layouts 1.12
 Item {
     id: gameStart
     anchors.top: parent.top
-    anchors.horizontalCenter: parent.horizontalCenter
     height: parent.height
     width: parent.width
 
     PlayerSelector {
+        anchors.horizontalCenter: parent.horizontalCenter
     }
 }
 

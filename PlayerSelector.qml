@@ -4,12 +4,12 @@ import QtQuick.Layouts 1.12
 
 Control {
     id: playerSelector
+    property int playerCount: playerCountSelect.currentValue
+
     RowLayout {
         id: mainRow
-        anchors.top: parent.top
         anchors.topMargin: 5
         spacing: 6
-        anchors.horizontalCenter: parent.horizontalCenter
 
         Label {
             text: "Enter number of players"
@@ -25,7 +25,7 @@ Control {
         spacing: 6
         Repeater {
             id: playerList
-            model: playersRoot.playerCount
+            model: playerSelector.playerCount
 
             Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
