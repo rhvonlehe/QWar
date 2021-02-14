@@ -11,6 +11,18 @@ void QGame::addPlayer(const QString& newPlayer)
     _players.push_back(Player(newPlayer.toStdString()));
 }
 
+QStringList QGame::getPlayers(void)
+{
+    QStringList retVal;
+
+    for (const auto& player : _players)
+    {
+        retVal.append(QString::fromStdString(player.name()));
+    }
+
+    return retVal;
+}
+
 void QGame::start(void)
 {
     _game = std::make_unique<Game>(_players);

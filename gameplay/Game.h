@@ -12,6 +12,8 @@ public:
 
     void play();
 
+    std::vector<Player>& players(void) {return _activePlayers; }
+
     bool isOver(void) const
     {
         return (_activePlayers.size() == 1);

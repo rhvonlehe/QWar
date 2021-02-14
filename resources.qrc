@@ -1,7 +1,8 @@
 <RCC>
     <qresource prefix="/qml">
         <file>RootWindow.qml</file>
-        <file>Players.qml</file>
         <file>GamePlay.qml</file>
+        <file>PlayerSelector.qml</file>
+        <file>GameStart.qml</file>
     </qresource>
 </RCC>
