@@ -3,17 +3,30 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 Control {
-    id: playerSelector
+    id: selector
     property int playerCount: playerCountSelect.currentValue
+    anchors.margins: 5
+    width: mainRow.width
+    height: Math.max(column1.height, column2.height)
+
+    Component.onCompleted: {
+        console.log(selector.height)
+        console.log(column1.height)
+        console.log(column2.height)
+
+    }
 
     RowLayout {
         id: mainRow
-        anchors.topMargin: 5
-        anchors.horizontalCenter: parent.horizontalCenter
         spacing: 6
 
         ColumnLayout {
+            id: column1
+            spacing: 6
             Label {
+                Layout.minimumWidth: 120
+                height: 32
+                font.pointSize: 12
                 text: "Enter number of players"
             }
 
@@ -22,21 +35,22 @@ Control {
                 model: [2, 3, 4]
             }
         }
-        Column {
+        ColumnLayout {
+            id: column2
             spacing: 6
+
             Repeater {
                 id: playerList
-                model: playerSelector.playerCount
+                model: selector.playerCount
 
                 Rectangle {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: 120
                     height: 32
+                    Layout.minimumWidth: 200
 
                     // Expose the player name
                     property alias playerName: textField.text
 
-                    TextEdit {
+                    TextField {
                         id: textField
                         font.pointSize: 12
                         text: "Player " + (index+1) + " name"

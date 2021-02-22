@@ -7,11 +7,54 @@ Item {
     anchors.top: parent.top
     height: parent.height
     width: parent.width
+    signal playGame
 
-    PlayerSelector {
+    Component.onCompleted: {
+        console.log(selector.right)
+        console.log(quitButton.left)
+    }
+
+    RowLayout {
+        id: layout
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+
+        RoundButton {
+            id: playButton
+            text: "Play"
+            width: 40
+            radius: 2
+            font.pointSize: 12
+            onClicked: {
+                for (var i =0; i < playerList.count; i++) {
+                    console.log(playerList.itemAt(i).playerName)
+//                    game.addPlayer(  .playerList.itemAt(i).playerName)
+                }
+                gameStart.playGame()
+
+                game.start()
+            }
+        }
+
+
+        PlayerSelector {
+            id: selector
+            anchors.verticalCenter: layout.verticalCenter
+        }
+
+        RoundButton {
+            id: quitButton
+//            anchors.left: selector.right
+            text: "Quit"
+            width: 40
+            radius: 2
+            font.pointSize: 12
+            onClicked: {
+                game.quit()
+            }
+        }
     }
+
 }
 
 
