@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 Control {
     id: selector
     property int playerCount: playerCountSelect.currentValue
+    property var playerArray: playerList
     anchors.margins: 5
     width: mainRow.width
     height: Math.max(column1.height, column2.height)
