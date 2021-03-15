@@ -4,5 +4,7 @@
         <file>GamePlay.qml</file>
         <file>PlayerSelector.qml</file>
         <file>GameStart.qml</file>
+        <file>Card.qml</file>
+        <file>PlayerArea.qml</file>
     </qresource>
 </RCC>
