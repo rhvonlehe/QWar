@@ -33,7 +33,7 @@ Item {
                 }
                 gameStart.playGame()
 
-                game.start()
+//                game.start() // todo remove
             }
         }
 

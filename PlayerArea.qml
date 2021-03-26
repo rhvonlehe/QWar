@@ -7,7 +7,12 @@ Item {
     property string playerName
     property string cardText
 
-    RowLayout {
+    Component.onCompleted: {
+        console.log("playerArea.enabled: ", enabled)
+
+    }
+
+    ColumnLayout {
 //        Card {
 //        }
 
@@ -22,6 +27,10 @@ Item {
             text: playerName
         }
 
+        Button {
+            id: playButton
+            text: "Play Card"
+        }
     }
 
 }
