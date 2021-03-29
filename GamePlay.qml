@@ -16,6 +16,12 @@ Item {
 
         // idea for model: ListModel { 0 3 0, 1 0 2, 0 4 0 }
 
+//        ListModel {
+//            [0, 3, 0],
+//            [1, 0, 2],
+
+//        }
+
 //        Repeater {
 //            model: playerArray
 //            delegate: PlayerArea
@@ -32,6 +38,7 @@ Item {
 
         // Player 1
         PlayerArea {
+            id: player1Area
             Layout.row: 1
             Layout.column: 0
             Layout.fillHeight: true
@@ -41,6 +48,7 @@ Item {
 
         // Player 2
         PlayerArea {
+            id: player2Area
             Layout.row: 1
             Layout.column: 2
             Layout.fillHeight: true
@@ -50,22 +58,26 @@ Item {
 
         // Player 3 (optional)
         PlayerArea {
+            id: player3Area
             Layout.row: 0
             Layout.column: 1
             Layout.fillHeight: true
             Layout.fillWidth: true
             enabled: grid.playerCnt > 2 ? true: false
+            opacity: grid.playerCnt > 2 ? 1 : 0
             playerName: grid.playerCnt > 2 ? playerArray[2] : ""
         }
 
         // Player 4 (optional)
         PlayerArea
         {
+            id: player4Area
             Layout.row: 2
             Layout.column: 1
             Layout.fillHeight: true
             Layout.fillWidth: true
             enabled: grid.playerCnt > 3 ? true : false
+            opacity: grid.playerCnt > 3 ? true : false
             playerName: grid.playerCnt > 3 ? playerArray[3] : ""
         }
     }
