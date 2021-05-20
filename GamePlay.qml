@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
@@ -7,6 +7,7 @@ import QtQml 2.12
 
 Item {
     id: gameRoot
+    signal endGame
     property var playerArray : game.getPlayers()
 
     ListModel {
@@ -26,6 +27,26 @@ Item {
         ListElement {
             property var row: 2
             property var column: 1
+        }
+    }
+
+    RowLayout {
+        Button {
+            id: deal
+            text: "Deal"
+        }
+
+        Button {
+            id: end
+            text: "End Game"
+            onClicked: {
+                gameRoot.endGame()
+            }
+        }
+
+        Button {
+            id: save
+            text: "Save Game"
         }
     }
 

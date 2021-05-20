@@ -28,5 +28,9 @@ ApplicationWindow {
             currentScreen = "GamePlay.qml"
             console.log("currentScreen: ", currentScreen)
         }
+        onEndGame: {
+            currentScreen = "GameStart.qml"
+            console.log("currentScreen: ", currentScreen)
+        }
     }
 }
