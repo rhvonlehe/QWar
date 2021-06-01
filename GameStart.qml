@@ -10,6 +10,7 @@ Item {
     signal playGame
 
     Component.onCompleted: {
+//        playButton.clicked.connect(dynamicLoader.)
         console.log(selector.right)
         console.log(quitButton.left)
     }
@@ -39,7 +40,8 @@ Item {
 
         PlayerSelector {
             id: selector
-            anchors.verticalCenter: layout.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
+//            anchors.verticalCenter: layout.verticalCenter
         }
 
         RoundButton {

@@ -14,7 +14,6 @@ Control {
         console.log(selector.height)
         console.log(column1.height)
         console.log(column2.height)
-
     }
 
     RowLayout {

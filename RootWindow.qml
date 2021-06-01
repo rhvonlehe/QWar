@@ -24,13 +24,18 @@ ApplicationWindow {
 
     Connections {
         target: dynamicLoader.item
-        onPlayGame: {
+        function onPlayGame() {
             currentScreen = "GamePlay.qml"
             console.log("currentScreen: ", currentScreen)
         }
-        onEndGame: {
+
+        function onEndGame() {
             currentScreen = "GameStart.qml"
             console.log("currentScreen: ", currentScreen)
         }
+    }
+
+    Component.onCompleted: {
+
     }
 }
