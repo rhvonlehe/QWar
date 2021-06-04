@@ -40,8 +40,7 @@ Item {
 
         PlayerSelector {
             id: selector
-            Layout.alignment: Qt.AlignVCenter
-//            anchors.verticalCenter: layout.verticalCenter
+            anchors.verticalCenter: layout.verticalCenter
         }
 
         RoundButton {

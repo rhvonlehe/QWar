@@ -74,10 +74,9 @@ Item {
         }
 
         Rectangle {
-//            width: parent.width
-//            height: width
             Layout.fillHeight: true
             Layout.fillWidth: true
+            anchors.horizontalCenter: Layout.horizontalCenter
             color: "turquoise"
 
             GridLayout {
