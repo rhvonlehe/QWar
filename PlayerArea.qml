@@ -22,6 +22,7 @@ Item {
         //        Rectangle { // TODO remove when graphical card ready
         //            height: 20
         //            width: 20
+        anchors.horizontalCenter: parent.horizontalCenter
         Label {
             color: playerArea.color
             height: 50
