@@ -3,26 +3,39 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 Control {
-    id: selector
+    id: selectorTop
     property int playerCount: playerCountSelect.currentValue
     property var playerArray: playerList
     anchors.margins: 5
-    width: mainRow.width
-    height: Math.max(column1.height, column2.height)
+//    width: mainRow.width
+//    height: Math.max(column1.height, column2.height)
+//    implicitBackgroundHeight: mainRow.minimumHeight
+//    implicitBackgroundWidth: mainRow.minimumWidth
+    height: mainRow.implicitHeight
+    width: mainRow.implicitWidth
+
 
     Component.onCompleted: {
-        console.log(selector.height)
-        console.log(column1.height)
-        console.log(column2.height)
     }
 
     RowLayout {
         id: mainRow
         spacing: 6
 
+        onHeightChanged: {
+            console.log("mainRow height: ", mainRow.height)
+            console.log("selectorTop height: ", selectorTop.height)
+            console.log("selectorTop implicitHeight: ", selectorTop.implicitHeight)
+            console.log("mainRow implicitHeight: ", mainRow.implicitHeight)
+            console.log(selectorTop.height)
+            console.log(column1.height)
+            console.log(column2.height)
+        }
+
         ColumnLayout {
             id: column1
             spacing: 6
+            Layout.fillHeight: true
             Label {
                 Layout.minimumWidth: 120
                 height: 32
@@ -41,10 +54,11 @@ Control {
 
             Repeater {
                 id: playerList
-                model: selector.playerCount
+                model: selectorTop.playerCount
+                Layout.alignment: Qt.AlignVCenter
 
                 Rectangle {
-                    height: 32
+                    Layout.minimumHeight: 32
                     Layout.minimumWidth: 200
 
                     // Expose the player name
@@ -56,6 +70,10 @@ Control {
                         text: "Player " + (index+1) + " name"
                     }
                 }
+            }
+
+            onHeightChanged: {
+                console.log("column2 implicit height: ", implicitHeight)
             }
         }
     }

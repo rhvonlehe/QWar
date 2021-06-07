@@ -37,7 +37,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             height: 100
             width: 250
             color: "turquoise"

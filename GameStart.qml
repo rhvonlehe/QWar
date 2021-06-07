@@ -19,6 +19,7 @@ Item {
         id: layout
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+//        height: parent.height
 
         RoundButton {
             id: playButton
@@ -26,6 +27,7 @@ Item {
             width: 40
             radius: 2
             font.pointSize: 12
+            Layout.alignment: Qt.AlignVCenter
             onClicked: {
                 var players = selector.playerArray
                 for (var i =0; i < players.count; i++) {
@@ -40,11 +42,21 @@ Item {
 
         PlayerSelector {
             id: selector
-            anchors.verticalCenter: layout.verticalCenter
+            Layout.alignment: Qt.AlignVCenter             // method 2
+//            anchors.verticalCenter: layout.verticalCenter  // method 1
+
+            onHeightChanged: {
+                console.log("selector height: ", selector.height)
+                console.log("selector implicit height: ", selector.implicitHeight)
+                console.log("layout height: ", layout.height)
+                console.log("selector x: ", selector.x)
+                console.log("selector y: ", selector.y)
+            }
         }
 
         RoundButton {
             id: quitButton
+            Layout.alignment: Qt.AlignVCenter
             text: "Quit"
             width: 40
             radius: 2
