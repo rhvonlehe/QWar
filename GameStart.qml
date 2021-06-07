@@ -42,6 +42,7 @@ Item {
 
         PlayerSelector {
             id: selector
+//            Layout.fillHeight:
             Layout.alignment: Qt.AlignVCenter             // method 2
 //            anchors.verticalCenter: layout.verticalCenter  // method 1
 
@@ -58,7 +59,7 @@ Item {
             id: quitButton
             Layout.alignment: Qt.AlignVCenter
             text: "Quit"
-            width: 40
+            Layout.minimumWidth: 40
             radius: 2
             font.pointSize: 12
             onClicked: {
