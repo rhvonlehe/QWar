@@ -9,7 +9,7 @@ Item {
     property string color
 
     Component.onCompleted: {
-        var globalCoords = playerArea.mapToItem(gameRoot, x, y)
+        var globalCoords = playerArea.mapToItem(gamePlay, x, y)
         console.log("playerArea.enabled: ", enabled)
         console.log("playerArea coords: ", x, y)
         console.log("area at coords: ", globalCoords.x, globalCoords.y)

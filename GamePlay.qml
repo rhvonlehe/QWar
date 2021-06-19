@@ -6,7 +6,7 @@ import QtQml 2.12
 
 
 Item {
-    id: gameRoot
+    id: gamePlay
     signal endGame
     property var playerArray : game.getPlayers()
 
@@ -57,7 +57,7 @@ Item {
                     Layout.preferredWidth: 80
                     text: "End Game"
                     onClicked: {
-                        gameRoot.endGame()
+                        gamePlay.endGame()
                     }
                 }
 

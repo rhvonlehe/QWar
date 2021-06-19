@@ -10,7 +10,6 @@ Item {
     signal playGame
 
     Component.onCompleted: {
-//        playButton.clicked.connect(dynamicLoader.)
         console.log(selector.right)
         console.log(quitButton.left)
     }
@@ -19,7 +18,6 @@ Item {
         id: layout
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-//        height: parent.height
 
         RoundButton {
             id: playButton
@@ -42,9 +40,7 @@ Item {
 
         PlayerSelector {
             id: selector
-//            Layout.fillHeight:
-            Layout.alignment: Qt.AlignVCenter             // method 2
-//            anchors.verticalCenter: layout.verticalCenter  // method 1
+            Layout.alignment: Qt.AlignVCenter
 
             onHeightChanged: {
                 console.log("selector height: ", selector.height)

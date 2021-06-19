@@ -28,7 +28,9 @@ ApplicationWindow {
             currentScreen = "GamePlay.qml"
             console.log("currentScreen: ", currentScreen)
         }
-
+    }
+    Connections {
+        target: dynamicLoader.item
         function onEndGame() {
             currentScreen = "GameStart.qml"
             console.log("currentScreen: ", currentScreen)
