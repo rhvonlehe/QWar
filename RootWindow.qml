@@ -24,6 +24,7 @@ ApplicationWindow {
 
     Connections {
         target: dynamicLoader.item
+        ignoreUnknownSignals: true
         function onPlayGame() {
             currentScreen = "GamePlay.qml"
             console.log("currentScreen: ", currentScreen)
@@ -31,6 +32,7 @@ ApplicationWindow {
     }
     Connections {
         target: dynamicLoader.item
+        ignoreUnknownSignals: true
         function onEndGame() {
             currentScreen = "GameStart.qml"
             console.log("currentScreen: ", currentScreen)
