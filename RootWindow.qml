@@ -29,10 +29,6 @@ ApplicationWindow {
             currentScreen = "GamePlay.qml"
             console.log("currentScreen: ", currentScreen)
         }
-    }
-    Connections {
-        target: dynamicLoader.item
-        ignoreUnknownSignals: true
         function onEndGame() {
             currentScreen = "GameStart.qml"
             console.log("currentScreen: ", currentScreen)
