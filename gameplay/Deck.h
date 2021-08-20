@@ -14,7 +14,7 @@ public:
     void addBack(const std::shared_ptr<Card> card);
     void addBack(const std::vector<std::shared_ptr<Card>> cards);
     void print(void) const;
-    int size(void) const
+    uint8_t size(void) const
     {
         return static_cast<int>(_cards.size());
     }

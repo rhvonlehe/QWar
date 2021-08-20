@@ -12,6 +12,7 @@ Item {
     Component.onCompleted: {
         console.log(selector.right)
         console.log(quitButton.left)
+        game.reset()
     }
 
     RowLayout {
@@ -33,8 +34,6 @@ Item {
                     game.addPlayer(players.itemAt(i).playerName)
                 }
                 gameStart.playGame()
-
-//                game.start() // todo remove
             }
         }
 

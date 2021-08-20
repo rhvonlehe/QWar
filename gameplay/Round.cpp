@@ -20,7 +20,7 @@ struct
     }
 } greaterWarHand;
 
-Round::Round(std::vector<Player>& players)
+Round::Round(std::vector<std::shared_ptr<Player> >& players)
     : _players(players)
 {
 
@@ -28,7 +28,7 @@ Round::Round(std::vector<Player>& players)
 
 void Round::play()
 {
-    std::vector<Player*> winners;
+    std::vector<std::shared_ptr<Player>> winners;
 
     // Most of the time, this is the only call made here
     //
@@ -43,9 +43,10 @@ void Round::play()
     winners[0]->acceptNewCards(Player::PLAYED, _cardsInRound);
 }
 
-std::vector<Player*> Round::findWinner(std::vector<std::pair<Player*, std::shared_ptr<Card>>>& played)
+std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<std::pair<std::shared_ptr<Player>,
+                                                       std::shared_ptr<Card>>>& played)
 {
-    std::vector<Player*> winners;
+    std::vector<std::shared_ptr<Player>> winners;
 
     std::sort(played.begin(), played.end(), greaterPair);
 
@@ -77,9 +78,9 @@ std::vector<Player*> Round::findWinner(std::vector<std::pair<Player*, std::share
     return winners;
 }
 
-std::vector<Player*> Round::findWinner(std::vector<WarHand>& played)
+std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& played)
 {
-    std::vector<Player*> winners;
+    std::vector<std::shared_ptr<Player>> winners;
 
     std::sort(played.begin(), played.end(), greaterWarHand);
 
@@ -112,19 +113,19 @@ std::vector<Player*> Round::findWinner(std::vector<WarHand>& played)
     return winners;
 }
 
-std::vector<Player*> Round::playNormal()
+std::vector<std::shared_ptr<Player> > Round::playNormal()
 {
     // NOTE: in this function we have all active players involved,
     // so when one player can't lay a card, he can be removed
     // from the global list easily.
     //
-    std::vector<std::pair<Player*, std::shared_ptr<Card>>> played;
+    std::vector<std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>>> played;
 
-    std::vector<Player>::iterator it = std::begin(_players);
+    auto it = std::begin(_players);
 
     while (it != std::end(_players))
     {
-        Player* player = &(*it);
+        auto player = (*it);
         if (!player->outOfCards())
         {
             auto card = player->playCard();
@@ -138,12 +139,12 @@ std::vector<Player*> Round::playNormal()
         ++it;
     }
 
-    std::vector<Player*> winners = findWinner(played);
+    std::vector<std::shared_ptr<Player>> winners = findWinner(played);
 
     return winners;
 }
 
-std::vector<Player*> Round::playWar(std::vector<Player*>& players)
+std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<Player>>& players)
 {
     // NOTE: in this function, potentially only a subset of all active
     // players are involved.  Remove a player from the local player
@@ -153,7 +154,7 @@ std::vector<Player*> Round::playWar(std::vector<Player*>& players)
     //
     std::vector<WarHand> played;
 
-    std::vector<Player*>::iterator it = std::begin(players);
+    auto it = std::begin(players);
 
     while (it != std::end(players))
     {
@@ -162,7 +163,7 @@ std::vector<Player*> Round::playWar(std::vector<Player*>& players)
         {
             auto downCard = player->playCard();
             auto upCard = player->playCard();
-            WarHand hand(player, downCard, upCard);
+            WarHand hand(*player, downCard, upCard);
             _cardsInRound.push_back(downCard);
             _cardsInRound.push_back(upCard);
             played.push_back(hand);
@@ -188,12 +189,11 @@ std::vector<Player*> Round::playWar(std::vector<Player*>& players)
 
 void Round::removePlayer(Player* player)
 {
-    auto it = std::find(_players.begin(), _players.end(), *player);
+    auto it = std::find(_players.begin(), _players.end(), player);
     if (it != _players.end())
     {
         _players.erase(it);
     }
-//    _players.erase(std::remove(_players.begin(), _players.end(), *player), _players.end());
 }
 
 

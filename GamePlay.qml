@@ -8,6 +8,7 @@ import QtQml 2.12
 Item {
     id: gamePlay
     signal endGame
+    signal deal
     property var playerArray : game.getPlayers()
 
     ListModel {
@@ -49,6 +50,9 @@ Item {
                     Layout.preferredHeight: 50
                     Layout.preferredWidth: 80
                     text: "Deal"
+                    onClicked: {
+                        game.deal()
+                    }
                 }
 
                 Button {
@@ -112,11 +116,5 @@ Item {
             }
         }
     }
-
 }
-
-
-//        Component.onCompleted: {
-//            console.log("count: ", playerCnt)
-//        }
 

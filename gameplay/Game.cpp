@@ -19,33 +19,34 @@ const std::array<Card::Value, 13> cardValues
 };
 
 
-
-Game::Game(std::vector<Player>& players)
+Game::Game(std::vector<std::shared_ptr<Player>>& players)
     : _activePlayers(players),
       _roundNumber(0)
 {
     initDeck();
-    _deck.print();
-    _deck.shuffle();
-    _deck.print();
 
     deal();
 }
 
-void Game::play()
+// For test purposes
+void Game::autoPlay()
 {
     while (!isOver())
     {
         _roundNumber++;
         std::cout << "Round: " << _roundNumber << std::endl;
-//        std::cout << "Press enter" << std::endl;
-//        std::cin.get();
 
         Round round(_activePlayers);
         round.play();
 
         cullPlayerList();
     }
+
+    if (_activePlayers.size() == 1)
+    {
+        std::cout << "Player " << _activePlayers[0]->name() << " has won!" << std::endl;
+    }
+
 }
 
 void Game::initDeck(void)
@@ -63,11 +64,15 @@ void Game::initDeck(void)
 
 void Game::deal()
 {
+    _deck.print();
+    _deck.shuffle();
+    _deck.print();
+
     while (!_deck.isEmpty())
     {
         for (auto& player : _activePlayers)
         {
-            player.acceptNewCard(Player::CURRENT, _deck.nextCard());
+            player->acceptNewCard(Player::CURRENT, _deck.nextCard());
             if (_deck.isEmpty())
             {
                 break;
@@ -80,15 +85,11 @@ void Game::cullPlayerList()
 {
     _activePlayers.erase(std::remove_if(
                              _activePlayers.begin(), _activePlayers.end(),
-                             [](const Player& x)
+                             [](const Player* x)
     {
-        return x.outOfCards();
+        return x->outOfCards();
     }), _activePlayers.end());
 
-    if (_activePlayers.size() == 1)
-    {
-        std::cout << "Player " << _activePlayers[0].name() << " has won!" << std::endl;
-    }
 }
 
 

@@ -23,7 +23,7 @@ ApplicationWindow {
     }
 
     Connections {
-        target: dynamicLoader.item
+        target: dynamicLoader.item  // target property means src of signal
         ignoreUnknownSignals: true
         function onPlayGame() {
             currentScreen = "GamePlay.qml"
@@ -34,6 +34,7 @@ ApplicationWindow {
             console.log("currentScreen: ", currentScreen)
         }
     }
+
 
     Component.onCompleted: {
 

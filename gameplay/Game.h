@@ -3,29 +3,31 @@
 #include <Player.h>
 #include <Deck.h>
 #include <vector>
+#include <map>
 
 
 class Game
 {
 public:
-    Game(std::vector<Player>& players);
+    Game(std::vector<std::shared_ptr<Player>>& players);
 
-    void play();
+    void autoPlay();
 
-    std::vector<Player>& players(void) {return _activePlayers; }
+    std::vector<std::shared_ptr<Player>>& players(void) {return _activePlayers; }
 
     bool isOver(void) const
     {
         return (_activePlayers.size() == 1);
     }
 
+    void deal();
+
 private:
     void initDeck();
-    void deal();
     void cullPlayerList();
 
-    std::vector<Player> _activePlayers;
-    Deck                _deck;
-    int                 _roundNumber;
+    std::vector<std::shared_ptr<Player>>    _activePlayers;
+    Deck                                    _deck;
+    int                                     _roundNumber;
 };
 
