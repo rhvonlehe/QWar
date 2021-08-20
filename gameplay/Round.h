@@ -7,11 +7,11 @@
 struct WarHand
 {
     WarHand() = default;
-    WarHand(Player& p, std::shared_ptr<Card> c1, std::shared_ptr<Card> c2)
+    WarHand(std::shared_ptr<Player> p, std::shared_ptr<Card> c1, std::shared_ptr<Card> c2)
         : player(p), downCard(c1), upCard(c2)
     {
     }
-    Player&                 player;
+    std::shared_ptr<Player> player;
     std::shared_ptr<Card>   downCard;
     std::shared_ptr<Card>   upCard;
 } ;

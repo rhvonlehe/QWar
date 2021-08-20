@@ -33,7 +33,8 @@ QStringList QGame::getPlayers(void)
 
 void QGame::start(void)
 {
-    _game->play();
+    // todo
+//    _game->play();
 }
 
 void QGame::quit(void)

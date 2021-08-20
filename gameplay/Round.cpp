@@ -163,7 +163,7 @@ std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<
         {
             auto downCard = player->playCard();
             auto upCard = player->playCard();
-            WarHand hand(*player, downCard, upCard);
+            WarHand hand(player, downCard, upCard);
             _cardsInRound.push_back(downCard);
             _cardsInRound.push_back(upCard);
             played.push_back(hand);
@@ -182,7 +182,7 @@ std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<
         }
     }
 
-    std::vector<Player*> winners = findWinner(played);
+    std::vector<std::shared_ptr<Player>> winners = findWinner(played);
 
     return winners;
 }
