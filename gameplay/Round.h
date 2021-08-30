@@ -28,7 +28,7 @@ private:
     std::vector<std::shared_ptr<Player> > findWinner(std::vector<WarHand>& played);
     std::vector<std::shared_ptr<Player>> playNormal();
     std::vector<std::shared_ptr<Player> > playWar(std::vector<std::shared_ptr<Player> > &players);
-    void removePlayer(Player *player);
+    void removePlayer(std::shared_ptr<Player> player);
 
     std::vector<std::shared_ptr<Player>>  _players;
     std::vector<std::shared_ptr<Card>>    _cardsInRound;

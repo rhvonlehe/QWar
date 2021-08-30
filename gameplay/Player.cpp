@@ -4,16 +4,8 @@
 Player::Player(const std::string name)
     : _name(name)
 {
-
 }
 
-//Player& Player::operator=(Player&& other)
-//{
-//    if (this != &other)
-//    {
-
-//    }
-//}
 
 // pre-condition: at least one card available in Player's piles
 //

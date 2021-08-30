@@ -22,6 +22,7 @@ target_sources(QWar
     QWarApplication.cpp
     QGame.cpp
     QPlayer.cpp
+    QGameModel.cpp
     )
 
 target_link_libraries(QWar

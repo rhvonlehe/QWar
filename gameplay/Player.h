@@ -16,7 +16,6 @@ public:
 
     Player(void) = default;
     Player(const std::string name);
-//    Player& operator=(Player&& other);
     void acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
     void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
     std::shared_ptr<Card> playCard(void);

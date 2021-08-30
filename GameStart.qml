@@ -7,6 +7,9 @@ Item {
     anchors.top: parent.top
     height: parent.height
     width: parent.width
+
+    property var namesList : []
+
     signal playGame
 
     Component.onCompleted: {
@@ -31,8 +34,15 @@ Item {
                 var players = selector.playerArray
                 for (var i =0; i < players.count; i++) {
                     console.log(players.itemAt(i).playerName)
+                    namesList[i] = players.itemAt(i).playerName
                     game.addPlayer(players.itemAt(i).playerName)
                 }
+
+                game.setPlayers(namesList)
+
+
+
+
                 gameStart.playGame()
             }
         }

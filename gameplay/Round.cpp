@@ -4,8 +4,8 @@
 
 struct
 {
-    bool operator()(std::pair<Player*, std::shared_ptr<Card>> a,
-                    std::pair<Player*, std::shared_ptr<Card>> b) const
+    bool operator()(std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>> a,
+                    std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>> b) const
     {
         return *(a.second) > *(b.second);
     }
@@ -187,7 +187,7 @@ std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<
     return winners;
 }
 
-void Round::removePlayer(Player* player)
+void Round::removePlayer(std::shared_ptr<Player> player)
 {
     auto it = std::find(_players.begin(), _players.end(), player);
     if (it != _players.end())

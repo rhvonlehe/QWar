@@ -15,14 +15,15 @@ class QGame : public QObject
 public:
     explicit QGame(QObject *parent = nullptr);
     Q_INVOKABLE void        reset(void);
+    Q_INVOKABLE void        setPlayers(const QStringList& playerList);
     Q_INVOKABLE void        addPlayer(const QString& newPlayer);
     Q_INVOKABLE QStringList getPlayers(void);
     Q_INVOKABLE void        start(void);
     Q_INVOKABLE void        quit(void);
     Q_INVOKABLE void        deal(void);
 
-slots:
-    void handleCardPlayed(QString playerName);
+public slots:
+//    void handleCardPlayed(QString playerName);
 
 signals:
     void gameQuit(void);

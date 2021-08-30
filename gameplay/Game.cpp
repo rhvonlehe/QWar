@@ -85,7 +85,7 @@ void Game::cullPlayerList()
 {
     _activePlayers.erase(std::remove_if(
                              _activePlayers.begin(), _activePlayers.end(),
-                             [](const Player* x)
+                             [](const std::shared_ptr<Player>& x)
     {
         return x->outOfCards();
     }), _activePlayers.end());
