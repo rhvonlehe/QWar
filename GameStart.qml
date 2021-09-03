@@ -38,7 +38,7 @@ Item {
                     game.addPlayer(players.itemAt(i).playerName)
                 }
 
-                game.setPlayers(namesList)
+                gameModel.populate(namesList)
 
 
 

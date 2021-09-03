@@ -8,9 +8,10 @@ QWarApplication::QWarApplication(int argc, char *argv[])
     _qmlAppEngine = std::make_unique<QQmlApplicationEngine>(this);
     _qmlAppEngine->load(QUrl("qrc:/qml/RootWindow.qml"));
 
-    _qmlAppEngine->rootContext()->setContextProperty("game", &_game);
+    _qmlAppEngine->rootContext()->setContextProperty("gameController", &_gameController);
+    _qmlAppEngine->rootContext()->setContextProperty("gameModel", &_gameModel);
 
-    QObject::connect(&_game, &QGame::gameQuit, this, &QWarApplication::onGameQuit);
+    QObject::connect(&_gameController, &QGameController::gameQuit, this, &QWarApplication::onGameQuit);
 }
 
 void QWarApplication::onGameQuit(void)

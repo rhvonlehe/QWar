@@ -20,7 +20,7 @@ target_sources(QWar
     ${RESOURCES}
     main.cpp
     QWarApplication.cpp
-    QGame.cpp
+    QGameController.cpp
     QPlayer.cpp
     QGameModel.cpp
     )
