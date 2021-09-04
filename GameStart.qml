@@ -15,7 +15,7 @@ Item {
     Component.onCompleted: {
         console.log(selector.right)
         console.log(quitButton.left)
-        game.reset()
+        gameController.reset()
     }
 
     RowLayout {
@@ -35,7 +35,7 @@ Item {
                 for (var i =0; i < players.count; i++) {
                     console.log(players.itemAt(i).playerName)
                     namesList[i] = players.itemAt(i).playerName
-                    game.addPlayer(players.itemAt(i).playerName)
+//                    game.addPlayer(players.itemAt(i).playerName)
                 }
 
                 gameModel.populate(namesList)
@@ -68,7 +68,7 @@ Item {
             radius: 2
             font.pointSize: 12
             onClicked: {
-                game.quit()
+                gameController.quit()
             }
         }
     }
