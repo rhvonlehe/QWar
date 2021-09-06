@@ -15,7 +15,6 @@ Item {
     Component.onCompleted: {
         console.log(selector.right)
         console.log(quitButton.left)
-        gameController.reset()
     }
 
     RowLayout {

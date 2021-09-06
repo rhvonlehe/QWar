@@ -25,7 +25,7 @@ public:
     Q_INVOKABLE void        populate(const QStringList& nameList);
 
     Q_INVOKABLE void        deal(void);
-    void                    reset(void);
+    Q_INVOKABLE void        reset(void);
 
 
 

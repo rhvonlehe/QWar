@@ -9,30 +9,10 @@ Item {
     id: gamePlay
     signal endGame
     signal deal
-    property var playerArray : game.getPlayers()
+//    property var playerArray : game.getPlayers()
 
     property var playerRow: [ 1, 1, 0, 2 ]
     property var playerCol: [ 0, 2, 1, 1 ]
-
-    ListModel {
-        id: playerLayoutModel
-        ListElement {
-            property var row: 1
-            property var column: 0
-        }
-        ListElement {
-            property var row: 1
-            property var column: 2
-        }
-        ListElement {
-            property var row: 0
-            property var column: 1
-        }
-        ListElement {
-            property var row: 2
-            property var column: 1
-        }
-    }
 
     ColumnLayout {
         id: mainColumn
@@ -65,6 +45,7 @@ Item {
                     text: "End Game"
                     onClicked: {
                         gamePlay.endGame()
+                        gameModel.reset()
                     }
                 }
 
@@ -91,7 +72,7 @@ Item {
                 columns: 3
                 rows: 3
                 anchors.fill: parent
-                property var playerCnt: playerArray.length
+                property var playerCnt: gameModel.rowCount()
 
                 Repeater {
 //                    model: playerLayoutModel
@@ -111,6 +92,10 @@ Item {
                         Layout.fillWidth: true
                         enabled: gameModel.rowCount() > index ? true : false
                         opacity: gameModel.rowCount() > index ? true : false
+
+                        Component.onCompleted: {
+                            console.log("rowCount is ", gameModel.rowCount())
+                        }
                     }
                 }
             }

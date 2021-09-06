@@ -1,5 +1,7 @@
 #include "QGameModel.h"
 
+#include <iostream>
+
 QGameModel::QGameModel()
 {
 
@@ -41,7 +43,9 @@ void QGameModel::deal(void)
 
 void QGameModel::reset(void)
 {
+    std::cout << "Resetting gameModel" << std::endl;
     _players.clear();
+    _game = nullptr;
 }
 
 
