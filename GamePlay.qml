@@ -83,18 +83,20 @@ Item {
                 Component {
                     id: playerArea
                     PlayerArea {
-                        color: "red"
-//                        playerName: playerArray[index]
-                        playerName: player.name
                         Layout.row: playerRow[index]
                         Layout.column: playerCol[index]
                         Layout.fillHeight: true
                         Layout.fillWidth: true
+                        color: "red"
+                        playerName: player.name
+                        unplayedCardsCnt: player.unplayedCardCnt
                         enabled: gameModel.rowCount() > index ? true : false
                         opacity: gameModel.rowCount() > index ? true : false
 
                         Component.onCompleted: {
                             console.log("rowCount is ", gameModel.rowCount())
+                            console.log("player name ", player.name)
+                            console.log("uplayedCardCnt ", player.unplayedCardCnt)
                         }
                     }
                 }

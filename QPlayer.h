@@ -11,7 +11,7 @@ public:
     ~QPlayer(void) = default;
 
     Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged);
-    Q_PROPERTY(uint8_t unplayedCardCnt READ getUnplayedCardCnt NOTIFY unplayedCardCntChanged);
+    Q_PROPERTY(unsigned int unplayedCardCnt READ getUnplayedCardCnt NOTIFY unplayedCardCntChanged);
 
     QString getName(void) const;
     void setName(QString name);

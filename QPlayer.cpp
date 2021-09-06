@@ -20,5 +20,5 @@ void QPlayer::setName(QString name)
 
 uint8_t QPlayer::getUnplayedCardCnt() const
 {
-    return _unplayedCardCnt;
+    return _player->totalUnplayed();
 }
