@@ -11,6 +11,9 @@ Item {
     signal deal
     property var playerArray : game.getPlayers()
 
+    property var playerRow: [ 1, 1, 0, 2 ]
+    property var playerCol: [ 0, 2, 1, 1 ]
+
     ListModel {
         id: playerLayoutModel
         ListElement {
@@ -91,7 +94,8 @@ Item {
                 property var playerCnt: playerArray.length
 
                 Repeater {
-                    model: playerLayoutModel
+//                    model: playerLayoutModel
+                    model: gameModel
                     delegate: playerArea
                 }
 
@@ -99,13 +103,14 @@ Item {
                     id: playerArea
                     PlayerArea {
                         color: "red"
-                        playerName: playerArray[index]
-                        Layout.row: model.row
-                        Layout.column: model.column
+//                        playerName: playerArray[index]
+                        playerName: player.name
+                        Layout.row: playerRow[index]
+                        Layout.column: playerCol[index]
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        enabled: gridnew.playerCnt > index ? true : false
-                        opacity: gridnew.playerCnt > index ? true : false
+                        enabled: gameModel.rowCount() > index ? true : false
+                        opacity: gameModel.rowCount() > index ? true : false
                     }
                 }
             }

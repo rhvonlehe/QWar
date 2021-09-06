@@ -7,6 +7,17 @@ QPlayer::QPlayer(std::shared_ptr<Player> player, QObject *parent)
 
 }
 
+QString QPlayer::getName() const
+{
+    auto name = _player->name();
+    return QString::fromUtf8(name.data(), name.size());
+}
+
+void QPlayer::setName(QString name)
+{
+    _player->name(name.toStdString());
+}
+
 uint8_t QPlayer::getUnplayedCardCnt() const
 {
     return _unplayedCardCnt;

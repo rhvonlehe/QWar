@@ -13,8 +13,7 @@ void QGameModel::populate(const QStringList& nameList)
     {
         auto player = std::make_shared<Player>(name.toStdString());
         players.push_back(player);
-        auto qPlayer = std::make_unique<QPlayer>(player);
-        _players.push_back(std::move(qPlayer));
+        _players.push_back(new QPlayer(player));
     }
 
     _game = std::make_unique<Game>(players);
@@ -48,23 +47,25 @@ void QGameModel::reset(void)
 
 int QGameModel::rowCount(const QModelIndex &parent) const
 {
-
-    //temp
-    return 0;
+    return _players.size();
 }
 
 QVariant QGameModel::data(const QModelIndex& index, int role) const
 {
-
-    return QVariant(0);
+    Q_UNUSED(role);
+    return QVariant::fromValue(_players[index.row()]);
 }
 
 QHash<int, QByteArray> QGameModel::roleNames() const
 {
-    QHash<int, QByteArray>  d;
-//    d[] = ;
+    static QHash<int, QByteArray> *pHash = nullptr;
+    if (!pHash)
+    {
+        pHash = new QHash<int, QByteArray>;
+        (*pHash)[Qt::UserRole + 1] = "player";
+    }
 
-    return d;
+    return *pHash;
 }
 
 

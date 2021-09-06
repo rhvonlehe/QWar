@@ -13,9 +13,12 @@ class QGameModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    enum DataType
+    enum RoleType
     {
-
+        ROLE_NAME = Qt::UserRole + 1,
+        ROLE_PLAYED_CARD,
+        ROLE_PLAYED_CNT,
+        ROLE_UNPLAYED_CNT
     };
 
     QGameModel();
@@ -31,7 +34,9 @@ public:
     QHash<int, QByteArray> roleNames() const;
 private:
 
-    std::vector<std::unique_ptr<QPlayer>>   _players;
-    std::unique_ptr<Game>                   _game;
+    // Must store ptrs to QObject-derived type.  They are not copyable.
+    std::vector<QPlayer*>           _players;
+    std::unique_ptr<Game>           _game;
 };
+
 
