@@ -90,6 +90,7 @@ Item {
                         color: "red"
                         playerName: player.name
                         unplayedCardsCnt: player.unplayedCardCnt
+                        playedCardsCnt: player.playedCardCnt
                         enabled: gameModel.rowCount() > index ? true : false
                         opacity: gameModel.rowCount() > index ? true : false
 
@@ -97,6 +98,10 @@ Item {
                             console.log("rowCount is ", gameModel.rowCount())
                             console.log("player name ", player.name)
                             console.log("uplayedCardCnt ", player.unplayedCardCnt)
+                        }
+
+                        onCardPlayed: {
+                            player.playCard()
                         }
                     }
                 }

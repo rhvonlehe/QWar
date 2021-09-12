@@ -12,15 +12,20 @@ public:
 
     Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(unsigned int unplayedCardCnt READ getUnplayedCardCnt NOTIFY unplayedCardCntChanged);
+    Q_PROPERTY(unsigned int playedCardCnt READ getPlayedCardCnt NOTIFY playedCardCntChanged);
+
+    Q_INVOKABLE void playCard(void);
 
     QString getName(void) const;
     void setName(QString name);
     uint8_t getUnplayedCardCnt(void) const;
+    uint8_t getPlayedCardCnt(void) const;
 
 
 signals:
     void nameChanged(QString);
     void unplayedCardCntChanged(uint32_t);
+    void playedCardCntChanged(uint32_t);
 
 
 private:

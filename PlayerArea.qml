@@ -31,13 +31,13 @@ Item {
         Label {
             height: 50
             width: 50
-            text: unplayedCardsCnt
+            text: "unplayed: " + unplayedCardsCnt
         }
 
         Label {
             height: 50
             width: 50
-            text: playedCardsCnt
+            text: "played: " + playedCardsCnt
         }
 
         Label {
