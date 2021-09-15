@@ -89,6 +89,7 @@ Item {
                         Layout.fillWidth: true
                         color: "red"
                         playerName: player.name
+                        active: player.active
                         unplayedCardsCnt: player.unplayedCardCnt
                         playedCardsCnt: player.playedCardCnt
                         enabled: gameModel.rowCount() > index ? true : false
@@ -101,6 +102,8 @@ Item {
                         }
 
                         onCardPlayed: {
+                            console.log("card played")
+                            active = false
                             player.playCard()
                         }
                     }

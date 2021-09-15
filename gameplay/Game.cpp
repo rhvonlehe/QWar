@@ -28,7 +28,7 @@ Game::Game(std::vector<std::shared_ptr<Player>>& players)
     deal();
 }
 
-// For test purposes
+// For test purposes - todo update with latest changes that better support view integration
 void Game::autoPlay()
 {
     while (!isOver())

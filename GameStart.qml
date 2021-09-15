@@ -38,10 +38,6 @@ Item {
                 }
 
                 gameModel.populate(namesList)
-
-
-
-
                 gameStart.playGame()
             }
         }

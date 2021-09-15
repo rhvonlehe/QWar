@@ -148,7 +148,7 @@ std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<
 {
     // NOTE: in this function, potentially only a subset of all active
     // players are involved.  Remove a player from the local player
-    // list when they can't complete a way due to lack of cards.
+    // list when they can't complete a war due to lack of cards.
     // Let the game determine who has dropped out after the round
     // has finished playing.
     //
