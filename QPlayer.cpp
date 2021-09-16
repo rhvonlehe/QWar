@@ -1,4 +1,5 @@
 #include "QPlayer.h"
+#include <Round.h>
 
 QPlayer::QPlayer(std::shared_ptr<Player> player, QObject *parent)
     : QObject(parent),
@@ -9,7 +10,6 @@ QPlayer::QPlayer(std::shared_ptr<Player> player, QObject *parent)
 
 void QPlayer::playCard()
 {
-
 }
 
 QString QPlayer::getName() const

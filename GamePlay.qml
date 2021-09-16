@@ -104,7 +104,7 @@ Item {
                         onCardPlayed: {
                             console.log("card played")
                             active = false
-                            player.playCard()
+                            gameModel.playCard(player)
                         }
                     }
                 }

@@ -23,7 +23,11 @@ struct
 Round::Round(std::vector<std::shared_ptr<Player> >& players)
     : _players(players)
 {
+}
 
+Round::Round(unsigned int playerCnt)
+    : _numPlayersToPlay(playerCnt)
+{
 }
 
 void Round::play()
@@ -41,6 +45,24 @@ void Round::play()
     }
 
     winners[0]->acceptNewCards(Player::PLAYED, _cardsInRound);
+}
+
+bool Round::playNormal(std::shared_ptr<Player>& player)
+{
+    static std::vector<std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>>> played;
+
+    auto card = player->playCard();
+    _cardsInRound.push_back(card);
+    played.push_back(std::make_pair(player, card));
+    _numPlayersToPlay--;
+
+    if (0 == _numPlayersToPlay)
+    {
+        _winners = findWinner(played);
+        return true;
+    }
+
+    return false;
 }
 
 std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<std::pair<std::shared_ptr<Player>,

@@ -26,6 +26,7 @@ public:
 
     Q_INVOKABLE void        deal(void);
     Q_INVOKABLE void        reset(void);
+    Q_INVOKABLE void        playCard(QObject* player);
 
 
 

@@ -48,6 +48,11 @@ void QGameModel::reset(void)
     _game = nullptr;
 }
 
+void QGameModel::playCard(QObject *player)
+{
+
+}
+
 
 int QGameModel::rowCount(const QModelIndex &parent) const
 {
