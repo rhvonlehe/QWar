@@ -88,10 +88,7 @@ Item {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "red"
-                        playerName: player.name
-                        active: player.active
-                        unplayedCardsCnt: player.unplayedCardCnt
-                        playedCardsCnt: player.playedCardCnt
+                        playerInstance: player
                         enabled: gameModel.rowCount() > index ? true : false
                         opacity: gameModel.rowCount() > index ? true : false
 
@@ -101,13 +98,15 @@ Item {
                             console.log("uplayedCardCnt ", player.unplayedCardCnt)
                         }
 
-                        onCardPlayed: {
+                        onCardRequested: {
                             console.log("card played")
-                            active = false
+//                            active = false
                             gameModel.playCard(player)
                         }
                     }
                 }
+
+                // Add TableArea here
             }
 
             Component.onCompleted: {

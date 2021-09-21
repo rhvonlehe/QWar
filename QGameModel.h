@@ -1,13 +1,12 @@
 #pragma once
 
 #include <Game.h>
-
+#include <Round.h>
 #include <QPlayer.h>
 #include <QAbstractListModel>
 #include <QHash>
 #include <QByteArray>
 #include <memory>
-
 
 class QGameModel : public QAbstractListModel
 {
@@ -26,8 +25,7 @@ public:
 
     Q_INVOKABLE void        deal(void);
     Q_INVOKABLE void        reset(void);
-    Q_INVOKABLE void        playCard(QObject* player);
-
+    Q_INVOKABLE void        playCard(QPlayer *player);
 
 
     virtual int rowCount(const QModelIndex& parent=QModelIndex()) const override;
@@ -38,6 +36,10 @@ private:
     // Must store ptrs to QObject-derived type.  They are not copyable.
     std::vector<QPlayer*>           _players;
     std::unique_ptr<Game>           _game;
+    int                             _roundNumber;
+    std::unique_ptr<Round>          _currentRound;
+
+//    std::map<std::string, std::shared_ptr<Player>> _playerMap; // todo remove
 };
 
 

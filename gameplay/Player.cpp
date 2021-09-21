@@ -26,6 +26,8 @@ std::shared_ptr<Card> Player::playCard()
         }
     }
 
+
+
     auto card = _unplayedCards.nextCard();
 
     return card;

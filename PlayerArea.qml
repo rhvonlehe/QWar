@@ -5,14 +5,11 @@ import QtQuick.Layouts 1.12
 Item {
     id: playerArea
     property bool   cardPlayed
-    property string playerName
     property string currentCard
     property string color
-    property int    unplayedCardsCnt
-    property int    playedCardsCnt
-    property bool   active
+    property var    playerInstance
 
-    signal cardPlayed
+    signal cardRequested
 
     Component.onCompleted: {
         var globalCoords = playerArea.mapToItem(gamePlay, x, y)
@@ -33,13 +30,13 @@ Item {
         Label {
             height: 50
             width: 50
-            text: "unplayed: " + unplayedCardsCnt
+            text: "unplayed: " + playerInstance.unplayedCardCnt
         }
 
         Label {
             height: 50
             width: 50
-            text: "played: " + playedCardsCnt
+            text: "played: " + playerInstance.playedCardCnt
         }
 
         Label {
@@ -55,18 +52,18 @@ Item {
             id: nameLabel
             height: 50
             width: 50
-            text: playerName
+            text: playerInstance.name
         }
 
         Button {
             id: playButton
             height: 50
             width: 50
-            enabled: active
+            enabled: playerInstance.active
             text: "Play Card"
 
             onClicked: {
-                playerArea.cardPlayed()
+                playerArea.cardRequested()
             }
         }
     }

@@ -26,7 +26,6 @@ Round::Round(std::vector<std::shared_ptr<Player> >& players)
 }
 
 Round::Round(unsigned int playerCnt)
-    : _numPlayersToPlay(playerCnt)
 {
 }
 
@@ -47,6 +46,7 @@ void Round::play()
     winners[0]->acceptNewCards(Player::PLAYED, _cardsInRound);
 }
 
+#if 0 // todo
 bool Round::playNormal(std::shared_ptr<Player>& player)
 {
     static std::vector<std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>>> played;
@@ -64,12 +64,12 @@ bool Round::playNormal(std::shared_ptr<Player>& player)
 
     return false;
 }
+#endif
 
 std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<std::pair<std::shared_ptr<Player>,
                                                        std::shared_ptr<Card>>>& played)
 {
-    std::vector<std::shared_ptr<Player>> winners;
-
+    _winners.clear();
     std::sort(played.begin(), played.end(), greaterPair);
 
     for (auto pair : played)
@@ -89,7 +89,7 @@ std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<std::pair<std
     {
         if (item.second == highest.second)
         {
-            winners.push_back(item.first);
+            _winners.push_back(item.first);
         }
         else
         {
@@ -97,7 +97,7 @@ std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<std::pair<std
         }
     }
 
-    return winners;
+    return _winners;
 }
 
 std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& played)
@@ -161,9 +161,7 @@ std::vector<std::shared_ptr<Player> > Round::playNormal()
         ++it;
     }
 
-    std::vector<std::shared_ptr<Player>> winners = findWinner(played);
-
-    return winners;
+    return findWinner(played);
 }
 
 std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<Player>>& players)

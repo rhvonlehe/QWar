@@ -23,17 +23,18 @@ public:
     Round(std::vector<std::shared_ptr<Player>>& players); // todo remove
     Round(unsigned int playerCnt);
     void play();
-    bool playNormal(std::shared_ptr<Player>& player);
+//    bool playNormal(std::shared_ptr<Player>& player); // todo
+    std::vector<std::shared_ptr<Player>> playNormal();
+    std::vector<std::shared_ptr<Player> > playWar(std::vector<std::shared_ptr<Player> > &players);
+
+    const std::vector<std::shared_ptr<Player>>& winners(void) const;
 private:
     std::vector<std::shared_ptr<Player>> findWinner(std::vector<std::pair<std::shared_ptr<Player>,
                                     std::shared_ptr<Card>>>& played);
     std::vector<std::shared_ptr<Player> > findWinner(std::vector<WarHand>& played);
-    std::vector<std::shared_ptr<Player>> playNormal();
-    std::vector<std::shared_ptr<Player> > playWar(std::vector<std::shared_ptr<Player> > &players);
     void removePlayer(std::shared_ptr<Player> player);
 
 
-    unsigned int                            _numPlayersToPlay;
     std::vector<std::shared_ptr<Player>>    _winners;
     std::vector<std::shared_ptr<Player>>    _players;
     std::vector<std::shared_ptr<Card>>      _cardsInRound;

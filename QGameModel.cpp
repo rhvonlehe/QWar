@@ -1,5 +1,4 @@
-#include "QGameModel.h"
-
+#include <QGameModel.h>
 #include <iostream>
 
 QGameModel::QGameModel()
@@ -46,12 +45,52 @@ void QGameModel::reset(void)
     std::cout << "Resetting gameModel" << std::endl;
     _players.clear();
     _game = nullptr;
+    _roundNumber = 0;
 }
 
-void QGameModel::playCard(QObject *player)
+
+// todo - make the parameter the qobject (or QPlayer?) passed in from QML
+// also increment the players that have played cards to know when done to reset
+void QGameModel::playCard(QPlayer* player)
 {
+    std::cout << "player calling playCard is " << player->getName().toStdString() << std::endl;
+
+    static bool roundComplete = true;
+    static int playersLeft = 0;
+
+    decltype(_currentRound->playNormal()) winners;
+
+    if (roundComplete)
+    {
+        playersLeft = _game->players().size();
+        _roundNumber++;
+        _currentRound = std::make_unique<Round>(_game->players());
+
+        winners = _currentRound->playNormal();
+    }
+
+    playersLeft--;
+
+    if (0 == playersLeft)
+    {
+        roundComplete = true;
+
+
+    }
 
 }
+
+#if 0 // todo
+void QGameMode::playWar(void)
+{
+    while (winners.size() > 1)
+    {
+        winners = round.playWar(winners);
+    }
+
+    _winner
+}
+#endif
 
 
 int QGameModel::rowCount(const QModelIndex &parent) const
