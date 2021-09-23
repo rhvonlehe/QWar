@@ -69,6 +69,7 @@ void QGameModel::playCard(QPlayer* player)
         winners = _currentRound->playNormal();
     }
 
+    player->playCard();
     playersLeft--;
 
     if (0 == playersLeft)

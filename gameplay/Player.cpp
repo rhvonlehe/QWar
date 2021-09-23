@@ -13,11 +13,11 @@ std::shared_ptr<Card> Player::playCard()
 {
     // Shuffle played deck and make it current deck if needed
     //
-    if (_unplayedCards.isEmpty())
+    if (_unplayedPile.isEmpty())
     {
-        if (!_playedCards.isEmpty())
+        if (!_playedPile.isEmpty())
         {
-            _playedCards.shuffle();
+            _playedPile.shuffle();
             movePlayedToCurrent();
         }
         else
@@ -28,28 +28,28 @@ std::shared_ptr<Card> Player::playCard()
 
 
 
-    auto card = _unplayedCards.nextCard();
+    auto card = _unplayedPile.nextCard();
 
     return card;
 }
 
 void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
 {
-    Deck& deck = (CURRENT == pile) ? _unplayedCards : _playedCards;
+    Deck& deck = (CURRENT == pile) ? _unplayedPile : _playedPile;
 
     deck.addBack(cards);
 }
 
 void Player::acceptNewCard(const Pile pile, const std::shared_ptr<Card> card)
 {
-    CURRENT == pile ? _unplayedCards.addBack(card) :
-                      _playedCards.addBack(card);
+    CURRENT == pile ? _unplayedPile.addBack(card) :
+                      _playedPile.addBack(card);
 }
 
 void Player::movePlayedToCurrent()
 {
-    while (false == _playedCards.isEmpty())
+    while (false == _playedPile.isEmpty())
     {
-        _unplayedCards.addBack(_playedCards.nextCard());
+        _unplayedPile.addBack(_playedPile.nextCard());
     }
 }

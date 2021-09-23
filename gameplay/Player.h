@@ -22,20 +22,20 @@ public:
 
     uint8_t totalPlayed(void) const
     {
-        return _playedCards.size();
+        return _playedPile.size();
     }
     uint8_t totalUnplayed(void) const
     {
-        return _unplayedCards.size();
+        return _unplayedPile.size();
     }
 
     bool hasTwoCards(void) const
     {
-        return ((_unplayedCards.size() + _playedCards.size()) >= 2);
+        return ((_unplayedPile.size() + _playedPile.size()) >= 2);
     }
     bool outOfCards(void) const
     {
-        return (_unplayedCards.isEmpty() && _playedCards.isEmpty());
+        return (_unplayedPile.isEmpty() && _playedPile.isEmpty());
     }
     std::string name(void) const
     {
@@ -50,7 +50,7 @@ private:
     void movePlayedToCurrent();
 
     std::string _name;
-    Deck        _unplayedCards;
-    Deck        _playedCards;
+    Deck        _unplayedPile;
+    Deck        _playedPile;
 };
 
