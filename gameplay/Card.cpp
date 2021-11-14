@@ -3,7 +3,6 @@
 #include <iostream>
 #include <map>
 
-//QChar test(0x2660);
 
 static std::map<Card::Suit, char> suitStr
 {

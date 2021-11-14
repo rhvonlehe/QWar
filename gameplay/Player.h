@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+class PlayerState;
+
 class Player
 {
 public:
@@ -14,7 +16,7 @@ public:
         PLAYED
     };
 
-    Player(void) = default;
+    Player(void) = delete;
     Player(const std::string name);
     void acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
     void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
@@ -48,9 +50,12 @@ public:
     }
 private:
     void movePlayedToCurrent();
+    void changeState(PlayerState* next);
+    friend class PlayerState;
 
-    std::string _name;
-    Deck        _unplayedPile;
-    Deck        _playedPile;
+    std::string     _name;
+    Deck            _unplayedPile;
+    Deck            _playedPile;
+    PlayerState*    _playerState;
 };
 

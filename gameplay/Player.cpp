@@ -1,9 +1,11 @@
 #include "Player.h"
+#include "PlayerState.h"
 #include <assert.h>
 
 Player::Player(const std::string name)
     : _name(name)
 {
+    _playerState = Idle::instance();
 }
 
 
@@ -52,4 +54,9 @@ void Player::movePlayedToCurrent()
     {
         _unplayedPile.addBack(_playedPile.nextCard());
     }
+}
+
+void Player::changeState(PlayerState* next)
+{
+    _playerState = next;
 }
