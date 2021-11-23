@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model version="5.0.4" links="0">
+ <framework name="qpcpp"/>
+ <package name="package1" stereotype="0x03">
+  <class name="Player" superclass="qpcpp::QHsm">
+   <statechart properties="0x00">
+    <state name="Idle">
+     <tran trig="PLAY" target="../../2/3">
+      <action brief="playOneCard"/>
+      <tran_glyph conn="17,16,3,3,22,9,-31,17,13">
+       <action box="0,-2,16,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="OUT_OF_CARDS" target="../../1">
+      <tran_glyph conn="17,14,3,3,38">
+       <action box="0,-2,15,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="17,10,18,14"/>
+    </state>
+    <state name="Eliminated">
+     <state_glyph node="55,10,17,12"/>
+    </state>
+    <state name="CARDS_PLAYED">
+     <tran trig="WINNER" target="../../0">
+      <action brief="acceptCards"/>
+      <tran_glyph conn="14,37,3,3,80,-33,-88,10,11">
+       <action box="0,-2,22,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="LOSER" target="../../0">
+      <tran_glyph conn="14,34,3,3,76,-28,-82,6,9">
+       <action box="0,-2,18,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="OUT_OF_CARDS" target="../../1">
+      <tran_glyph conn="14,32,3,1,72,-17,-14">
+       <action box="0,-2,16,2"/>
+      </tran_glyph>
+     </tran>
+     <state name="WaitingForWinner">
+      <tran trig="WINNER_TIE" target="../../4">
+       <tran_glyph conn="21,42,3,3,24">
+        <action box="0,-2,10,2"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="21,38,19,13"/>
+     </state>
+     <state name="WaitFirstCard">
+      <tran trig="PLAY" target="../../5">
+       <tran_glyph conn="45,44,3,3,21">
+        <action box="0,-2,10,2"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="45,39,16,12"/>
+     </state>
+     <state name="WaitHoleCard">
+      <tran trig="PLAY" target="../../6">
+       <tran_glyph conn="66,43,3,3,22">
+        <action box="0,-2,10,2"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="66,39,17,12"/>
+     </state>
+     <state name="WaitLastCard">
+      <tran trig="PLAY" target="../../7">
+       <tran_glyph conn="88,45,3,1,21,12,-37">
+        <action box="0,-2,10,2"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="88,39,16,12"/>
+     </state>
+     <state name="WaitFlip">
+      <tran trig="FLIP" target="../../3">
+       <tran_glyph conn="50,59,3,3,26,6,-57,-20,2">
+        <action box="0,-2,10,2"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="50,54,22,10"/>
+     </state>
+     <state_glyph node="14,28,97,40"/>
+    </state>
+    <state_diagram size="126,74"/>
+   </statechart>
+  </class>
+  <class name="Round" superclass="qpcpp::QHsm">
+   <statechart properties="0x00">
+    <state name="IDLE">
+     <tran trig="NEW_ROUND" target="../../1">
+      <tran_glyph conn="19,14,3,3,21,14,-29,16,8">
+       <action box="0,-2,16,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="19,8,18,15"/>
+    </state>
+    <state name="NORMAL">
+     <tran trig="SINGLE_WINNER" target="../../0">
+      <tran_glyph conn="19,41,3,0,25,-36,-10,3">
+       <action box="0,-2,16,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="WINNER_TIE" target="../../2">
+      <tran_glyph conn="19,43,3,3,41">
+       <action box="0,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="19,37,18,14"/>
+    </state>
+    <state name="WAR">
+     <tran trig="WINNER_TIE">
+      <tran_glyph conn="60,41,3,-1,16">
+       <action box="0,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="WINNER" target="../../0">
+      <tran_glyph conn="79,41,1,3,12,-39,-77,10,5">
+       <action box="0,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="60,37,19,14"/>
+    </state>
+    <state_diagram size="113,72"/>
+   </statechart>
+  </class>
+ </package>
+</model>

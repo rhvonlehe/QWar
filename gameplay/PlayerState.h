@@ -1,79 +1,90 @@
 #pragma once
 
-class Player;
+#include "Player.h"
+#include <boost/statechart/event.hpp>
+#include <boost/statechart/asynchronous_state_machine.hpp>
+#include <boost/statechart/state.hpp>
+#include <boost/statechart/transition.hpp>
 
-class PlayerState
+#include <iostream>
+#define TEMP_LOG(X) { std::cout << X << std::endl; }
+
+// Declare things in one spot for visual convenience
+//
+// Player events
+//
+struct EvOutOfCards;
+struct EvPlay;
+struct EvFlip;
+struct EvWinner;
+struct EvWinnterTie;
+struct EvLoser;
+
+// Player states
+//
+struct Idle;
+struct Eliminated;
+struct CardsPlayed;
+struct WaitingForWinner;
+struct WaitFirstCard;
+struct WaitHoleCard;
+struct WaitLastCard;
+struct WaitFlip;
+
+struct PlayerSM : boost::statechart::asynchronous_state_machine<PlayerSM, Idle>
 {
-public:
-    virtual void playFirst(Player&) {};
-    virtual void winnerTie(Player&) {};
-    virtual void layWarCards(Player&) {};
-    virtual void roundEnded(Player&) {};
-    virtual void outOfCards(Player&);
-protected:
-    void changeState(Player&, PlayerState*);
+    PlayerSM(my_context ctx, Player& player)
+        : my_base(ctx),
+          _player(player) {}
+    ~PlayerSM() { terminate(); }
+
+
+
+private:
+    Player&   _player;
 };
 
-class Eliminated : public PlayerState
+// More definition for events
+//
+struct EvOutOfCards : boost::statechart::event < EvOutOfCards >
 {
-public:
-    static PlayerState* instance();
+    EvOutOfCards() { TEMP_LOG("EvOutOfCards event"); }
+};
+struct EvPlay       : boost::statechart::event < EvPlay >
+{
+    EvPlay() { TEMP_LOG("EvPlay event"); }
+};
+struct EvFlip       : boost::statechart::event < EvFlip >
+{
+    EvFlip() { TEMP_LOG("EvFlip event"); }
+};
+struct EvWinner     : boost::statechart::event < EvWinner>
+{
+    EvWinner() { TEMP_LOG("EvWinner event"); }
+};
+struct EvWinnerTie  : boost::statechart::event < EvWinnerTie >
+{
+    EvWinnerTie() { TEMP_LOG("EvWinnerTie event"); }
+};
+struct EvLoser      : boost::statechart::event < EvLoser >
+{
+    EvLoser() { TEMP_LOG("EvLoser event"); }
 };
 
-class Idle : public PlayerState
+// More definition for states
+//
+struct Idle : boost::statechart::state<Idle, PlayerSM>
 {
-public:
-    static PlayerState* instance();
+    typedef boost::mpl::list<
+    boost::statechart::transition< EvPlay, CardsPlayed > > reactions;
 
-    virtual void playFirst(Player&);
+    Idle(my_context ctx);
 };
 
-class PlayedFirst : public PlayerState
+struct Eliminated : boost::statechart::state<Eliminated, PlayerSM>
 {
-public:
-    static PlayerState* instance();
-
-    virtual void winnerTie(Player&);
-    virtual void roundEnded(Player&);
-};
-
-class LaidWarCards : public PlayerState
-{
-public:
-    static PlayerState* instance();
-
-    virtual void roundEnded(Player&);
+    Eliminated(my_context ctx);
 };
 
 
-
-
-
-
-
-#if 0 // todo remove
-class PlayerSM
-{
-public:
-    enum PlayerState {
-        PLAYER_STATE_ELIMINATED,
-        PLAYER_STATE_IDLE,
-        PLAYER_STATE_PLAYED_FIRST,
-        PLAYER_STATE_LAID_WAR_CARDS
-    };
-
-    enum PlayerEvent {
-        PLAYER_EVENT_PLAY_FIRST,
-        PLAYER_EVENT_WINNER_TIE,
-        PLAYER_EVENT_LAY_WAR_CARDS,
-        PLAYER_EVENT_ROUND_ENDED,
-        PLAYER_EVENT_OUT_OF_CARDS
-    };
-
-
-    PlayerSM();
-
-    void process(Player& context, PlayerEvent event);
-};
-#endif
 
