@@ -79,11 +79,24 @@ struct Idle : boost::statechart::state<Idle, PlayerSM>
     boost::statechart::transition< EvPlay, CardsPlayed > > reactions;
 
     Idle(my_context ctx);
+    ~Idle();
 };
 
 struct Eliminated : boost::statechart::state<Eliminated, PlayerSM>
 {
     Eliminated(my_context ctx);
+    ~Eliminated();
+};
+
+struct CardsPlayed : boost::statechart::state<CardsPlayed, PlayerSM>
+{
+    typedef boost::mpl::list<
+    boost::statechart::transition< EvOutOfCards, Eliminated >,
+    boost::statechart::transition< EvLoser, Idle>,
+    boost::statechart::transition< EvWinner, Idle> > reactions;
+
+    CardsPlayed(my_context ctx);
+    ~CardsPlayed();
 };
 
 

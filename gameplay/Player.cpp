@@ -5,7 +5,7 @@
 Player::Player(const std::string name)
     : _name(name)
 {
-    _playerState = Idle::instance();
+//    _playerState = Idle::instance();
 }
 
 
@@ -56,7 +56,8 @@ void Player::movePlayedToCurrent()
     }
 }
 
-void Player::changeState(PlayerState* next)
-{
-    _playerState = next;
-}
+// TODO remove
+//void Player::changeState(PlayerState* next)
+//{
+//    _playerState = next;
+//}

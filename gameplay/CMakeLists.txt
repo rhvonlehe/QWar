@@ -1,4 +1,4 @@
-find_package(Boost 1.67.0)
+find_package(Boost REQUIRED COMPONENTS system)
 
 add_library(gameplay STATIC)
 

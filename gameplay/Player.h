@@ -50,12 +50,15 @@ public:
     }
 private:
     void movePlayedToCurrent();
+
+#if 0 // todo remove
     void changeState(PlayerState* next);
     friend class PlayerState;
+#endif
 
     std::string     _name;
     Deck            _unplayedPile;
     Deck            _playedPile;
-    PlayerState*    _playerState;
+//    PlayerState*    _playerState;
 };
 
