@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Player.h"
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/asynchronous_state_machine.hpp>
 #include <boost/statechart/state.hpp>
@@ -11,6 +10,8 @@
 
 // Declare things in one spot for visual convenience
 //
+class Player;
+
 // Player events
 //
 struct EvOutOfCards;
@@ -98,6 +99,8 @@ struct CardsPlayed : boost::statechart::state<CardsPlayed, PlayerSM>
     CardsPlayed(my_context ctx);
     ~CardsPlayed();
 };
+
+//struct
 
 
 

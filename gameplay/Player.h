@@ -2,10 +2,11 @@
 
 #include <Deck.h>
 #include <Card.h>
+#include <PlayerState.h>
 #include <string>
 #include <vector>
 
-class PlayerState;
+class PlayerSM;
 
 class Player
 {
@@ -59,6 +60,10 @@ private:
     std::string     _name;
     Deck            _unplayedPile;
     Deck            _playedPile;
+
+    using FifoScheduler = boost::statechart::fifo_scheduler<>;
+    FifoScheduler                   _scheduler;
+    FifoScheduler::processor_handle _processor;
 //    PlayerState*    _playerState;
 };
 

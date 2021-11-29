@@ -1,4 +1,6 @@
-find_package(Boost REQUIRED COMPONENTS system)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost REQUIRED COMPONENTS system thread)
+find_package(Threads)
 
 add_library(gameplay STATIC)
 
@@ -17,6 +19,8 @@ target_sources(gameplay
     Round.cpp
     Game.cpp
     )
+
+target_compile_definitions(gameplay PUBLIC BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 target_link_libraries(gameplay
     PRIVATE

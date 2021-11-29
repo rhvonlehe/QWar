@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "PlayerState.h"
 #include <assert.h>
 
 Player::Player(const std::string name)
