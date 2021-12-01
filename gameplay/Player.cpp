@@ -10,6 +10,13 @@ Player::Player(const std::string name)
 
 // pre-condition: at least one card available in Player's piles
 //
+void Player::playCard(void)
+{
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvPlay>(new EvPlay()));
+}
+
+#if 0 // todo old remove
 std::shared_ptr<Card> Player::playCard()
 {
     // Shuffle played deck and make it current deck if needed
@@ -33,6 +40,7 @@ std::shared_ptr<Card> Player::playCard()
 
     return card;
 }
+#endif
 
 void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
 {

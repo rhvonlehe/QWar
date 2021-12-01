@@ -29,6 +29,7 @@ Round::Round(unsigned int playerCnt)
 {
 }
 
+#if 0
 void Round::play()
 {
     std::vector<std::shared_ptr<Player>> winners;
@@ -45,6 +46,7 @@ void Round::play()
 
     winners[0]->acceptNewCards(Player::PLAYED, _cardsInRound);
 }
+#endif
 
 #if 0 // todo
 bool Round::playNormal(std::shared_ptr<Player>& player)
@@ -135,6 +137,7 @@ std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& pla
     return winners;
 }
 
+#if 0 // todo
 std::vector<std::shared_ptr<Player> > Round::playNormal()
 {
     // NOTE: in this function we have all active players involved,
@@ -163,7 +166,9 @@ std::vector<std::shared_ptr<Player> > Round::playNormal()
 
     return findWinner(played);
 }
+#endif
 
+#if 0
 std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<Player>>& players)
 {
     // NOTE: in this function, potentially only a subset of all active
@@ -206,6 +211,7 @@ std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<
 
     return winners;
 }
+#endif
 
 void Round::removePlayer(std::shared_ptr<Player> player)
 {

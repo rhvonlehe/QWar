@@ -21,7 +21,8 @@ public:
     Player(const std::string name);
     void acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
     void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
-    std::shared_ptr<Card> playCard(void);
+//    std::shared_ptr<Card> playCard(void); // todo remove
+    void playCard(void);
 
     uint8_t totalPlayed(void) const
     {

@@ -56,9 +56,9 @@ Item {
                     text: "Save Game"
                 }
             }
-//            Component.onCompleted: {
+            Component.onCompleted: {
 //                console.log("rectangle containing buttons size: ", height, width)
-//            }
+            }
         }
 
         Rectangle {

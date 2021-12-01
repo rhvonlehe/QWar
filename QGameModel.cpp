@@ -53,6 +53,10 @@ void QGameModel::reset(void)
 // also increment the players that have played cards to know when done to reset
 void QGameModel::playCard(QPlayer* player)
 {
+
+
+
+#if 0 // todo old
     std::cout << "player calling playCard is " << player->getName().toStdString() << std::endl;
 
     static bool roundComplete = true;
@@ -78,7 +82,7 @@ void QGameModel::playCard(QPlayer* player)
 
 
     }
-
+#endif
 }
 
 #if 0 // todo

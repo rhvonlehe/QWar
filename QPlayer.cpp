@@ -9,7 +9,9 @@ QPlayer::QPlayer(std::shared_ptr<Player> player, QObject *parent)
 
 void QPlayer::playCard()
 {
-
+    printf("Player %s played a card\n", getName().toStdString().c_str());
+    fflush(stdout);
+    _player->playCard();
 }
 
 QString QPlayer::getName() const

@@ -28,6 +28,7 @@ Game::Game(std::vector<std::shared_ptr<Player>>& players)
     deal();
 }
 
+#if 0 // todo
 // For test purposes - todo update with latest changes that better support view integration
 void Game::autoPlay()
 {
@@ -48,6 +49,7 @@ void Game::autoPlay()
     }
 
 }
+#endif
 
 void Game::initDeck(void)
 {

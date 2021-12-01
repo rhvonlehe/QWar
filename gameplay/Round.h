@@ -22,10 +22,13 @@ class Round
 public:
     Round(std::vector<std::shared_ptr<Player>>& players); // todo remove
     Round(unsigned int playerCnt);
+
+#if 0 // todo
     void play();
 //    bool playNormal(std::shared_ptr<Player>& player); // todo
     std::vector<std::shared_ptr<Player>> playNormal();
     std::vector<std::shared_ptr<Player> > playWar(std::vector<std::shared_ptr<Player> > &players);
+#endif
 
     const std::vector<std::shared_ptr<Player>>& winners(void) const;
 private:

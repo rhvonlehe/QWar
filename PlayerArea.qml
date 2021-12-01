@@ -63,7 +63,8 @@ Item {
             text: "Play Card"
 
             onClicked: {
-                playerArea.cardRequested()
+                playerInstance.playCard()
+//                playerArea.cardRequested()
             }
         }
     }

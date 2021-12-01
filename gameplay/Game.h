@@ -11,7 +11,9 @@ class Game
 public:
     Game(std::vector<std::shared_ptr<Player>>& players);
 
+#if 0
     void autoPlay();
+#endif
 
     std::vector<std::shared_ptr<Player>>& players(void) {return _activePlayers; }
 
