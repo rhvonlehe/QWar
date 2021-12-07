@@ -4,7 +4,6 @@ QPlayer::QPlayer(std::shared_ptr<Player> player, QObject *parent)
     : QObject(parent),
       _player(player)
 {
-
 }
 
 void QPlayer::playCard()

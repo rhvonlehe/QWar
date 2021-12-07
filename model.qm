@@ -29,6 +29,7 @@
       </tran_glyph>
      </tran>
      <tran trig="LOSER" target="../../0">
+      <action brief="loseCards"/>
       <tran_glyph conn="14,34,3,3,76,-28,-82,6,9">
        <action box="0,-2,18,2"/>
       </tran_glyph>

@@ -34,7 +34,7 @@ struct WaitFlip;
 
 struct PlayerSM : boost::statechart::asynchronous_state_machine<PlayerSM, Idle>
 {
-    PlayerSM(my_context ctx, Player& player)
+    PlayerSM(my_context ctx, Player* player)
         : my_base(ctx),
           _player(player) {}
     ~PlayerSM() { terminate(); }
@@ -42,7 +42,7 @@ struct PlayerSM : boost::statechart::asynchronous_state_machine<PlayerSM, Idle>
 
 
 private:
-    Player&   _player;
+    Player*   _player;
 };
 
 // More definition for events

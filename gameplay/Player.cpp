@@ -4,6 +4,10 @@
 Player::Player(const std::string name)
     : _name(name)
 {
+    // Set up event processor
+    _processor = _scheduler.create_processor<PlayerSM>(this);
+    _scheduler.initiate_processor(_processor);
+
 //    _playerState = Idle::instance();
 }
 

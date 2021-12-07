@@ -1,5 +1,5 @@
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost REQUIRED COMPONENTS system thread)
+find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
 
 add_library(gameplay STATIC)
