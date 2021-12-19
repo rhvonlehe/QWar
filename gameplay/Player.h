@@ -5,6 +5,8 @@
 #include <PlayerState.h>
 #include <string>
 #include <vector>
+#include <memory>
+#include <thread>
 
 class PlayerSM;
 
@@ -19,6 +21,7 @@ public:
 
     Player(void) = delete;
     Player(const std::string name);
+    ~Player(void);
     void acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
     void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
 //    std::shared_ptr<Card> playCard(void); // todo remove
@@ -65,6 +68,7 @@ private:
     using FifoScheduler = boost::statechart::fifo_scheduler<>;
     FifoScheduler                   _scheduler;
     FifoScheduler::processor_handle _processor;
+    std::unique_ptr<std::thread>    _processorThread;
 //    PlayerState*    _playerState;
 };
 

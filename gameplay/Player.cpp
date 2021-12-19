@@ -1,16 +1,31 @@
 #include "Player.h"
 #include <assert.h>
+#include <thread>
 
 Player::Player(const std::string name)
-    : _name(name)
+    : _name(name),
+      _scheduler(true)
 {
     // Set up event processor
     _processor = _scheduler.create_processor<PlayerSM>(this);
     _scheduler.initiate_processor(_processor);
 
+    _processorThread =
+            std::make_unique<std::thread>(
+                [&]()
+    {
+        std::cout << "starting player SM thread" << std::endl;
+        _scheduler();
+    }
+    );
 //    _playerState = Idle::instance();
 }
 
+Player::~Player(void)
+{
+    _scheduler.terminate();
+    _processorThread->join();
+}
 
 // pre-condition: at least one card available in Player's piles
 //
