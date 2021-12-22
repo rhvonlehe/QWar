@@ -8,7 +8,8 @@
 class Deck
 {
 public:
-    Deck();
+    Deck(bool full = false);
+    void clear(void);
     void shuffle(void);
     std::shared_ptr<Card> nextCard(void);
     void addBack(const std::shared_ptr<Card> card);

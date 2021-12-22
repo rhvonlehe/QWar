@@ -37,7 +37,7 @@ Item {
 //                    game.addPlayer(players.itemAt(i).playerName)
                 }
 
-                gameModel.populate(namesList)
+                gameModel.populate(namesList) // TODO: move to 'deal' button
                 gameStart.playGame()
             }
         }

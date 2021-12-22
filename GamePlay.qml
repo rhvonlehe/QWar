@@ -34,7 +34,7 @@ Item {
                     Layout.preferredWidth: 80
                     text: "Deal"
                     onClicked: {
-                        game.deal()
+                        gameModel.deal()
                     }
                 }
 

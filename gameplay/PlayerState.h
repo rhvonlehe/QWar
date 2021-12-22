@@ -20,13 +20,14 @@ struct EvFlip;
 struct EvWinner;
 struct EvWinnterTie;
 struct EvLoser;
+struct EvReset;
 
 // Player states
 //
 struct Idle;
 struct Eliminated;
 struct CardsPlayed;
-struct WaitingForWinner;
+struct WaitForWinner;
 struct WaitFirstCard;
 struct WaitHoleCard;
 struct WaitLastCard;
@@ -37,9 +38,7 @@ struct PlayerSM : boost::statechart::asynchronous_state_machine<PlayerSM, Idle>
     PlayerSM(my_context ctx, Player* player)
         : my_base(ctx),
           _player(player) {}
-    ~PlayerSM() { terminate(); }
-
-
+    ~PlayerSM(void) { terminate(); }
 
 private:
     Player*   _player;
@@ -49,47 +48,52 @@ private:
 //
 struct EvOutOfCards : boost::statechart::event < EvOutOfCards >
 {
-    EvOutOfCards() { TEMP_LOG("EvOutOfCards event"); }
+    EvOutOfCards(void) { TEMP_LOG("EvOutOfCards event"); }
 };
 struct EvPlay       : boost::statechart::event < EvPlay >
 {
-    EvPlay() { TEMP_LOG("EvPlay event"); }
+    EvPlay(void) { TEMP_LOG("EvPlay event"); }
 };
 struct EvFlip       : boost::statechart::event < EvFlip >
 {
-    EvFlip() { TEMP_LOG("EvFlip event"); }
+    EvFlip(void) { TEMP_LOG("EvFlip event"); }
 };
 struct EvWinner     : boost::statechart::event < EvWinner>
 {
-    EvWinner() { TEMP_LOG("EvWinner event"); }
+    EvWinner(void) { TEMP_LOG("EvWinner event"); }
 };
 struct EvWinnerTie  : boost::statechart::event < EvWinnerTie >
 {
-    EvWinnerTie() { TEMP_LOG("EvWinnerTie event"); }
+    EvWinnerTie(void) { TEMP_LOG("EvWinnerTie event"); }
 };
 struct EvLoser      : boost::statechart::event < EvLoser >
 {
-    EvLoser() { TEMP_LOG("EvLoser event"); }
+    EvLoser(void) { TEMP_LOG("EvLoser event"); }
 };
+struct EvReset      : boost::statechart::event < EvReset >
+{
+    EvReset(void) { TEMP_LOG("EvReset event"); }
+};
+
 
 // More definition for states
 //
 struct Idle : boost::statechart::state<Idle, PlayerSM>
 {
     typedef boost::mpl::list<
-    boost::statechart::transition< EvPlay, CardsPlayed > > reactions;
+    boost::statechart::transition< EvPlay, WaitForWinner > > reactions;
 
     Idle(my_context ctx);
-    ~Idle();
+    ~Idle(void);
 };
 
 struct Eliminated : boost::statechart::state<Eliminated, PlayerSM>
 {
     Eliminated(my_context ctx);
-    ~Eliminated();
+    ~Eliminated(void);
 };
 
-struct CardsPlayed : boost::statechart::state<CardsPlayed, PlayerSM>
+struct CardsPlayed : boost::statechart::state<CardsPlayed, PlayerSM, WaitForWinner>
 {
     typedef boost::mpl::list<
     boost::statechart::transition< EvOutOfCards, Eliminated >,
@@ -97,9 +101,33 @@ struct CardsPlayed : boost::statechart::state<CardsPlayed, PlayerSM>
     boost::statechart::transition< EvWinner, Idle> > reactions;
 
     CardsPlayed(my_context ctx);
-    ~CardsPlayed();
+    ~CardsPlayed(void);
 };
 
+struct WaitForWinner : boost::statechart::state<WaitForWinner, CardsPlayed>
+{
+    typedef boost::mpl::list<
+    boost::statechart::transition< EvWinnerTie, WaitFirstCard > > reactions;
+
+    WaitForWinner(my_context ctx);
+    ~WaitForWinner(void);
+};
+
+struct WaitFirstCard : boost::statechart::state<WaitFirstCard, CardsPlayed>
+{
+    typedef boost::mpl::list<
+    boost::statechart::transition< EvPlay, WaitHoleCard > > reactions;
+
+    WaitFirstCard(my_context ctx);
+    ~WaitFirstCard(void);
+};
+
+struct WaitHoleCard : boost::statechart::state<WaitHoleCard, CardsPlayed>
+{
+
+    WaitHoleCard(my_context ctx);
+    ~WaitHoleCard(void);
+};
 //struct
 
 

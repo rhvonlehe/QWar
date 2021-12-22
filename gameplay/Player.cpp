@@ -18,13 +18,21 @@ Player::Player(const std::string name)
         _scheduler();
     }
     );
-//    _playerState = Idle::instance();
 }
 
 Player::~Player(void)
 {
     _scheduler.terminate();
     _processorThread->join();
+}
+
+void Player::reset(void)
+{
+    _unplayedPile.clear();
+    _playedPile.clear();
+
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvReset>(new EvReset()));
 }
 
 // pre-condition: at least one card available in Player's piles
@@ -81,9 +89,3 @@ void Player::movePlayedToCurrent()
         _unplayedPile.addBack(_playedPile.nextCard());
     }
 }
-
-// TODO remove
-//void Player::changeState(PlayerState* next)
-//{
-//    _playerState = next;
-//}

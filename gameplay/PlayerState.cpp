@@ -26,3 +26,30 @@ CardsPlayed::CardsPlayed(my_context ctx)
 
 CardsPlayed::~CardsPlayed()
 {}
+
+WaitForWinner::WaitForWinner(my_context ctx)
+    : my_base(ctx)
+{
+    TEMP_LOG("WaitForWinner state entered");
+}
+
+WaitForWinner::~WaitForWinner(void)
+{}
+
+WaitFirstCard::WaitFirstCard(my_context ctx)
+    : my_base(ctx)
+{
+    TEMP_LOG("WaitFirstCard state entered");
+}
+
+WaitFirstCard::~WaitFirstCard(void)
+{}
+
+WaitHoleCard::WaitHoleCard(my_context ctx)
+    : my_base(ctx)
+{
+    TEMP_LOG("WaitHoleCard state entered");
+}
+
+WaitHoleCard::~WaitHoleCard(void)
+{}

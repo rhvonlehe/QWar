@@ -39,7 +39,7 @@
        <action box="0,-2,16,2"/>
       </tran_glyph>
      </tran>
-     <state name="WaitingForWinner">
+     <state name="WaitForWinner">
       <tran trig="WINNER_TIE" target="../../4">
        <tran_glyph conn="21,42,3,3,24">
         <action box="0,-2,10,2"/>

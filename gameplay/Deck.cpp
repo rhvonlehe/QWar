@@ -1,12 +1,43 @@
 #include "Deck.h"
+#include <cassert>
+#include <algorithm>
+#include <array>
 
-Deck::Deck()
+const std::array<Card::Suit, 4> cardSuits
 {
+    Card::SPADES, Card::CLUBS, Card::DIAMONDS, Card::HEARTS
+};
 
+const std::array<Card::Value, 13> cardValues
+{
+    Card::TWO, Card::THREE, Card::FOUR, Card::FIVE, Card::SIX, Card::SEVEN,
+            Card::EIGHT, Card::NINE, Card::TEN, Card::JACK, Card::QUEEN,
+            Card::KING, Card::ACE
+};
+
+Deck::Deck(bool full)
+{
+    // initialize to full deck?
+    if (full)
+    {
+        std::for_each(cardValues.begin(), cardValues.end(), [&](const Card::Value& value) {
+            std::for_each(cardSuits.begin(), cardSuits.end(), [&](const Card::Suit& suit) {
+                _cards.push_back(std::make_shared<Card>(suit, value));
+            });
+        }
+        );
+    }
+}
+
+void Deck::clear(void)
+{
+    _cards.clear();
 }
 
 void Deck::shuffle(void)
 {
+    assert(_cards.size());
+
     int r1;
     int r2;
 
@@ -36,18 +67,11 @@ void Deck::addBack(const std::shared_ptr<Card> card)
 void Deck::addBack(const std::vector<std::shared_ptr<Card>> cards)
 {
     _cards.insert(_cards.end(), cards.begin(), cards.end());
-//    for (auto& card : cards)
-//    {
-//        addBack(card);
-//    }
 }
 
 void Deck::print(void) const
 {
-    for (auto card : _cards)
-    {
-        card->print();
-    }
+    std::for_each(_cards.begin(), _cards.end(), [](const std::shared_ptr<Card>& card) { card->print(); });
 }
 
 void Deck::swap(const int r1, const int r2)

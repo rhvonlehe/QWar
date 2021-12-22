@@ -29,7 +29,7 @@ private:
     void cullPlayerList();
 
     std::vector<std::shared_ptr<Player>>    _activePlayers;
-    Deck                                    _deck;
+    std::unique_ptr<Deck>                   _deck;
     int                                     _roundNumber;
 };
 
