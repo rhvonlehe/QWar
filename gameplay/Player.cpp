@@ -43,6 +43,12 @@ void Player::playCard(void)
                            boost::intrusive_ptr<EvPlay>(new EvPlay()));
 }
 
+void Player::registerCallback(const std::function<void (Player::ObservableEvent)> callback)
+{
+    _callback = callback;
+}
+
+
 #if 0 // todo old remove
 std::shared_ptr<Card> Player::playCard()
 {
@@ -80,6 +86,8 @@ void Player::acceptNewCard(const Pile pile, const std::shared_ptr<Card> card)
 {
     CURRENT == pile ? _unplayedPile.addBack(card) :
                       _playedPile.addBack(card);
+
+    _callback(EV_CARDS_CHANGED);
 }
 
 void Player::movePlayedToCurrent()

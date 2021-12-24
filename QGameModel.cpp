@@ -23,6 +23,7 @@ void QGameModel::populate(const QStringList& nameList)
 void QGameModel::deal(void)
 {
     _game->deal();
+
 #if 0
     // TODO: Consider not doing all of this here.
     // Collect names and create QPlayer and Player objects

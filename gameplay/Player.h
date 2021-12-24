@@ -7,6 +7,8 @@
 #include <vector>
 #include <memory>
 #include <thread>
+#include <map>
+#include <functional>
 
 class PlayerSM;
 
@@ -18,6 +20,13 @@ public:
         CURRENT,
         PLAYED
     };
+    enum ObservableEvent
+    {
+        EV_CARDS_CHANGED,
+        EV_WINNER,
+        EV_LOSER,
+        EV_TIE
+    };
 
     Player(void) = delete;
     Player(const std::string name);
@@ -27,6 +36,7 @@ public:
     void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
 //    std::shared_ptr<Card> playCard(void); // todo remove
     void playCard(void);
+    void registerCallback(const std::function<void (Player::ObservableEvent)> callback);
 
     uint8_t totalPlayed(void) const
     {
@@ -57,19 +67,17 @@ public:
 private:
     void movePlayedToCurrent();
 
-#if 0 // todo remove
-    void changeState(PlayerState* next);
-    friend class PlayerState;
-#endif
-
     std::string     _name;
     Deck            _unplayedPile;
     Deck            _playedPile;
 
+    // Observer variable - simplified for just one observer
+    std::function<void(ObservableEvent)> _callback;
+
+    // StateChart variables
     using FifoScheduler = boost::statechart::fifo_scheduler<>;
     FifoScheduler                   _scheduler;
     FifoScheduler::processor_handle _processor;
     std::unique_ptr<std::thread>    _processorThread;
-//    PlayerState*    _playerState;
 };
 

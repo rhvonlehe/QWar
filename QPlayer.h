@@ -22,6 +22,7 @@ public:
     void setName(QString name);
     uint8_t getUnplayedCardCnt(void) const;
     uint8_t getPlayedCardCnt(void) const;
+    void update(Player::ObservableEvent event);
 
 
 signals:
