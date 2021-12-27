@@ -5,7 +5,7 @@ QPlayer::QPlayer(std::shared_ptr<Player> player, QObject *parent)
       _player(player)
 {
     // Register some actions with the player model
-    _player->registerCallback([&](Player::ObservableEvent event) { update(event); });
+    _player->addObserverCallback([&](Player::ObservableEvent event) { update(event); });
 }
 
 void QPlayer::playCard()
@@ -40,10 +40,15 @@ void QPlayer::update(Player::ObservableEvent event)
 {
     switch (event)
     {
+    case Player::EV_PLAYER_WAITING:
+        _active = false;
+        emit activeChanged(_active);
+        break;
     case Player::EV_CARDS_CHANGED:
         emit unplayedCardCntChanged(getUnplayedCardCnt());
         emit playedCardCntChanged(getPlayedCardCnt());
         break;
+
     }
 
 }

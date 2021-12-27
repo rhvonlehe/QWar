@@ -41,11 +41,13 @@ void Player::playCard(void)
 {
     _scheduler.queue_event(_processor,
                            boost::intrusive_ptr<EvPlay>(new EvPlay()));
+    notifyEvent(EV_CARD_PLAYED);
+    notifyEvent(EV_CARDS_CHANGED);
 }
 
-void Player::registerCallback(const std::function<void (Player::ObservableEvent)> callback)
+void Player::addObserverCallback(const std::function<void (Player::ObservableEvent)> func)
 {
-    _callback = callback;
+    _observerFuncs.push_back(func);
 }
 
 
@@ -80,6 +82,8 @@ void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<C
     Deck& deck = (CURRENT == pile) ? _unplayedPile : _playedPile;
 
     deck.addBack(cards);
+
+    notifyEvent(EV_CARDS_CHANGED);
 }
 
 void Player::acceptNewCard(const Pile pile, const std::shared_ptr<Card> card)
@@ -87,7 +91,7 @@ void Player::acceptNewCard(const Pile pile, const std::shared_ptr<Card> card)
     CURRENT == pile ? _unplayedPile.addBack(card) :
                       _playedPile.addBack(card);
 
-    _callback(EV_CARDS_CHANGED);
+    notifyEvent(EV_CARDS_CHANGED);
 }
 
 void Player::movePlayedToCurrent()
@@ -96,4 +100,10 @@ void Player::movePlayedToCurrent()
     {
         _unplayedPile.addBack(_playedPile.nextCard());
     }
+}
+
+void Player::notifyEvent(ObservableEvent event)
+{
+    std::for_each(_observerFuncs.begin(), _observerFuncs.end(),
+                  [event](std::function<void(ObservableEvent)> f) { f(event); });
 }

@@ -1,4 +1,10 @@
 #include "PlayerState.h"
+#include "Player.h"
+
+void PlayerSM::playOneCard(const EvPlay& event)
+{
+    _player->notifyEvent(Player::EV_PLAYER_WAITING);
+}
 
 Idle::Idle(my_context ctx)
     : my_base(ctx)

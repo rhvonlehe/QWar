@@ -40,6 +40,8 @@ struct PlayerSM : boost::statechart::asynchronous_state_machine<PlayerSM, Idle>
           _player(player) {}
     ~PlayerSM(void) { terminate(); }
 
+    void playOneCard(const EvPlay& event);
+
 private:
     Player*   _player;
 };
@@ -81,7 +83,8 @@ struct EvReset      : boost::statechart::event < EvReset >
 struct Idle : boost::statechart::state<Idle, PlayerSM>
 {
     typedef boost::mpl::list<
-    boost::statechart::transition< EvPlay, WaitForWinner > > reactions;
+    boost::statechart::transition< EvPlay, WaitForWinner,
+        PlayerSM, &PlayerSM::playOneCard > > reactions;
 
     Idle(my_context ctx);
     ~Idle(void);

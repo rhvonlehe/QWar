@@ -22,6 +22,9 @@ public:
     };
     enum ObservableEvent
     {
+        EV_PLAYER_WAITING,
+        EV_PLAYER_ACTIVE,
+        EV_CARD_PLAYED,
         EV_CARDS_CHANGED,
         EV_WINNER,
         EV_LOSER,
@@ -36,7 +39,7 @@ public:
     void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
 //    std::shared_ptr<Card> playCard(void); // todo remove
     void playCard(void);
-    void registerCallback(const std::function<void (Player::ObservableEvent)> callback);
+    void addObserverCallback(const std::function<void (Player::ObservableEvent)> callback);
 
     uint8_t totalPlayed(void) const
     {
@@ -65,14 +68,20 @@ public:
         return (_name == rhs.name());
     }
 private:
+    friend class PlayerSM;
     void movePlayedToCurrent();
+    void notifyEvent(ObservableEvent event);
+
+//    void notifyWaiting();
+//    void notifyCardsChanged();
 
     std::string     _name;
     Deck            _unplayedPile;
     Deck            _playedPile;
+    Deck            _activeRoundCards;
 
     // Observer variable - simplified for just one observer
-    std::function<void(ObservableEvent)> _callback;
+    std::vector<std::function<void(ObservableEvent)>> _observerFuncs;
 
     // StateChart variables
     using FifoScheduler = boost::statechart::fifo_scheduler<>;

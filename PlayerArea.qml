@@ -64,9 +64,17 @@ Item {
 
             onClicked: {
                 playerInstance.playCard()
-//                playerArea.cardRequested()
             }
         }
     }
+
+//    Connections {
+//        target: playerInstance
+//        ignoreUnknownSignals: true
+//        function onActiveChanged() {
+//            currentScreen = "GamePlay.qml"
+//            console.log("currentScreen: ", currentScreen)
+//        }
+//    }
 }
 

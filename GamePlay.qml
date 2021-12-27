@@ -97,12 +97,6 @@ Item {
                             console.log("player name ", player.name)
                             console.log("uplayedCardCnt ", player.unplayedCardCnt)
                         }
-
-                        onCardRequested: {
-                            console.log("card played")
-//                            active = false
-                            gameModel.playCard(player)
-                        }
                     }
                 }
 
