@@ -34,10 +34,9 @@ Item {
                 for (var i =0; i < players.count; i++) {
                     console.log(players.itemAt(i).playerName)
                     namesList[i] = players.itemAt(i).playerName
-//                    game.addPlayer(players.itemAt(i).playerName)
                 }
 
-                gameModel.populate(namesList) // TODO: move to 'deal' button
+                gameModel.populate(namesList)
                 gameStart.playGame()
             }
         }

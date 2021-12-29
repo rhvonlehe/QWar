@@ -22,14 +22,14 @@ public:
         return (_activePlayers.size() == 1);
     }
 
+    // Deal is similar to 'init' or 'reset' on the game
     void deal();
 
 private:
-    void initDeck();
     void cullPlayerList();
 
     std::vector<std::shared_ptr<Player>>    _activePlayers;
     std::unique_ptr<Deck>                   _deck;
-    int                                     _roundNumber;
+    uint32_t                                _roundNumber;
 };
 

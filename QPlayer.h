@@ -14,6 +14,7 @@ public:
     Q_PROPERTY(bool active READ getActive NOTIFY activeChanged);
     Q_PROPERTY(unsigned int unplayedCardCnt READ getUnplayedCardCnt NOTIFY unplayedCardCntChanged);
     Q_PROPERTY(unsigned int playedCardCnt READ getPlayedCardCnt NOTIFY playedCardCntChanged);
+    Q_PROPERTY(QString playedCards READ getPlayedCards NOTIFY playedCardsChanged);
 
     Q_INVOKABLE void playCard(void);
 
@@ -22,6 +23,7 @@ public:
     void setName(QString name);
     uint8_t getUnplayedCardCnt(void) const;
     uint8_t getPlayedCardCnt(void) const;
+    QString getPlayedCards(void);
     void update(Player::ObservableEvent event);
 
 
@@ -30,10 +32,11 @@ signals:
     void activeChanged(bool);
     void unplayedCardCntChanged(uint32_t);
     void playedCardCntChanged(uint32_t);
+    void playedCardsChanged(QString);
 
 
 private:
     std::shared_ptr<Player> _player;
-    uint8_t                 _unplayedCardCnt;
     bool                    _active;
+    QString                 _cardsPlayed; // will change later to look better
 };

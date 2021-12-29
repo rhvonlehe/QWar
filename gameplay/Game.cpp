@@ -12,7 +12,7 @@ Game::Game(std::vector<std::shared_ptr<Player>>& players)
 }
 
 #if 0 // todo
-// For test purposes - todo update with latest changes that better support view integration
+// For test purposes - todo update with latest changes that better support view support
 void Game::autoPlay()
 {
     while (!isOver())
@@ -34,12 +34,8 @@ void Game::autoPlay()
 }
 #endif
 
-void Game::initDeck(void)
-{
-}
-
 void Game::deal()
-{      
+{
     _deck = std::make_unique<Deck>(true);
 
     _deck->print();
@@ -50,12 +46,11 @@ void Game::deal()
     std::for_each(_activePlayers.begin(), _activePlayers.end(),
                   [](std::shared_ptr<Player> player) { player->reset(); } );
 
-
     while (!_deck->isEmpty())
     {
         for (auto& player : _activePlayers)
         {
-            player->acceptNewCard(Player::CURRENT, _deck->nextCard());
+            player->acceptNewCard(Player::UNPLAYED, _deck->nextCard());
             if (_deck->isEmpty())
             {
                 break;

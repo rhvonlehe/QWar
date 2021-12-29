@@ -39,6 +39,7 @@ void Player::reset(void)
 //
 void Player::playCard(void)
 {
+    _activeRoundCards.push_back(getNextCard());
     _scheduler.queue_event(_processor,
                            boost::intrusive_ptr<EvPlay>(new EvPlay()));
     notifyEvent(EV_CARD_PLAYED);
@@ -50,9 +51,7 @@ void Player::addObserverCallback(const std::function<void (Player::ObservableEve
     _observerFuncs.push_back(func);
 }
 
-
-#if 0 // todo old remove
-std::shared_ptr<Card> Player::playCard()
+std::shared_ptr<Card> Player::getNextCard()
 {
     // Shuffle played deck and make it current deck if needed
     //
@@ -65,21 +64,18 @@ std::shared_ptr<Card> Player::playCard()
         }
         else
         {
-            assert(1);
+            _scheduler.queue_event(_processor,
+                                   boost::intrusive_ptr<EvOutOfCards>(new EvOutOfCards()));
+            return nullptr;
         }
     }
 
-
-
-    auto card = _unplayedPile.nextCard();
-
-    return card;
+    return _unplayedPile.nextCard();
 }
-#endif
 
 void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
 {
-    Deck& deck = (CURRENT == pile) ? _unplayedPile : _playedPile;
+    Deck& deck = (UNPLAYED == pile) ? _unplayedPile : _playedPile;
 
     deck.addBack(cards);
 
@@ -88,7 +84,7 @@ void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<C
 
 void Player::acceptNewCard(const Pile pile, const std::shared_ptr<Card> card)
 {
-    CURRENT == pile ? _unplayedPile.addBack(card) :
+    UNPLAYED == pile ? _unplayedPile.addBack(card) :
                       _playedPile.addBack(card);
 
     notifyEvent(EV_CARDS_CHANGED);

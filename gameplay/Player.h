@@ -17,7 +17,7 @@ class Player
 public:
     enum Pile
     {
-        CURRENT,
+        UNPLAYED,
         PLAYED
     };
     enum ObservableEvent
@@ -37,9 +37,14 @@ public:
     void reset(void);
     void acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
     void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
-//    std::shared_ptr<Card> playCard(void); // todo remove
     void playCard(void);
     void addObserverCallback(const std::function<void (Player::ObservableEvent)> callback);
+
+    std::shared_ptr<Card> lastCardPlayed(void) const
+    {
+        assert(_activeRoundCards.size());
+        return _activeRoundCards.back();
+    }
 
     uint8_t totalPlayed(void) const
     {
@@ -68,17 +73,16 @@ public:
         return (_name == rhs.name());
     }
 private:
+    std::shared_ptr<Card> getNextCard(void);
+
     friend class PlayerSM;
     void movePlayedToCurrent();
     void notifyEvent(ObservableEvent event);
 
-//    void notifyWaiting();
-//    void notifyCardsChanged();
-
-    std::string     _name;
-    Deck            _unplayedPile;
-    Deck            _playedPile;
-    Deck            _activeRoundCards;
+    std::string         _name;
+    Deck                _unplayedPile;
+    Deck                _playedPile;
+    std::vector<std::shared_ptr<Card>>   _activeRoundCards;
 
     // Observer variable - simplified for just one observer
     std::vector<std::function<void(ObservableEvent)>> _observerFuncs;

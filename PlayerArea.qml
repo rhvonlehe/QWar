@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.12
 Item {
     id: playerArea
     property bool   cardPlayed
-    property string currentCard
+    property string currentCards
     property string color
     property var    playerInstance
 
@@ -17,6 +17,8 @@ Item {
         console.log("playerArea coords: ", x, y)
         console.log("area at coords: ", globalCoords.x, globalCoords.y)
     }
+
+    currentCards: playerInstance.playedCards
 
     ColumnLayout {
         //        Card {
@@ -43,7 +45,7 @@ Item {
             color: playerArea.color
             height: 50
             width: 50
-            text: currentCard
+            text: currentCards
         }
         //        }
 
@@ -67,14 +69,5 @@ Item {
             }
         }
     }
-
-//    Connections {
-//        target: playerInstance
-//        ignoreUnknownSignals: true
-//        function onActiveChanged() {
-//            currentScreen = "GamePlay.qml"
-//            console.log("currentScreen: ", currentScreen)
-//        }
-//    }
 }
 

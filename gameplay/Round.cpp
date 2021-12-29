@@ -25,10 +25,6 @@ Round::Round(std::vector<std::shared_ptr<Player> >& players)
 {
 }
 
-Round::Round(unsigned int playerCnt)
-{
-}
-
 #if 0
 void Round::play()
 {

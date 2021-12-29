@@ -36,6 +36,11 @@ uint8_t QPlayer::getPlayedCardCnt() const
     return _player->totalPlayed();
 }
 
+QString QPlayer::getPlayedCards(void)
+{
+    return _cardsPlayed;
+}
+
 void QPlayer::update(Player::ObservableEvent event)
 {
     switch (event)
@@ -43,6 +48,17 @@ void QPlayer::update(Player::ObservableEvent event)
     case Player::EV_PLAYER_WAITING:
         _active = false;
         emit activeChanged(_active);
+        break;
+    case Player::EV_PLAYER_ACTIVE:
+        _active = true;
+        emit activeChanged(_active);
+        break;
+    case Player::EV_CARD_PLAYED:
+        {
+            auto cardStr = QString::fromStdString(_player->lastCardPlayed()->str());
+            _cardsPlayed.append(cardStr).append(" ");
+            emit playedCardsChanged(_cardsPlayed);
+        }
         break;
     case Player::EV_CARDS_CHANGED:
         emit unplayedCardCntChanged(getUnplayedCardCnt());

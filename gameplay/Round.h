@@ -21,7 +21,6 @@ class Round
 {
 public:
     Round(std::vector<std::shared_ptr<Player>>& players); // todo remove
-    Round(unsigned int playerCnt);
 
 #if 0 // todo
     void play();
@@ -41,5 +40,4 @@ private:
     std::vector<std::shared_ptr<Player>>    _winners;
     std::vector<std::shared_ptr<Player>>    _players;
     std::vector<std::shared_ptr<Card>>      _cardsInRound;
-
 };
