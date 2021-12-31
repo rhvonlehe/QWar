@@ -17,6 +17,7 @@ target_sources(gameplay
     Player.cpp
     PlayerState.cpp
     Round.cpp
+    RoundState.cpp
     Game.cpp
     )
 

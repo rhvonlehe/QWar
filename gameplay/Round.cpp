@@ -1,4 +1,5 @@
 #include "Round.h"
+#include "RoundState.h"
 #include <algorithm>
 #include <iostream>
 
@@ -21,9 +22,41 @@ struct
 } greaterWarHand;
 
 Round::Round(std::vector<std::shared_ptr<Player> >& players)
-    : _players(players)
+    : _players(players), _playersWaiting(players)
 {
+    // Set up event processor
+    _processor = _scheduler.create_processor<RoundSM>(this);
+    _scheduler.initiate_processor(_processor);
+
+    _processorThread =
+            std::make_unique<std::thread>(
+                [&]()
+    {
+        std::cout << "starting round SM thread" << std::endl;
+        _scheduler();
+    }
+    );
 }
+
+Round::~Round(void)
+{
+    _scheduler.terminate();
+    _processorThread->join();
+}
+
+void Round::playerWaiting(std::shared_ptr<Player> player)
+{
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvPlayerWaiting>(new EvPlayerWaiting()));
+
+    auto it = std::find(_playersWaiting.begin(), _playersWaiting.end(), player);
+
+    assert(it != _playersWaiting.end());
+    _playersWaiting.erase(it);
+
+
+}
+
 
 #if 0
 void Round::play()

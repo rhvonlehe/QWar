@@ -1,7 +1,9 @@
 #pragma once
 
 #include <Player.h>
+#include <boost/statechart/asynchronous_state_machine.hpp>
 #include <vector>
+#include <map>
 #include <memory>
 
 struct WarHand
@@ -20,7 +22,12 @@ struct WarHand
 class Round
 {
 public:
-    Round(std::vector<std::shared_ptr<Player>>& players); // todo remove
+    Round(std::vector<std::shared_ptr<Player>>& players);
+
+    ~Round(void);
+
+    void playerWaiting(std::shared_ptr<Player> player);
+
 
 #if 0 // todo
     void play();
@@ -36,8 +43,14 @@ private:
     std::vector<std::shared_ptr<Player> > findWinner(std::vector<WarHand>& played);
     void removePlayer(std::shared_ptr<Player> player);
 
-
+    std::vector<std::shared_ptr<Player>>    _playersWaiting;
     std::vector<std::shared_ptr<Player>>    _winners;
     std::vector<std::shared_ptr<Player>>    _players;
-    std::vector<std::shared_ptr<Card>>      _cardsInRound;
+
+    // StateChart variables
+    using FifoScheduler = boost::statechart::fifo_scheduler<>;
+    FifoScheduler                   _scheduler;
+    FifoScheduler::processor_handle _processor;
+    std::unique_ptr<std::thread>    _processorThread;
+
 };

@@ -7,8 +7,18 @@
 
 Game::Game(std::vector<std::shared_ptr<Player>>& players)
     : _activePlayers(players),
+      _allPlayers(players),
       _roundNumber(0)
 {
+    _round = std::make_unique<Round>(_allPlayers);
+
+    for (auto& player : _allPlayers)
+    {
+        player->addObserverCallback([&](Player::ObservableEvent event) {
+            handlePlayerUpdate(player, event);
+        }
+        );
+    }
 }
 
 #if 0 // todo
@@ -59,13 +69,26 @@ void Game::deal()
     }
 }
 
+void Game::handlePlayerUpdate(std::shared_ptr<Player> player,
+                              Player::ObservableEvent event)
+{
+    switch (event)
+    {
+    case Player::EV_PLAYER_WAITING:
+        _round->playerWaiting(player);
+        break;
+    default: break;
+    }
+}
+
+
 void Game::cullPlayerList()
 {
     _activePlayers.erase(std::remove_if(
                              _activePlayers.begin(), _activePlayers.end(),
-                             [](const std::shared_ptr<Player>& x)
+                             [](const std::shared_ptr<Player>& p)
     {
-        return x->outOfCards();
+        return p->outOfCards();
     }), _activePlayers.end());
 
 }
