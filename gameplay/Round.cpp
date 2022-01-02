@@ -1,5 +1,6 @@
 #include "Round.h"
 #include "RoundState.h"
+#include <functional>
 #include <algorithm>
 #include <iostream>
 
@@ -22,10 +23,10 @@ struct
 } greaterWarHand;
 
 Round::Round(std::vector<std::shared_ptr<Player> >& players)
-    : _players(players), _playersWaiting(players)
+    : _players(players), _playersActive(players)
 {
     // Set up event processor
-    _processor = _scheduler.create_processor<RoundSM>(this);
+    _processor = _scheduler.create_processor<RoundSM>(std::ref(*this));
     _scheduler.initiate_processor(_processor);
 
     _processorThread =
@@ -44,17 +45,23 @@ Round::~Round(void)
     _processorThread->join();
 }
 
-void Round::playerWaiting(std::shared_ptr<Player> player)
+void Round::sendPlayerWaiting(std::shared_ptr<Player> player)
 {
     _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvPlayerWaiting>(new EvPlayerWaiting()));
+                           boost::intrusive_ptr<EvPlayerWaiting>(new EvPlayerWaiting(player)));
+}
 
-    auto it = std::find(_playersWaiting.begin(), _playersWaiting.end(), player);
+void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
+{
+    auto it = std::find(_playersActive.begin(), _playersActive.end(), player);
 
-    assert(it != _playersWaiting.end());
-    _playersWaiting.erase(it);
+    assert(it != _playersActive.end());
+    _playersActive.erase(it);
+}
 
-
+bool Round::allPlayersWaiting(void) const
+{
+    return (0 == _playersActive.size());
 }
 
 

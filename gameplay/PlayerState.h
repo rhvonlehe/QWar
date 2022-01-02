@@ -8,6 +8,8 @@
 #include <iostream>
 #define TEMP_LOG(X) { std::cout << X << std::endl; }
 
+namespace sc = boost::statechart;
+
 // Declare things in one spot for visual convenience
 //
 class Player;
@@ -33,7 +35,7 @@ struct WaitHoleCard;
 struct WaitLastCard;
 struct WaitFlip;
 
-struct PlayerSM : boost::statechart::asynchronous_state_machine<PlayerSM, Idle>
+struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
 {
     PlayerSM(my_context ctx, Player* player)
         : my_base(ctx),
@@ -48,31 +50,31 @@ private:
 
 // More definition for events
 //
-struct EvOutOfCards : boost::statechart::event < EvOutOfCards >
+struct EvOutOfCards : sc::event < EvOutOfCards >
 {
     EvOutOfCards(void) { TEMP_LOG("EvOutOfCards event"); }
 };
-struct EvPlay       : boost::statechart::event < EvPlay >
+struct EvPlay       : sc::event < EvPlay >
 {
     EvPlay(void) { TEMP_LOG("EvPlay event"); }
 };
-struct EvFlip       : boost::statechart::event < EvFlip >
+struct EvFlip       : sc::event < EvFlip >
 {
     EvFlip(void) { TEMP_LOG("EvFlip event"); }
 };
-struct EvWinner     : boost::statechart::event < EvWinner>
+struct EvWinner     : sc::event < EvWinner>
 {
     EvWinner(void) { TEMP_LOG("EvWinner event"); }
 };
-struct EvWinnerTie  : boost::statechart::event < EvWinnerTie >
+struct EvWinnerTie  : sc::event < EvWinnerTie >
 {
     EvWinnerTie(void) { TEMP_LOG("EvWinnerTie event"); }
 };
-struct EvLoser      : boost::statechart::event < EvLoser >
+struct EvLoser      : sc::event < EvLoser >
 {
     EvLoser(void) { TEMP_LOG("EvLoser event"); }
 };
-struct EvReset      : boost::statechart::event < EvReset >
+struct EvReset      : sc::event < EvReset >
 {
     EvReset(void) { TEMP_LOG("EvReset event"); }
 };
@@ -80,52 +82,52 @@ struct EvReset      : boost::statechart::event < EvReset >
 
 // More definition for states
 //
-struct Idle : boost::statechart::state<Idle, PlayerSM>
+struct Idle : sc::state<Idle, PlayerSM>
 {
     typedef boost::mpl::list<
-    boost::statechart::transition< EvPlay, WaitForWinner,
-        PlayerSM, &PlayerSM::playOneCard > > reactions;
+    sc::transition< EvPlay, WaitForWinner,
+    PlayerSM, &PlayerSM::playOneCard > > reactions;
 
     Idle(my_context ctx);
     ~Idle(void);
 };
 
-struct Eliminated : boost::statechart::state<Eliminated, PlayerSM>
+struct Eliminated : sc::state<Eliminated, PlayerSM>
 {
     Eliminated(my_context ctx);
     ~Eliminated(void);
 };
 
-struct CardsPlayed : boost::statechart::state<CardsPlayed, PlayerSM, WaitForWinner>
+struct CardsPlayed : sc::state<CardsPlayed, PlayerSM, WaitForWinner>
 {
     typedef boost::mpl::list<
-    boost::statechart::transition< EvOutOfCards, Eliminated >,
-    boost::statechart::transition< EvLoser, Idle>,
-    boost::statechart::transition< EvWinner, Idle> > reactions;
+    sc::transition< EvOutOfCards, Eliminated >,
+    sc::transition< EvLoser, Idle>,
+    sc::transition< EvWinner, Idle> > reactions;
 
     CardsPlayed(my_context ctx);
     ~CardsPlayed(void);
 };
 
-struct WaitForWinner : boost::statechart::state<WaitForWinner, CardsPlayed>
+struct WaitForWinner : sc::state<WaitForWinner, CardsPlayed>
 {
     typedef boost::mpl::list<
-    boost::statechart::transition< EvWinnerTie, WaitFirstCard > > reactions;
+    sc::transition< EvWinnerTie, WaitFirstCard > > reactions;
 
     WaitForWinner(my_context ctx);
     ~WaitForWinner(void);
 };
 
-struct WaitFirstCard : boost::statechart::state<WaitFirstCard, CardsPlayed>
+struct WaitFirstCard : sc::state<WaitFirstCard, CardsPlayed>
 {
     typedef boost::mpl::list<
-    boost::statechart::transition< EvPlay, WaitHoleCard > > reactions;
+    sc::transition< EvPlay, WaitHoleCard > > reactions;
 
     WaitFirstCard(my_context ctx);
     ~WaitFirstCard(void);
 };
 
-struct WaitHoleCard : boost::statechart::state<WaitHoleCard, CardsPlayed>
+struct WaitHoleCard : sc::state<WaitHoleCard, CardsPlayed>
 {
 
     WaitHoleCard(my_context ctx);
