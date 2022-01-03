@@ -23,7 +23,9 @@ struct
 } greaterWarHand;
 
 Round::Round(std::vector<std::shared_ptr<Player> >& players)
-    : _players(players), _playersActive(players)
+    : _players(players),
+      _playersActive(players),
+      _scheduler(true)
 {
     // Set up event processor
     _processor = _scheduler.create_processor<RoundSM>(std::ref(*this));
@@ -45,7 +47,7 @@ Round::~Round(void)
     _processorThread->join();
 }
 
-void Round::sendPlayerWaiting(std::shared_ptr<Player> player)
+void Round::playerWaiting(std::shared_ptr<Player> player)
 {
     _scheduler.queue_event(_processor,
                            boost::intrusive_ptr<EvPlayerWaiting>(new EvPlayerWaiting(player)));
@@ -57,11 +59,52 @@ void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
 
     assert(it != _playersActive.end());
     _playersActive.erase(it);
+
+    if (allPlayersWaiting())
+    {
+        evaluate();
+    }
 }
 
 bool Round::allPlayersWaiting(void) const
 {
     return (0 == _playersActive.size());
+}
+
+void Round::evaluate(void)
+{
+    // Always use the list of winners if it's non-empty
+    auto playersToEval = (_winners.size()) ? _winners : _players;
+    std::vector<std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>>> allHands;
+
+    for (const auto& p : playersToEval)
+    {
+        allHands.push_back(std::make_pair(p, p->evalCard()));
+    }
+
+    _winners = findWinner(allHands);
+
+    if (_winners.size() > 1)
+    {
+        for (auto winner : _winners)
+        {
+            winner->winnerTie();
+        }
+
+        _scheduler.queue_event(_processor,
+                               boost::intrusive_ptr<EvTie>(new EvTie()));
+    }
+    else // exactly 1 winner
+    {
+        std::vector<std::shared_ptr<Card>> roundCards;
+        for (const auto& p : _players)
+        {
+            auto playerCards = p->getActiveRoundCards();
+            roundCards.insert(roundCards.end(), playerCards.begin(), playerCards.end());
+        }
+
+        _winners.front()->winner(roundCards);
+    }
 }
 
 

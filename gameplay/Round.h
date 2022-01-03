@@ -26,12 +26,12 @@ public:
 
     ~Round(void);
 
-    void sendPlayerWaiting(std::shared_ptr<Player> player);
+    void playerWaiting(std::shared_ptr<Player> player);
 
 
 #if 0 // todo
     void play();
-//    bool playNormal(std::shared_ptr<Player>& player); // todo
+    //    bool playNormal(std::shared_ptr<Player>& player); // todo
     std::vector<std::shared_ptr<Player>> playNormal();
     std::vector<std::shared_ptr<Player> > playWar(std::vector<std::shared_ptr<Player> > &players);
 #endif
@@ -40,10 +40,11 @@ public:
 private:
     friend class RoundSM;
     void handlePlayerWaiting(std::shared_ptr<Player> player);
-     bool allPlayersWaiting(void) const;
+    bool allPlayersWaiting(void) const;
+    void evaluate(void);
 
     std::vector<std::shared_ptr<Player>> findWinner(std::vector<std::pair<std::shared_ptr<Player>,
-                                    std::shared_ptr<Card>>>& played);
+                                                    std::shared_ptr<Card>>>& played);
     std::vector<std::shared_ptr<Player> > findWinner(std::vector<WarHand>& played);
     void removePlayer(std::shared_ptr<Player> player);
 

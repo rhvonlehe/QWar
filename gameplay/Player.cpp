@@ -47,6 +47,24 @@ void Player::playCard(void)
     notifyEvent(EV_CARDS_CHANGED);
 }
 
+std::shared_ptr<Card> Player::evalCard(void) const
+{
+    return _evalCard;
+}
+
+void Player::winnerTie(void)
+{
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvWinnerTie>(new EvWinnerTie()));
+}
+
+void Player::winner(std::vector<std::shared_ptr<Card>> cardsWon)
+{
+    acceptNewCards(PLAYED, cardsWon);
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvWinner>(new EvWinner()));
+}
+
 void Player::addObserverCallback(const std::function<void (Player::ObservableEvent)> func)
 {
     _observerFuncs.push_back(func);
@@ -72,6 +90,12 @@ std::shared_ptr<Card> Player::getNextCard()
     }
 
     return _unplayedPile.nextCard();
+}
+
+void Player::setEvalCard(void)
+{
+    assert(_activeRoundCards.size());
+    _evalCard = _activeRoundCards.back();
 }
 
 void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)

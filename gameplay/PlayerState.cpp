@@ -3,6 +3,7 @@
 
 void PlayerSM::playOneCard(const EvPlay& event)
 {
+    _player->setEvalCard();
     _player->notifyEvent(Player::EV_PLAYER_WAITING);
 }
 
