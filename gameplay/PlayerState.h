@@ -19,9 +19,9 @@ class Player;
 struct EvOutOfCards;
 struct EvPlay;
 struct EvFlip;
-struct EvWinner;
-struct EvWinnterTie;
-struct EvLoser;
+struct EvWon;
+struct EvTie;
+struct EvLost;
 struct EvReset;
 
 // Player states
@@ -43,6 +43,7 @@ struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
     ~PlayerSM(void) { terminate(); }
 
     void playOneCard(const EvPlay& event);
+    void acceptLoserCards(const EvLost& event);
 
 private:
     Player*   _player;
@@ -62,17 +63,20 @@ struct EvFlip       : sc::event < EvFlip >
 {
     EvFlip(void) { TEMP_LOG("EvFlip event"); }
 };
-struct EvWinner     : sc::event < EvWinner>
+struct EvWon     : sc::event < EvWon>
 {
-    EvWinner(void) { TEMP_LOG("EvWinner event"); }
+    EvWon(void) { TEMP_LOG("EvWinner event"); }
 };
-struct EvWinnerTie  : sc::event < EvWinnerTie >
+struct EvTie  : sc::event < EvTie >
 {
-    EvWinnerTie(void) { TEMP_LOG("EvWinnerTie event"); }
+    EvTie(void) { TEMP_LOG("EvWinnerTie event"); }
 };
-struct EvLoser      : sc::event < EvLoser >
+struct EvLost      : sc::event < EvLost >
 {
-    EvLoser(void) { TEMP_LOG("EvLoser event"); }
+    EvLost(std::shared_ptr<Player> p)
+     : winner(p)
+    { TEMP_LOG("EvLoser event"); }
+    std::shared_ptr<Player> winner;
 };
 struct EvReset      : sc::event < EvReset >
 {
@@ -102,8 +106,8 @@ struct CardsPlayed : sc::state<CardsPlayed, PlayerSM, WaitForWinner>
 {
     typedef boost::mpl::list<
     sc::transition< EvOutOfCards, Eliminated >,
-    sc::transition< EvLoser, Idle>,
-    sc::transition< EvWinner, Idle> > reactions;
+    sc::transition< EvLost, Idle, PlayerSM, &PlayerSM::acceptLoserCards>,
+    sc::transition< EvWon, Idle> > reactions;
 
     CardsPlayed(my_context ctx);
     ~CardsPlayed(void);
@@ -112,7 +116,7 @@ struct CardsPlayed : sc::state<CardsPlayed, PlayerSM, WaitForWinner>
 struct WaitForWinner : sc::state<WaitForWinner, CardsPlayed>
 {
     typedef boost::mpl::list<
-    sc::transition< EvWinnerTie, WaitFirstCard > > reactions;
+    sc::transition< EvTie, WaitFirstCard > > reactions;
 
     WaitForWinner(my_context ctx);
     ~WaitForWinner(void);

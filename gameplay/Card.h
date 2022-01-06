@@ -43,14 +43,19 @@ public:
         return _value;
     }
 
-    bool operator==(Card& rhs)
+    bool operator==(Card& rhs) const
     {
         return (_value == rhs._value);
     }
 
-    bool operator>(Card& rhs)
+    bool operator>(Card& rhs) const
     {
         return (_value > rhs._value);
+    }
+
+    bool operator<(Card& rhv) const
+    {
+        return (_value < rhv._value);
     }
 
     void print() const;

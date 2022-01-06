@@ -24,7 +24,6 @@ struct
 
 Round::Round(std::vector<std::shared_ptr<Player> >& players)
     : _players(players),
-      _playersActive(players),
       _scheduler(true)
 {
     // Set up event processor
@@ -55,6 +54,16 @@ void Round::playerWaiting(std::shared_ptr<Player> player)
 
 void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
 {
+    // Guaranteed that each player only does this once, so just count up to the total
+    // player count
+    static int playersWaiting = 0;
+
+    if (++playersWaiting == _players.size())
+    {
+        evaluate();
+    }
+
+#if 0 // todo remove
     auto it = std::find(_playersActive.begin(), _playersActive.end(), player);
 
     assert(it != _playersActive.end());
@@ -64,15 +73,43 @@ void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
     {
         evaluate();
     }
-}
+#endif
 
-bool Round::allPlayersWaiting(void) const
-{
-    return (0 == _playersActive.size());
 }
 
 void Round::evaluate(void)
 {
+    // Idea: keep winners in the _players vector and move losers into a
+    // loser vector.  This way the evaluation will always be on remaining players.
+
+    findWinner();
+
+    // Winner(s) remain in _players vector
+    if (_players.size() > 1)
+    {
+        for (auto winner : _players)
+        {
+            winner->tie();
+        }
+
+        _scheduler.queue_event(_processor,
+                               boost::intrusive_ptr<EvTie>(new EvTie()));
+    }
+    else // exactly 1 winner
+    {
+        auto winner = _players.front();
+
+        for (auto loser : _losers)
+        {
+            loser->lost(winner);
+        }
+
+        winner->won();
+    }
+
+
+
+#if 0 // old - todo remove
     // Always use the list of winners if it's non-empty
     auto playersToEval = (_winners.size()) ? _winners : _players;
     std::vector<std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>>> allHands;
@@ -88,7 +125,7 @@ void Round::evaluate(void)
     {
         for (auto winner : _winners)
         {
-            winner->winnerTie();
+            winner->tie();
         }
 
         _scheduler.queue_event(_processor,
@@ -103,8 +140,17 @@ void Round::evaluate(void)
             roundCards.insert(roundCards.end(), playerCards.begin(), playerCards.end());
         }
 
-        _winners.front()->winner(roundCards);
+        auto winningPlayer = _winners.front();
+        winningPlayer->won(roundCards);
+
+        _players.erase(std::remove(_players.begin(), _players.end(), winningPlayer), _players.end());
+
+        for (auto& p : _players)
+        {
+            p->lost();
+        }
     }
+#endif
 }
 
 
@@ -147,9 +193,34 @@ bool Round::playNormal(std::shared_ptr<Player>& player)
 }
 #endif
 
-std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<std::pair<std::shared_ptr<Player>,
-                                                       std::shared_ptr<Card>>>& played)
+void Round::findWinner(void)
 {
+    // Result has winners left in _players and losers in _losers
+    //
+    auto sorter = [](std::shared_ptr<Player> p1, std::shared_ptr<Player> p2) {
+        return (*p1->evalCard() > *p2->evalCard());
+    };
+
+    // max_element should be more efficient than doing a full sort
+    auto maxIt = std::max_element(_players.begin(),
+                                  _players.end(),
+                                  [](std::shared_ptr<Player> p1, std::shared_ptr<Player> p2)
+    { return (*p1->evalCard() < *p2->evalCard()); } );
+
+    auto highestValue = *(*maxIt)->evalCard();
+
+    //    std::sort(_players.begin(), _players.end(), sorter);
+    //    auto highestValue = *_players.front()->evalCard();
+
+    auto backHalfIt = std::stable_partition(_players.begin(),
+                                            _players.end(),
+                                            [highestValue](std::shared_ptr<Player> p)
+    { return (highestValue == *p->evalCard()); } );
+
+    _losers.insert(_losers.end(), backHalfIt, _players.end());
+    _players.erase(backHalfIt, _players.end());
+
+#if 0 // old - remove
     _winners.clear();
     std::sort(played.begin(), played.end(), greaterPair);
 
@@ -179,6 +250,7 @@ std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<std::pair<std
     }
 
     return _winners;
+#endif
 }
 
 std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& played)

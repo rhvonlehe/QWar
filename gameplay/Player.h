@@ -38,10 +38,10 @@ public:
     void acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
     void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
     void playCard(void);
-    std::shared_ptr<Card> evalCard(void) const;
-    void winnerTie(void);
-    void winner(std::vector<std::shared_ptr<Card>> cardsWon);
-    void loser(void);
+    std::shared_ptr<Card> evalCard(void);
+    void tie(void);
+    void won(void);
+    void lost(std::shared_ptr<Player> winner);
     void addObserverCallback(const std::function<void (Player::ObservableEvent)> callback);
 
     std::shared_ptr<Card> lastCardPlayed(void) const
@@ -84,6 +84,7 @@ public:
 private:
     std::shared_ptr<Card> getNextCard(void);
     void setEvalCard(void);
+    void endRound(void);
 
     friend class PlayerSM;
     void movePlayedToCurrent();

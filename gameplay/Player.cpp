@@ -47,22 +47,31 @@ void Player::playCard(void)
     notifyEvent(EV_CARDS_CHANGED);
 }
 
-std::shared_ptr<Card> Player::evalCard(void) const
+std::shared_ptr<Card> Player::evalCard(void)
 {
     return _evalCard;
 }
 
-void Player::winnerTie(void)
+void Player::tie(void)
 {
     _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvWinnerTie>(new EvWinnerTie()));
+                           boost::intrusive_ptr<EvTie>(new EvTie()));
 }
 
-void Player::winner(std::vector<std::shared_ptr<Card>> cardsWon)
+void Player::won(void)
 {
-    acceptNewCards(PLAYED, cardsWon);
+    acceptNewCards(PLAYED, _activeRoundCards);
     _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvWinner>(new EvWinner()));
+                           boost::intrusive_ptr<EvWon>(new EvWon()));
+
+    endRound();
+}
+
+void Player::lost(std::shared_ptr<Player> winner)
+{
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvLost>(new EvLost(winner)));
+    endRound();
 }
 
 void Player::addObserverCallback(const std::function<void (Player::ObservableEvent)> func)
@@ -98,8 +107,15 @@ void Player::setEvalCard(void)
     _evalCard = _activeRoundCards.back();
 }
 
+void Player::endRound(void)
+{
+    _evalCard = nullptr;
+    _activeRoundCards.clear();
+}
+
 void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
 {
+    std::cout << "player " << _name << " accepting " << cards.size() << " new cards" << std::endl;
     Deck& deck = (UNPLAYED == pile) ? _unplayedPile : _playedPile;
 
     deck.addBack(cards);

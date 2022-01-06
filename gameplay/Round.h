@@ -40,15 +40,13 @@ public:
 private:
     friend class RoundSM;
     void handlePlayerWaiting(std::shared_ptr<Player> player);
-    bool allPlayersWaiting(void) const;
     void evaluate(void);
 
-    std::vector<std::shared_ptr<Player>> findWinner(std::vector<std::pair<std::shared_ptr<Player>,
-                                                    std::shared_ptr<Card>>>& played);
+    void findWinner(void);
     std::vector<std::shared_ptr<Player> > findWinner(std::vector<WarHand>& played);
     void removePlayer(std::shared_ptr<Player> player);
 
-    std::vector<std::shared_ptr<Player>>    _playersActive;
+    std::vector<std::shared_ptr<Player>>    _losers;
     std::vector<std::shared_ptr<Player>>    _winners;
     std::vector<std::shared_ptr<Player>>    _players;
 

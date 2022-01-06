@@ -7,6 +7,11 @@ void PlayerSM::playOneCard(const EvPlay& event)
     _player->notifyEvent(Player::EV_PLAYER_WAITING);
 }
 
+void PlayerSM::acceptLoserCards(const EvLost &event)
+{
+    event.winner->acceptNewCards(Player::PLAYED, _player->getActiveRoundCards());
+}
+
 Idle::Idle(my_context ctx)
     : my_base(ctx)
 {
