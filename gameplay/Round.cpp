@@ -22,8 +22,10 @@ struct
     }
 } greaterWarHand;
 
-Round::Round(std::vector<std::shared_ptr<Player> >& players)
+Round::Round(std::vector<std::shared_ptr<Player> >& players,
+             const std::function<void ()> callback)
     : _players(players),
+      _observerFunc(callback),
       _scheduler(true)
 {
     // Set up event processor
@@ -62,19 +64,6 @@ void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
     {
         evaluate();
     }
-
-#if 0 // todo remove
-    auto it = std::find(_playersActive.begin(), _playersActive.end(), player);
-
-    assert(it != _playersActive.end());
-    _playersActive.erase(it);
-
-    if (allPlayersWaiting())
-    {
-        evaluate();
-    }
-#endif
-
 }
 
 void Round::evaluate(void)
@@ -97,101 +86,24 @@ void Round::evaluate(void)
     }
     else // exactly 1 winner
     {
-        auto winner = _players.front();
+        _players.front()->won();
+
+#if 0 // todo move elsewhere
+        std::vector<std::shared_ptr<Card>> allLoserCards;
 
         for (auto loser : _losers)
         {
-            loser->lost(winner);
+            auto oneLoserCards = loser->lost();
+            allLoserCards.insert(allLoserCards.end(), oneLoserCards.begin(), oneLoserCards.end());
         }
 
-        winner->won();
-    }
+        winner->won(allLoserCards);
 
-
-
-#if 0 // old - todo remove
-    // Always use the list of winners if it's non-empty
-    auto playersToEval = (_winners.size()) ? _winners : _players;
-    std::vector<std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>>> allHands;
-
-    for (const auto& p : playersToEval)
-    {
-        allHands.push_back(std::make_pair(p, p->evalCard()));
-    }
-
-    _winners = findWinner(allHands);
-
-    if (_winners.size() > 1)
-    {
-        for (auto winner : _winners)
-        {
-            winner->tie();
-        }
-
-        _scheduler.queue_event(_processor,
-                               boost::intrusive_ptr<EvTie>(new EvTie()));
-    }
-    else // exactly 1 winner
-    {
-        std::vector<std::shared_ptr<Card>> roundCards;
-        for (const auto& p : _players)
-        {
-            auto playerCards = p->getActiveRoundCards();
-            roundCards.insert(roundCards.end(), playerCards.begin(), playerCards.end());
-        }
-
-        auto winningPlayer = _winners.front();
-        winningPlayer->won(roundCards);
-
-        _players.erase(std::remove(_players.begin(), _players.end(), winningPlayer), _players.end());
-
-        for (auto& p : _players)
-        {
-            p->lost();
-        }
-    }
+        // Notify the game object the round is done.
+        _observerFunc();
 #endif
-}
-
-
-#if 0
-void Round::play()
-{
-    std::vector<std::shared_ptr<Player>> winners;
-
-    // Most of the time, this is the only call made here
-    //
-    winners = playNormal();
-
-
-    while (winners.size() > 1)
-    {
-        winners = playWar(winners);
     }
-
-    winners[0]->acceptNewCards(Player::PLAYED, _cardsInRound);
 }
-#endif
-
-#if 0 // todo
-bool Round::playNormal(std::shared_ptr<Player>& player)
-{
-    static std::vector<std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>>> played;
-
-    auto card = player->playCard();
-    _cardsInRound.push_back(card);
-    played.push_back(std::make_pair(player, card));
-    _numPlayersToPlay--;
-
-    if (0 == _numPlayersToPlay)
-    {
-        _winners = findWinner(played);
-        return true;
-    }
-
-    return false;
-}
-#endif
 
 void Round::findWinner(void)
 {
@@ -219,38 +131,6 @@ void Round::findWinner(void)
 
     _losers.insert(_losers.end(), backHalfIt, _players.end());
     _players.erase(backHalfIt, _players.end());
-
-#if 0 // old - remove
-    _winners.clear();
-    std::sort(played.begin(), played.end(), greaterPair);
-
-    for (auto pair : played)
-    {
-        std::cout << "Player " << pair.first->name();
-        std::cout << " played " << pair.second->str() << std::endl;
-    }
-
-
-    // Iterate until the first card that is a lower value and truncate from
-    // there on, return the results which will be all Players with the
-    // highest card value
-    //
-    auto highest = played[0];
-
-    for (auto& item : played)
-    {
-        if (item.second == highest.second)
-        {
-            _winners.push_back(item.first);
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    return _winners;
-#endif
 }
 
 std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& played)
@@ -288,36 +168,7 @@ std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& pla
     return winners;
 }
 
-#if 0 // todo
-std::vector<std::shared_ptr<Player> > Round::playNormal()
-{
-    // NOTE: in this function we have all active players involved,
-    // so when one player can't lay a card, he can be removed
-    // from the global list easily.
-    //
-    std::vector<std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>>> played;
 
-    auto it = std::begin(_players);
-
-    while (it != std::end(_players))
-    {
-        auto player = (*it);
-        if (!player->outOfCards())
-        {
-            auto card = player->playCard();
-            _cardsInRound.push_back(card);
-            played.push_back(std::make_pair(player, card));
-        }
-        else
-        {
-            _players.erase(it);
-        }
-        ++it;
-    }
-
-    return findWinner(played);
-}
-#endif
 
 #if 0
 std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<Player>>& players)
@@ -362,7 +213,6 @@ std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<
 
     return winners;
 }
-#endif
 
 void Round::removePlayer(std::shared_ptr<Player> player)
 {
@@ -372,5 +222,6 @@ void Round::removePlayer(std::shared_ptr<Player> player)
         _players.erase(it);
     }
 }
+#endif
 
 

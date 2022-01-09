@@ -24,6 +24,7 @@ public:
     {
         EV_PLAYER_WAITING,
         EV_PLAYER_ACTIVE,
+        EV_WINNER_REQ_CARDS,
         EV_CARD_PLAYED,
         EV_CARDS_CHANGED,
         EV_WINNER,
@@ -40,8 +41,8 @@ public:
     void playCard(void);
     std::shared_ptr<Card> evalCard(void);
     void tie(void);
-    void won(void);
-    void lost(std::shared_ptr<Player> winner);
+    void won();
+    std::vector<std::shared_ptr<Card> > lost(void);
     void addObserverCallback(const std::function<void (Player::ObservableEvent)> callback);
 
     std::shared_ptr<Card> lastCardPlayed(void) const
@@ -50,7 +51,7 @@ public:
         return _activeRoundCards.back();
     }
 
-    std::vector<std::shared_ptr<Card>> getActiveRoundCards(void)
+    std::vector<std::shared_ptr<Card>> giveUpActiveRoundCards(void)
     {
         return _activeRoundCards;
     }
@@ -84,7 +85,7 @@ public:
 private:
     std::shared_ptr<Card> getNextCard(void);
     void setEvalCard(void);
-    void endRound(void);
+    void resetRoundData(void);
 
     friend class PlayerSM;
     void movePlayedToCurrent();
@@ -93,9 +94,9 @@ private:
     std::string         _name;
     Deck                _unplayedPile;
     Deck                _playedPile;
+
     std::vector<std::shared_ptr<Card>>  _activeRoundCards;
     std::shared_ptr<Card>               _evalCard;
-
 
     // Observer variable - simplified for just one observer
     std::vector<std::function<void(ObservableEvent)>> _observerFuncs;

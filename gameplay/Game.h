@@ -26,6 +26,8 @@ public:
     // Deal is similar to 'init' or 'reset' on the game
     void deal();
 
+    void handleRoundComplete(void);
+
     void handlePlayerUpdate(std::shared_ptr<Player> player,
                             Player::ObservableEvent event);
 

@@ -10,7 +10,7 @@ Game::Game(std::vector<std::shared_ptr<Player>>& players)
       _allPlayers(players),
       _roundNumber(0)
 {
-    _round = std::make_unique<Round>(_allPlayers);
+    _round = std::make_unique<Round>(_allPlayers, [&]() { handleRoundComplete(); });
 
     for (auto& player : _allPlayers)
     {
@@ -67,6 +67,12 @@ void Game::deal()
             }
         }
     }
+}
+
+void Game::handleRoundComplete(void)
+{
+    cullPlayerList();
+    _round = std::make_unique<Round>(_activePlayers, [&](){ handleRoundComplete(); });
 }
 
 void Game::handlePlayerUpdate(std::shared_ptr<Player> player,

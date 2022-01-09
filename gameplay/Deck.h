@@ -17,7 +17,7 @@ public:
     void print(void) const;
     uint8_t size(void) const
     {
-        return static_cast<int>(_cards.size());
+        return static_cast<uint8_t>(_cards.size());
     }
     bool isEmpty(void) const
     {

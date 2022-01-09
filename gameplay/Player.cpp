@@ -8,7 +8,7 @@ Player::Player(const std::string name)
       _scheduler(true)
 {
     // Set up event processor
-    _processor = _scheduler.create_processor<PlayerSM>(this);
+    _processor = _scheduler.create_processor<PlayerSM>(std::ref(*this));
     _scheduler.initiate_processor(_processor);
 
     _processorThread =
@@ -58,20 +58,24 @@ void Player::tie(void)
                            boost::intrusive_ptr<EvTie>(new EvTie()));
 }
 
-void Player::won(void)
+void Player::won()
 {
-    acceptNewCards(PLAYED, _activeRoundCards);
     _scheduler.queue_event(_processor,
                            boost::intrusive_ptr<EvWon>(new EvWon()));
-
-    endRound();
+#if 0
+    acceptNewCards(PLAYED, _activeRoundCards);
+    acceptNewCards(PLAYED, loserCards);
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvWon>(new EvWon()));
+#endif
 }
 
-void Player::lost(std::shared_ptr<Player> winner)
+std::vector<std::shared_ptr<Card>> Player::lost(void)
 {
+    auto retVal = _activeRoundCards;
     _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvLost>(new EvLost(winner)));
-    endRound();
+                           boost::intrusive_ptr<EvLost>(new EvLost()));
+    return retVal;
 }
 
 void Player::addObserverCallback(const std::function<void (Player::ObservableEvent)> func)
@@ -107,15 +111,17 @@ void Player::setEvalCard(void)
     _evalCard = _activeRoundCards.back();
 }
 
-void Player::endRound(void)
+void Player::resetRoundData(void)
 {
     _evalCard = nullptr;
     _activeRoundCards.clear();
+    notifyEvent(EV_PLAYER_ACTIVE);
 }
 
 void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
 {
     std::cout << "player " << _name << " accepting " << cards.size() << " new cards" << std::endl;
+    fflush(stdout);
     Deck& deck = (UNPLAYED == pile) ? _unplayedPile : _playedPile;
 
     deck.addBack(cards);

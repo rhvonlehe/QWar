@@ -3,19 +3,25 @@
 
 void PlayerSM::playOneCard(const EvPlay& event)
 {
-    _player->setEvalCard();
-    _player->notifyEvent(Player::EV_PLAYER_WAITING);
+    _player.setEvalCard();
+    notifyEvent(Player::EV_PLAYER_WAITING);
 }
 
-void PlayerSM::acceptLoserCards(const EvLost &event)
+void PlayerSM::notifyEvent(Player::ObservableEvent event)
 {
-    event.winner->acceptNewCards(Player::PLAYED, _player->getActiveRoundCards());
+    _player.notifyEvent(event);
+}
+
+void PlayerSM::resetRoundData(void)
+{
+    _player.resetRoundData();
 }
 
 Idle::Idle(my_context ctx)
     : my_base(ctx)
 {
     TEMP_LOG("Idle state entered");
+    context<PlayerSM>().resetRoundData();
 }
 
 Idle::~Idle()
@@ -30,6 +36,22 @@ Eliminated::Eliminated(my_context ctx)
 Eliminated::~Eliminated()
 {}
 
+AcceptingCards::AcceptingCards(my_context ctx)
+    : my_base(ctx)
+{
+    TEMP_LOG("AcceptingCards state entered");
+}
+
+AcceptingCards::~AcceptingCards()
+{}
+
+sc::result AcceptingCards::react( const EvWinnerReqCards& event)
+{
+    context<PlayerSM>().notifyEvent(Player::EV_WINNER_REQ_CARDS);
+
+    return discard_event();
+}
+
 CardsPlayed::CardsPlayed(my_context ctx)
     : my_base(ctx)
 {
@@ -37,7 +59,8 @@ CardsPlayed::CardsPlayed(my_context ctx)
 }
 
 CardsPlayed::~CardsPlayed()
-{}
+{
+}
 
 WaitForWinner::WaitForWinner(my_context ctx)
     : my_base(ctx)

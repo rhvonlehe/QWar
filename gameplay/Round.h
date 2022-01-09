@@ -22,7 +22,8 @@ struct WarHand
 class Round
 {
 public:
-    Round(std::vector<std::shared_ptr<Player>>& players);
+    Round(std::vector<std::shared_ptr<Player>>& players,
+          const std::function<void(void)> callback);
 
     ~Round(void);
 
@@ -30,8 +31,6 @@ public:
 
 
 #if 0 // todo
-    void play();
-    //    bool playNormal(std::shared_ptr<Player>& player); // todo
     std::vector<std::shared_ptr<Player>> playNormal();
     std::vector<std::shared_ptr<Player> > playWar(std::vector<std::shared_ptr<Player> > &players);
 #endif
@@ -44,11 +43,12 @@ private:
 
     void findWinner(void);
     std::vector<std::shared_ptr<Player> > findWinner(std::vector<WarHand>& played);
-    void removePlayer(std::shared_ptr<Player> player);
 
     std::vector<std::shared_ptr<Player>>    _losers;
     std::vector<std::shared_ptr<Player>>    _winners;
     std::vector<std::shared_ptr<Player>>    _players;
+
+    std::function<void()>                   _observerFunc;
 
     // StateChart variables
     using FifoScheduler = boost::statechart::fifo_scheduler<>;

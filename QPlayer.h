@@ -30,8 +30,8 @@ public:
 signals:
     void nameChanged(QString);
     void activeChanged(bool);
-    void unplayedCardCntChanged(uint32_t);
-    void playedCardCntChanged(uint32_t);
+    void unplayedCardCntChanged(quint8);
+    void playedCardCntChanged(quint8);
     void playedCardsChanged(QString);
 
 

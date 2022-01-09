@@ -1,18 +1,16 @@
 #pragma once
 
+#include "Player.h"
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/asynchronous_state_machine.hpp>
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/transition.hpp>
+#include <boost/statechart/custom_reaction.hpp>
 
 #include <iostream>
 #define TEMP_LOG(X) { std::cout << X << std::endl; }
 
 namespace sc = boost::statechart;
-
-// Declare things in one spot for visual convenience
-//
-class Player;
 
 // Player events
 //
@@ -22,12 +20,15 @@ struct EvFlip;
 struct EvWon;
 struct EvTie;
 struct EvLost;
+struct EvWinnerAcceptCards;
+struct EvWinnerReqCards;
 struct EvReset;
 
 // Player states
 //
 struct Idle;
 struct Eliminated;
+struct AcceptingCards;
 struct CardsPlayed;
 struct WaitForWinner;
 struct WaitFirstCard;
@@ -37,16 +38,16 @@ struct WaitFlip;
 
 struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
 {
-    PlayerSM(my_context ctx, Player* player)
+    PlayerSM(my_context ctx, Player& player)
         : my_base(ctx),
           _player(player) {}
     ~PlayerSM(void) { terminate(); }
 
     void playOneCard(const EvPlay& event);
-    void acceptLoserCards(const EvLost& event);
+    void notifyEvent(Player::ObservableEvent event);
+    void resetRoundData(void);
 
-private:
-    Player*   _player;
+    Player&   _player;
 };
 
 // More definition for events
@@ -73,16 +74,23 @@ struct EvTie  : sc::event < EvTie >
 };
 struct EvLost      : sc::event < EvLost >
 {
-    EvLost(std::shared_ptr<Player> p)
-     : winner(p)
-    { TEMP_LOG("EvLoser event"); }
-    std::shared_ptr<Player> winner;
+    EvLost() { TEMP_LOG("EvLoser event"); }
 };
+
+struct EvWinnerReqCards : sc::event < EvWinnerReqCards>
+{
+    EvWinnerReqCards() { TEMP_LOG("EvWinnerReqCards event"); }
+};
+
+struct EvWinnerAcceptCards : sc::event < EvWinnerAcceptCards >
+{
+    EvWinnerAcceptCards() { TEMP_LOG("EvWinnerAcceptCards event"); }
+};
+
 struct EvReset      : sc::event < EvReset >
 {
     EvReset(void) { TEMP_LOG("EvReset event"); }
 };
-
 
 // More definition for states
 //
@@ -102,12 +110,24 @@ struct Eliminated : sc::state<Eliminated, PlayerSM>
     ~Eliminated(void);
 };
 
+struct AcceptingCards: sc::state<AcceptingCards, PlayerSM>
+{
+    typedef boost::mpl::list<
+    sc::custom_reaction< EvWinnerReqCards>,
+    sc::transition< EvWinnerAcceptCards, Idle> > reactions;
+
+    AcceptingCards(my_context ctx);
+    ~AcceptingCards(void);
+
+    sc::result react(const EvWinnerReqCards& event);
+};
+
 struct CardsPlayed : sc::state<CardsPlayed, PlayerSM, WaitForWinner>
 {
     typedef boost::mpl::list<
     sc::transition< EvOutOfCards, Eliminated >,
-    sc::transition< EvLost, Idle, PlayerSM, &PlayerSM::acceptLoserCards>,
-    sc::transition< EvWon, Idle> > reactions;
+    sc::transition< EvLost, Idle>,
+    sc::transition< EvWon, AcceptingCards> > reactions;
 
     CardsPlayed(my_context ctx);
     ~CardsPlayed(void);

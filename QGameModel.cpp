@@ -3,7 +3,6 @@
 
 QGameModel::QGameModel()
 {
-
 }
 
 void QGameModel::populate(const QStringList& nameList)
