@@ -28,6 +28,7 @@ public:
     ~Round(void);
 
     void playerWaiting(std::shared_ptr<Player> player);
+    void winnerReqCards(std::shared_ptr<Player> player);
 
 
 #if 0 // todo
@@ -42,10 +43,8 @@ private:
     void evaluate(void);
 
     void findWinner(void);
-    std::vector<std::shared_ptr<Player> > findWinner(std::vector<WarHand>& played);
 
     std::vector<std::shared_ptr<Player>>    _losers;
-    std::vector<std::shared_ptr<Player>>    _winners;
     std::vector<std::shared_ptr<Player>>    _players;
 
     std::function<void()>                   _observerFunc;

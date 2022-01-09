@@ -54,6 +54,12 @@ void Round::playerWaiting(std::shared_ptr<Player> player)
                            boost::intrusive_ptr<EvPlayerWaiting>(new EvPlayerWaiting(player)));
 }
 
+void Round::winnerReqCards(std::shared_ptr<Player> player)
+{
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvDistributeCards>(new EvDistributeCards(player)));
+}
+
 void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
 {
     // Guaranteed that each player only does this once, so just count up to the total
@@ -107,12 +113,6 @@ void Round::evaluate(void)
 
 void Round::findWinner(void)
 {
-    // Result has winners left in _players and losers in _losers
-    //
-    auto sorter = [](std::shared_ptr<Player> p1, std::shared_ptr<Player> p2) {
-        return (*p1->evalCard() > *p2->evalCard());
-    };
-
     // max_element should be more efficient than doing a full sort
     auto maxIt = std::max_element(_players.begin(),
                                   _players.end(),
@@ -120,9 +120,6 @@ void Round::findWinner(void)
     { return (*p1->evalCard() < *p2->evalCard()); } );
 
     auto highestValue = *(*maxIt)->evalCard();
-
-    //    std::sort(_players.begin(), _players.end(), sorter);
-    //    auto highestValue = *_players.front()->evalCard();
 
     auto backHalfIt = std::stable_partition(_players.begin(),
                                             _players.end(),
@@ -133,6 +130,7 @@ void Round::findWinner(void)
     _players.erase(backHalfIt, _players.end());
 }
 
+#if 0 // todo old remove
 std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& played)
 {
     std::vector<std::shared_ptr<Player>> winners;
@@ -167,7 +165,7 @@ std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& pla
 
     return winners;
 }
-
+#endif
 
 
 #if 0
