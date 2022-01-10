@@ -60,7 +60,7 @@ void Game::deal()
     {
         for (auto& player : _activePlayers)
         {
-            player->acceptNewCard(Player::UNPLAYED, _deck->nextCard());
+            player->acceptNewCard(Player::PILE_UNPLAYED, _deck->nextCard());
             if (_deck->isEmpty())
             {
                 break;
@@ -69,10 +69,9 @@ void Game::deal()
     }
 }
 
+// todo - do something?
 void Game::handleRoundComplete(void)
 {
-    cullPlayerList();
-    _round = std::make_unique<Round>(_activePlayers, [&](){ handleRoundComplete(); });
 }
 
 void Game::handlePlayerUpdate(std::shared_ptr<Player> player,
@@ -91,16 +90,7 @@ void Game::handlePlayerUpdate(std::shared_ptr<Player> player,
 }
 
 
-void Game::cullPlayerList()
-{
-    _activePlayers.erase(std::remove_if(
-                             _activePlayers.begin(), _activePlayers.end(),
-                             [](const std::shared_ptr<Player>& p)
-    {
-        return p->outOfCards();
-    }), _activePlayers.end());
 
-}
 
 
 

@@ -62,12 +62,6 @@ void Player::won()
 {
     _scheduler.queue_event(_processor,
                            boost::intrusive_ptr<EvWon>(new EvWon()));
-#if 0
-    acceptNewCards(PLAYED, _activeRoundCards);
-    acceptNewCards(PLAYED, loserCards);
-    _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvWon>(new EvWon()));
-#endif
 }
 
 std::vector<std::shared_ptr<Card>> Player::lost(void)
@@ -122,7 +116,7 @@ void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<C
 {
     std::cout << "player " << _name << " accepting " << cards.size() << " new cards" << std::endl;
     fflush(stdout);
-    Deck& deck = (UNPLAYED == pile) ? _unplayedPile : _playedPile;
+    Deck& deck = (PILE_UNPLAYED == pile) ? _unplayedPile : _playedPile;
 
     deck.addBack(cards);
 
@@ -131,7 +125,7 @@ void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<C
 
 void Player::acceptNewCard(const Pile pile, const std::shared_ptr<Card> card)
 {
-    UNPLAYED == pile ? _unplayedPile.addBack(card) :
+    PILE_UNPLAYED == pile ? _unplayedPile.addBack(card) :
                       _playedPile.addBack(card);
 
     notifyEvent(EV_CARDS_CHANGED);

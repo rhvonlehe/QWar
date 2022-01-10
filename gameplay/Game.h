@@ -32,7 +32,6 @@ public:
                             Player::ObservableEvent event);
 
 private:
-    void cullPlayerList();
 
     std::vector<std::shared_ptr<Player>>    _activePlayers;
     std::vector<std::shared_ptr<Player>>    _allPlayers;

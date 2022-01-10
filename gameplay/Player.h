@@ -17,8 +17,8 @@ class Player
 public:
     enum Pile
     {
-        UNPLAYED,
-        PLAYED
+        PILE_UNPLAYED,
+        PILE_PLAYED
     };
     enum ObservableEvent
     {

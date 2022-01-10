@@ -14,6 +14,7 @@ struct
 
 } greaterPair;
 
+#if 0 // todo remove
 struct
 {
     bool operator()(WarHand a, WarHand b) const
@@ -21,6 +22,7 @@ struct
         return *(a.downCard) > *(b.downCard);
     }
 } greaterWarHand;
+#endif
 
 Round::Round(std::vector<std::shared_ptr<Player> >& players,
              const std::function<void ()> callback)
@@ -64,9 +66,7 @@ void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
 {
     // Guaranteed that each player only does this once, so just count up to the total
     // player count
-    static int playersWaiting = 0;
-
-    if (++playersWaiting == _players.size())
+    if (++_playersWaiting == _players.size())
     {
         evaluate();
     }
@@ -86,28 +86,13 @@ void Round::evaluate(void)
         {
             winner->tie();
         }
-
-        _scheduler.queue_event(_processor,
-                               boost::intrusive_ptr<EvTie>(new EvTie()));
     }
     else // exactly 1 winner
     {
-        _players.front()->won();
+        auto winner = _players.front();
 
-#if 0 // todo move elsewhere
-        std::vector<std::shared_ptr<Card>> allLoserCards;
-
-        for (auto loser : _losers)
-        {
-            auto oneLoserCards = loser->lost();
-            allLoserCards.insert(allLoserCards.end(), oneLoserCards.begin(), oneLoserCards.end());
-        }
-
-        winner->won(allLoserCards);
-
-        // Notify the game object the round is done.
-        _observerFunc();
-#endif
+        _scheduler.queue_event(_processor,
+                               boost::intrusive_ptr<EvWinner>(new EvWinner(winner)));
     }
 }
 
@@ -128,6 +113,45 @@ void Round::findWinner(void)
 
     _losers.insert(_losers.end(), backHalfIt, _players.end());
     _players.erase(backHalfIt, _players.end());
+}
+
+void Round::cullPlayerList(void)
+{
+    _players.erase(std::remove_if(
+                             _players.begin(), _players.end(),
+                             [](const std::shared_ptr<Player>& p)
+    {
+        return p->outOfCards();
+    }), _players.end());
+}
+
+void Round::initializeRound(void)
+{
+    _playersWaiting = 0;
+
+    // Put losers back with players
+    _players.insert(_players.end(), _losers.begin(), _losers.end());
+    _losers.clear();
+
+    // remove from play anyone who is out of cards
+    cullPlayerList();
+}
+
+void Round::distributeCards(std::shared_ptr<Player> winner)
+{
+    std::vector<std::shared_ptr<Card>> allLoserCards;
+
+    for (auto loser : _losers)
+    {
+        auto oneLoserCards = loser->lost();
+        allLoserCards.insert(allLoserCards.end(), oneLoserCards.begin(), oneLoserCards.end());
+    }
+
+
+    winner->acceptNewCards(Player::PILE_PLAYED, allLoserCards);
+
+    // Notify the game object the round is done.
+    _observerFunc();
 }
 
 #if 0 // todo old remove

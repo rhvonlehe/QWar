@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 
+#if 0 // todo remove
 struct WarHand
 {
     WarHand() = default;
@@ -17,7 +18,7 @@ struct WarHand
     std::shared_ptr<Card>   downCard;
     std::shared_ptr<Card>   upCard;
 };
-
+#endif
 
 class Round
 {
@@ -30,20 +31,17 @@ public:
     void playerWaiting(std::shared_ptr<Player> player);
     void winnerReqCards(std::shared_ptr<Player> player);
 
-
-#if 0 // todo
-    std::vector<std::shared_ptr<Player>> playNormal();
-    std::vector<std::shared_ptr<Player> > playWar(std::vector<std::shared_ptr<Player> > &players);
-#endif
-
     const std::vector<std::shared_ptr<Player>>& winners(void) const;
 private:
     friend class RoundSM;
     void handlePlayerWaiting(std::shared_ptr<Player> player);
     void evaluate(void);
-
     void findWinner(void);
+    void cullPlayerList(void);
+    void initializeRound(void);
+    void distributeCards(std::shared_ptr<Player> winner);
 
+    int                                     _playersWaiting;
     std::vector<std::shared_ptr<Player>>    _losers;
     std::vector<std::shared_ptr<Player>>    _players;
 
