@@ -11,7 +11,7 @@
     </initial>
     <state name="Idle">
      <entry brief="resetRoundDAta, notifyActive"/>
-     <tran trig="PLAY" target="../../3/3">
+     <tran trig="ACTION" target="../../3/3">
       <action brief="playOneCard"/>
       <tran_glyph conn="57,21,3,3,28,5,-76,16,12">
        <action box="0,-2,16,2"/>
@@ -55,7 +55,7 @@
       <state_glyph node="21,38,19,13"/>
      </state>
      <state name="WaitFirstCard">
-      <tran trig="PLAY" target="../../5">
+      <tran trig="ACTION" target="../../5">
        <tran_glyph conn="45,44,3,3,21">
         <action box="0,-2,10,2"/>
        </tran_glyph>
@@ -63,7 +63,7 @@
       <state_glyph node="45,39,16,12"/>
      </state>
      <state name="WaitHoleCard">
-      <tran trig="PLAY" target="../../6">
+      <tran trig="ACTION" target="../../6">
        <tran_glyph conn="66,43,3,3,22">
         <action box="0,-2,10,2"/>
        </tran_glyph>
@@ -71,7 +71,7 @@
       <state_glyph node="66,39,17,12"/>
      </state>
      <state name="WaitLastCard">
-      <tran trig="PLAY" target="../../7">
+      <tran trig="ACTION" target="../../7">
        <tran_glyph conn="88,45,3,1,21,12,-37">
         <action box="0,-2,10,2"/>
        </tran_glyph>
@@ -79,7 +79,7 @@
       <state_glyph node="88,39,16,12"/>
      </state>
      <state name="WaitFlip">
-      <tran trig="FLIP" target="../../3">
+      <tran trig="ACTION" target="../../3">
        <tran_glyph conn="50,59,3,3,26,6,-57,-20,2">
         <action box="0,-2,10,2"/>
        </tran_glyph>
@@ -111,34 +111,34 @@
   <class name="Round" superclass="qpcpp::QHsm">
    <statechart properties="0x00">
     <initial target="../2">
-     <initial_glyph conn="7,45,4,3,1,10">
+     <initial_glyph conn="7,45,4,3,2,21">
       <action box="0,-2,10,2"/>
      </initial_glyph>
     </initial>
     <state name="DONE">
      <tran trig="DISTRIBUTE_CARDS" target="../../2">
-      <action brief="distributeCards"/>
-      <tran_glyph conn="20,15,3,3,36,8,-52,19,13">
-       <action box="0,-2,31,2"/>
+      <action brief="distributeCards, cullPlayerList"/>
+      <tran_glyph conn="20,15,3,3,36,8,-35,20,7">
+       <action box="0,-2,41,2"/>
       </tran_glyph>
      </tran>
-     <state_glyph node="20,6,34,13"/>
+     <state_glyph node="20,6,39,13"/>
     </state>
     <state name="ACTIVE">
-     <entry brief="cullPlayerList"/>
+     <entry brief="initializeRound"/>
      <tran trig="WINNER" target="../../1">
-      <tran_glyph conn="17,33,3,3,75,-30,-77,7,5">
+      <tran_glyph conn="28,34,3,3,66,-30,-78,6,4">
        <action box="0,-2,16,2"/>
       </tran_glyph>
      </tran>
      <tran trig="PLAYER_WAITING">
       <action brief="evaluate"/>
-      <tran_glyph conn="17,37,3,-1,31">
+      <tran_glyph conn="28,38,3,-1,31">
        <action box="0,-2,32,2"/>
       </tran_glyph>
      </tran>
-     <state_glyph node="17,27,55,22">
-      <entry box="1,2,21,2"/>
+     <state_glyph node="28,28,55,22">
+      <entry box="1,2,22,2"/>
      </state_glyph>
     </state>
     <state_diagram size="113,72"/>

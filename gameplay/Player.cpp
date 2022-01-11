@@ -36,13 +36,15 @@ void Player::reset(void)
                            boost::intrusive_ptr<EvReset>(new EvReset()));
 }
 
-// pre-condition: at least one card available in Player's piles
-//
+void Player::action(void)
+{
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvAction>(new EvAction()));
+}
+
 void Player::playCard(void)
 {
     _activeRoundCards.push_back(getNextCard());
-    _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvPlay>(new EvPlay()));
     notifyEvent(EV_CARD_PLAYED);
     notifyEvent(EV_CARDS_CHANGED);
 }
@@ -112,18 +114,24 @@ void Player::resetRoundData(void)
     notifyEvent(EV_PLAYER_ACTIVE);
 }
 
-void Player::acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
+// TODO: consider passing the pile,cards in the event
+void Player::acceptRoundCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
 {
-    std::cout << "player " << _name << " accepting " << cards.size() << " new cards" << std::endl;
     fflush(stdout);
     Deck& deck = (PILE_UNPLAYED == pile) ? _unplayedPile : _playedPile;
 
+    std::cout << "player " << _name << " accepting " << cards.size() << " loser cards" << std::endl;
     deck.addBack(cards);
+    std::cout << "player " << _name << " accepting " << _activeRoundCards.size() << " own cards" << std::endl;
+    deck.addBack(_activeRoundCards);
 
     notifyEvent(EV_CARDS_CHANGED);
+
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvAcceptCards>(new EvAcceptCards()));
 }
 
-void Player::acceptNewCard(const Pile pile, const std::shared_ptr<Card> card)
+void Player::acceptDealtCard(const Pile pile, const std::shared_ptr<Card> card)
 {
     PILE_UNPLAYED == pile ? _unplayedPile.addBack(card) :
                       _playedPile.addBack(card);

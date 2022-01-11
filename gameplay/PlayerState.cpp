@@ -1,10 +1,11 @@
 #include "PlayerState.h"
 #include "Player.h"
 
-void PlayerSM::playOneCard(const EvPlay& event)
+void PlayerSM::playOneCard(const EvAction& event)
 {
+    _player.playCard();
     _player.setEvalCard();
-    notifyEvent(Player::EV_PLAYER_WAITING);
+    notifyEvent(Player::EV_PLAYER_WAIT_WINNER);
 }
 
 void PlayerSM::notifyEvent(Player::ObservableEvent event)
@@ -39,14 +40,17 @@ Eliminated::~Eliminated()
 AcceptingCards::AcceptingCards(my_context ctx)
     : my_base(ctx)
 {
+    context<PlayerSM>().notifyEvent(Player::EV_WINNER);
+    context<PlayerSM>().notifyEvent(Player::EV_PLAYER_ACTIVE);
     TEMP_LOG("AcceptingCards state entered");
 }
 
 AcceptingCards::~AcceptingCards()
 {}
 
-sc::result AcceptingCards::react( const EvWinnerReqCards& event)
+sc::result AcceptingCards::react(const EvAction &event)
 {
+    context<PlayerSM>().
     context<PlayerSM>().notifyEvent(Player::EV_WINNER_REQ_CARDS);
 
     return discard_event();

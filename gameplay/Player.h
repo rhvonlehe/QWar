@@ -22,7 +22,8 @@ public:
     };
     enum ObservableEvent
     {
-        EV_PLAYER_WAITING,
+        EV_PLAYER_WAIT_WINNER,
+        EV_PLAYER_WAIT_FLIP,
         EV_PLAYER_ACTIVE,
         EV_WINNER_REQ_CARDS,
         EV_CARD_PLAYED,
@@ -36,9 +37,9 @@ public:
     Player(const std::string name);
     ~Player(void);
     void reset(void);
-    void acceptNewCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
-    void acceptNewCard(const Pile pile, const std::shared_ptr<Card> card);
-    void playCard(void);
+    void acceptRoundCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
+    void acceptDealtCard(const Pile pile, const std::shared_ptr<Card> card);
+    void action(void);
     std::shared_ptr<Card> evalCard(void);
     void tie(void);
     void won();
@@ -83,11 +84,12 @@ public:
         return (_name == rhs.name());
     }
 private:
+    friend class PlayerSM;
+
+    void playCard(void);
     std::shared_ptr<Card> getNextCard(void);
     void setEvalCard(void);
     void resetRoundData(void);
-
-    friend class PlayerSM;
     void movePlayedToCurrent();
     void notifyEvent(ObservableEvent event);
 

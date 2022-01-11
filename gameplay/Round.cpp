@@ -132,9 +132,6 @@ void Round::initializeRound(void)
     // Put losers back with players
     _players.insert(_players.end(), _losers.begin(), _losers.end());
     _losers.clear();
-
-    // remove from play anyone who is out of cards
-    cullPlayerList();
 }
 
 void Round::distributeCards(std::shared_ptr<Player> winner)
@@ -147,8 +144,7 @@ void Round::distributeCards(std::shared_ptr<Player> winner)
         allLoserCards.insert(allLoserCards.end(), oneLoserCards.begin(), oneLoserCards.end());
     }
 
-
-    winner->acceptNewCards(Player::PILE_PLAYED, allLoserCards);
+    winner->acceptRoundCards(Player::PILE_PLAYED, allLoserCards);
 
     // Notify the game object the round is done.
     _observerFunc();

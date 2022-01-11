@@ -2,17 +2,34 @@
 
 QPlayer::QPlayer(std::shared_ptr<Player> player, QObject *parent)
     : QObject(parent),
-      _player(player)
+      _player(player),
+      _identifyWinner(false)
 {
     // Register some actions with the player model
     _player->addObserverCallback([&](Player::ObservableEvent event) { update(event); });
 }
 
-void QPlayer::playCard()
+void QPlayer::action()
 {
-    printf("Player %s played a card\n", getName().toStdString().c_str());
+    printf("Player %s hit their button\n", getName().toStdString().c_str());
     fflush(stdout);
-    _player->playCard();
+    _player->action();
+}
+
+QString QPlayer::getButtonText(void) const
+{
+    // TODO: make this an array indexed by an enum?
+    if (_identifyWinner)
+    {
+        return QString("Accept Cards");
+    }
+//    else if ()
+//    {
+
+//    }
+    else {
+        return QString("Play Card");
+    }
 }
 
 QString QPlayer::getName() const
@@ -45,7 +62,7 @@ void QPlayer::update(Player::ObservableEvent event)
 {
     switch (event)
     {
-    case Player::EV_PLAYER_WAITING:
+    case Player::EV_PLAYER_WAIT_WINNER:
         _active = false;
         emit activeChanged(_active);
         break;
@@ -64,7 +81,20 @@ void QPlayer::update(Player::ObservableEvent event)
         emit unplayedCardCntChanged(getUnplayedCardCnt());
         emit playedCardCntChanged(getPlayedCardCnt());
         break;
-
+    case Player::EV_WINNER:
+        _identifyWinner = true;
+        emit winnerChanged(_identifyWinner);
+        emit buttonTextChanged(getButtonText());
+        break;
+    case Player::EV_PLAYER_WAIT_FLIP:
+        // TODO
+        break;
+    case Player::EV_WINNER_REQ_CARDS:
+        _identifyWinner = false;
+        emit winnerChanged(_identifyWinner);
+        emit buttonTextChanged(getButtonText());
+    default:
+        break;
     }
 
 }

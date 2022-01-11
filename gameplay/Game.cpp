@@ -16,8 +16,7 @@ Game::Game(std::vector<std::shared_ptr<Player>>& players)
     {
         player->addObserverCallback([&](Player::ObservableEvent event) {
             handlePlayerUpdate(player, event);
-        }
-        );
+        } );
     }
 }
 
@@ -60,7 +59,7 @@ void Game::deal()
     {
         for (auto& player : _activePlayers)
         {
-            player->acceptNewCard(Player::PILE_UNPLAYED, _deck->nextCard());
+            player->acceptDealtCard(Player::PILE_UNPLAYED, _deck->nextCard());
             if (_deck->isEmpty())
             {
                 break;
@@ -79,7 +78,7 @@ void Game::handlePlayerUpdate(std::shared_ptr<Player> player,
 {
     switch (event)
     {
-    case Player::EV_PLAYER_WAITING:
+    case Player::EV_PLAYER_WAIT_WINNER:
         _round->playerWaiting(player);
         break;
     case Player::EV_WINNER_REQ_CARDS:

@@ -87,7 +87,6 @@ Item {
                         Layout.column: playerCol[index]
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        color: "red"
                         playerInstance: player
                         enabled: gameModel.rowCount() > index ? true : false
                         opacity: gameModel.rowCount() > index ? true : false
