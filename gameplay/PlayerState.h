@@ -31,7 +31,6 @@ struct Eliminated;
 struct AcceptingCards;
 struct CardsPlayed;
 struct WaitForWinner;
-struct WaitFirstCard;
 struct WaitHoleCard;
 struct WaitLastCard;
 struct WaitFlip;
@@ -43,9 +42,9 @@ struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
           _player(player) {}
     ~PlayerSM(void) { terminate(); }
 
-    void playOneCard(const EvAction& event);
     void notifyEvent(Player::ObservableEvent event);
     void resetRoundData(void);
+//    void handleFirstCard(const EvAction& event); // todo remove
 
     Player&   _player;
 };
@@ -92,11 +91,12 @@ struct EvReset      : sc::event < EvReset >
 struct Idle : sc::state<Idle, PlayerSM>
 {
     typedef boost::mpl::list<
-    sc::transition< EvAction, WaitForWinner,
-    PlayerSM, &PlayerSM::playOneCard > > reactions;
+    sc::custom_reaction< EvAction > > reactions;
 
     Idle(my_context ctx);
     ~Idle(void);
+
+    sc::result react(const EvAction& event);
 };
 
 struct Eliminated : sc::state<Eliminated, PlayerSM>
@@ -131,28 +131,45 @@ struct CardsPlayed : sc::state<CardsPlayed, PlayerSM, WaitForWinner>
 struct WaitForWinner : sc::state<WaitForWinner, CardsPlayed>
 {
     typedef boost::mpl::list<
-    sc::transition< EvTie, WaitFirstCard > > reactions;
+    sc::transition< EvTie, WaitHoleCard> > reactions;
 
     WaitForWinner(my_context ctx);
     ~WaitForWinner(void);
 };
 
-struct WaitFirstCard : sc::state<WaitFirstCard, CardsPlayed>
-{
-    typedef boost::mpl::list<
-    sc::transition< EvAction, WaitHoleCard > > reactions;
-
-    WaitFirstCard(my_context ctx);
-    ~WaitFirstCard(void);
-};
-
 struct WaitHoleCard : sc::state<WaitHoleCard, CardsPlayed>
 {
+    typedef boost::mpl::list<
+    sc::custom_reaction< EvAction >
+    /*sc::transition< EvAction, WaitHoleCard >*/ > reactions;
 
     WaitHoleCard(my_context ctx);
     ~WaitHoleCard(void);
+
+    sc::result react(const EvAction& event);
 };
-//struct
+
+struct WaitLastCard : sc::state<WaitLastCard, CardsPlayed>
+{
+    typedef boost::mpl::list<
+    sc::custom_reaction< EvAction > > reactions;
+
+    WaitLastCard(my_context ctx);
+    ~WaitLastCard(void);
+
+    sc::result react(const EvAction& event);
+};
+
+struct WaitFlip : sc::state<WaitFlip, CardsPlayed>
+{
+    typedef boost::mpl::list<
+    sc::custom_reaction< EvAction > > reactions;
+
+    WaitFlip(my_context ctx);
+    ~WaitFlip(void);
+
+    sc::result react(const EvAction& event);
+};
 
 
 

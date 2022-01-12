@@ -1,13 +1,6 @@
 #include "PlayerState.h"
 #include "Player.h"
 
-void PlayerSM::playOneCard(const EvAction& event)
-{
-    _player.playCard();
-    _player.setEvalCard();
-    notifyEvent(Player::EV_PLAYER_WAIT_WINNER);
-}
-
 void PlayerSM::notifyEvent(Player::ObservableEvent event)
 {
     _player.notifyEvent(event);
@@ -18,6 +11,13 @@ void PlayerSM::resetRoundData(void)
     _player.resetRoundData();
 }
 
+// todo remove?
+//void PlayerSM::handleFirstCard(const EvAction& event)
+//{
+//    _player.
+//}
+
+
 Idle::Idle(my_context ctx)
     : my_base(ctx)
 {
@@ -27,6 +27,17 @@ Idle::Idle(my_context ctx)
 
 Idle::~Idle()
 {}
+
+sc::result Idle::react(const EvAction& event)
+{
+    auto& player = context<PlayerSM>()._player;
+    player.playCard();
+    player.setEvalCard();
+    player.notifyEvent(Player::EV_PLAYER_WAIT_WINNER);
+
+    return transit<WaitForWinner>();
+}
+
 
 Eliminated::Eliminated(my_context ctx)
     : my_base(ctx)
@@ -50,7 +61,6 @@ AcceptingCards::~AcceptingCards()
 
 sc::result AcceptingCards::react(const EvAction &event)
 {
-    context<PlayerSM>().
     context<PlayerSM>().notifyEvent(Player::EV_WINNER_REQ_CARDS);
 
     return discard_event();
@@ -75,20 +85,53 @@ WaitForWinner::WaitForWinner(my_context ctx)
 WaitForWinner::~WaitForWinner(void)
 {}
 
-WaitFirstCard::WaitFirstCard(my_context ctx)
-    : my_base(ctx)
-{
-    TEMP_LOG("WaitFirstCard state entered");
-}
-
-WaitFirstCard::~WaitFirstCard(void)
-{}
-
 WaitHoleCard::WaitHoleCard(my_context ctx)
     : my_base(ctx)
 {
     TEMP_LOG("WaitHoleCard state entered");
+    context<PlayerSM>().notifyEvent(Player::EV_PLAYER_ACTIVE);
 }
 
 WaitHoleCard::~WaitHoleCard(void)
 {}
+
+sc::result WaitHoleCard::react(const EvAction& event)
+{
+    auto& player = context<PlayerSM>()._player;
+    player.playCard();
+    player.setEvalCard();
+    return transit<WaitLastCard>();
+}
+
+
+WaitLastCard::WaitLastCard(my_context ctx)
+    : my_base(ctx)
+{
+    TEMP_LOG("WaitLastCard state entered");
+}
+
+WaitLastCard::~WaitLastCard(void)
+{}
+
+sc::result WaitLastCard::react(const EvAction& event)
+{
+    auto& player = context<PlayerSM>()._player;
+    player.playCard();
+    return transit<WaitFlip>();
+}
+
+WaitFlip::WaitFlip(my_context ctx)
+    : my_base(ctx)
+{
+    TEMP_LOG("WaitFlip state entered");
+}
+
+WaitFlip::~WaitFlip(void)
+{}
+
+sc::result WaitFlip::react(const EvAction& event)
+{
+    auto& player = context<PlayerSM>()._player;
+    player.playCard();
+    return transit<WaitFlip>();
+}

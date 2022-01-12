@@ -84,14 +84,19 @@ public:
         return (_name == rhs.name());
     }
 private:
-    friend class PlayerSM;
-
     void playCard(void);
     std::shared_ptr<Card> getNextCard(void);
     void setEvalCard(void);
     void resetRoundData(void);
     void movePlayedToCurrent();
     void notifyEvent(ObservableEvent event);
+
+private:
+    friend class PlayerSM;
+    friend class Idle;
+    friend class WaitHoleCard;
+    friend class WaitLastCard;
+    friend class WaitFlip;
 
     std::string         _name;
     Deck                _unplayedPile;

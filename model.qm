@@ -48,35 +48,27 @@
      </tran>
      <state name="WaitForWinner">
       <tran trig="TIE" target="../../4">
-       <tran_glyph conn="21,42,3,3,24">
+       <tran_glyph conn="21,42,3,3,29">
         <action box="0,-2,10,2"/>
        </tran_glyph>
       </tran>
       <state_glyph node="21,38,19,13"/>
      </state>
-     <state name="WaitFirstCard">
-      <tran trig="ACTION" target="../../5">
-       <tran_glyph conn="45,44,3,3,21">
-        <action box="0,-2,10,2"/>
-       </tran_glyph>
-      </tran>
-      <state_glyph node="45,39,16,12"/>
-     </state>
      <state name="WaitHoleCard">
-      <tran trig="ACTION" target="../../6">
-       <tran_glyph conn="66,43,3,3,22">
+      <tran trig="ACTION" target="../../5">
+       <tran_glyph conn="50,43,3,3,30">
         <action box="0,-2,10,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="66,39,17,12"/>
+      <state_glyph node="50,39,17,12"/>
      </state>
      <state name="WaitLastCard">
-      <tran trig="ACTION" target="../../7">
-       <tran_glyph conn="88,45,3,1,21,12,-37">
+      <tran trig="ACTION" target="../../6">
+       <tran_glyph conn="80,45,3,1,21,12,-29">
         <action box="0,-2,10,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="88,39,16,12"/>
+      <state_glyph node="80,39,16,12"/>
      </state>
      <state name="WaitFlip">
       <tran trig="ACTION" target="../../3">
@@ -92,7 +84,7 @@
      <entry brief="setTimeout"/>
      <tran trig="WINNER_REQ_CARDS">
       <action brief="send event to Round"/>
-      <tran_glyph conn="13,15,3,-1,29">
+      <tran_glyph conn="13,13,3,-1,20">
        <action box="0,-2,35,3"/>
       </tran_glyph>
      </tran>
