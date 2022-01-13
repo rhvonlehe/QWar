@@ -29,8 +29,8 @@ static std::map<Card::Value, char> valStr
     {Card::ACE,   'A'}
 };
 
-Card::Card(Suit suit, Value value)
-    : _suit(suit), _value(value)
+Card::Card(Suit suit, Value value, bool faceDown)
+    : _suit(suit), _value(value), _faceDown(faceDown)
 {
 
 }
@@ -44,8 +44,20 @@ std::string Card::str() const
 {
     std::string printable;
 
-    printable += valStr[_value];
-    printable += suitStr[_suit];
+    if (_faceDown)
+    {
+        printable += "XX";
+    }
+    else
+    {
+        printable += valStr[_value];
+        printable += suitStr[_suit];
+    }
 
     return printable;
+}
+
+void Card::flip(bool faceDown)
+{
+    _faceDown = faceDown;
 }

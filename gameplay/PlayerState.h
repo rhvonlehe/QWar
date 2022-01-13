@@ -152,6 +152,7 @@ struct WaitHoleCard : sc::state<WaitHoleCard, CardsPlayed>
 struct WaitLastCard : sc::state<WaitLastCard, CardsPlayed>
 {
     typedef boost::mpl::list<
+    sc::transition< EvOutOfCards, WaitFlip >,
     sc::custom_reaction< EvAction > > reactions;
 
     WaitLastCard(my_context ctx);

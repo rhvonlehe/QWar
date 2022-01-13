@@ -78,7 +78,7 @@ void Game::handlePlayerUpdate(std::shared_ptr<Player> player,
 {
     switch (event)
     {
-    case Player::EV_PLAYER_WAIT_WINNER:
+    case Player::EV_PLAYER_WAITING:
         _round->playerWaiting(player);
         break;
     case Player::EV_WINNER_REQ_CARDS:

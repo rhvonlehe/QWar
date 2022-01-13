@@ -22,15 +22,13 @@ public:
     };
     enum ObservableEvent
     {
-        EV_PLAYER_WAIT_WINNER,
-        EV_PLAYER_WAIT_FLIP,
+        EV_PLAYER_WAITING,
         EV_PLAYER_ACTIVE,
         EV_WINNER_REQ_CARDS,
         EV_CARD_PLAYED,
+        EV_CARD_FLIPPED,
         EV_CARDS_CHANGED,
         EV_WINNER,
-        EV_LOSER,
-        EV_TIE
     };
 
     Player(void) = delete;
@@ -52,7 +50,7 @@ public:
         return _activeRoundCards.back();
     }
 
-    std::vector<std::shared_ptr<Card>> giveUpActiveRoundCards(void)
+    std::vector<std::shared_ptr<Card>> getActiveRoundCards(void)
     {
         return _activeRoundCards;
     }
@@ -84,7 +82,8 @@ public:
         return (_name == rhs.name());
     }
 private:
-    void playCard(void);
+    void playCard(bool faceDown = false);
+    void flipCard(void);
     std::shared_ptr<Card> getNextCard(void);
     void setEvalCard(void);
     void resetRoundData(void);
@@ -97,6 +96,7 @@ private:
     friend class WaitHoleCard;
     friend class WaitLastCard;
     friend class WaitFlip;
+    friend class WaitForWinner;
 
     std::string         _name;
     Deck                _unplayedPile;

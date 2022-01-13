@@ -68,6 +68,7 @@ void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
     // player count
     if (++_playersWaiting == _players.size())
     {
+        std::cout << _playersWaiting <<" players waiting" << std::endl;
         evaluate();
     }
 }
@@ -82,6 +83,8 @@ void Round::evaluate(void)
     // Winner(s) remain in _players vector
     if (_players.size() > 1)
     {
+        _playersWaiting = 0;
+
         for (auto winner : _players)
         {
             winner->tie();
@@ -89,6 +92,7 @@ void Round::evaluate(void)
     }
     else // exactly 1 winner
     {
+        printf("one winner found");
         auto winner = _players.front();
 
         _scheduler.queue_event(_processor,

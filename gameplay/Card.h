@@ -31,7 +31,7 @@ public:
     };
 
     Card() = default;
-    Card(Suit suit, Value value);
+    Card(Suit suit, Value value, bool faceDown = false);
 
     inline Suit suit(void) const
     {
@@ -62,10 +62,11 @@ public:
 
     std::string str(void) const;
 
-
+    void flip(bool faceDown);
 private:
 
     Suit  _suit;
     Value _value;
+    bool  _faceDown;
 };
 

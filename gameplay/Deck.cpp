@@ -8,10 +8,10 @@ const std::array<Card::Suit, 4> cardSuits
     Card::SPADES, Card::CLUBS, Card::DIAMONDS, Card::HEARTS
 };
 
-const std::array<Card::Value, 13> cardValues
+const std::array<Card::Value, 5 /*13*/> cardValues
 {
-    Card::TWO, Card::THREE, Card::FOUR, Card::FIVE, Card::SIX, Card::SEVEN,
-            Card::EIGHT, Card::NINE, Card::TEN, Card::JACK, Card::QUEEN,
+ /*   Card::TWO, Card::THREE, Card::FOUR, Card::FIVE, Card::SIX, Card::SEVEN,
+            Card::EIGHT, Card::NINE, */Card::TEN, Card::JACK, Card::QUEEN,
             Card::KING, Card::ACE
 };
 

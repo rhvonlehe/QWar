@@ -28,7 +28,6 @@ public:
     uint8_t getUnplayedCardCnt(void) const;
     uint8_t getPlayedCardCnt(void) const;
     QString getPlayedCards(void);
-    void update(Player::ObservableEvent event);
 
 signals:
     void nameChanged(QString);
@@ -39,8 +38,12 @@ signals:
     void playedCardCntChanged(quint8);
     void playedCardsChanged(QString);
 
+private:
+    void updateCardsPlayed(void);
+    void update(Player::ObservableEvent event);
 
 private:
+
     std::shared_ptr<Player> _player;
     bool                    _active;
     bool                    _identifyWinner;

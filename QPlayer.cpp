@@ -58,11 +58,23 @@ QString QPlayer::getPlayedCards(void)
     return _cardsPlayed;
 }
 
+void QPlayer::updateCardsPlayed(void)
+{
+    _cardsPlayed.clear();
+    auto cards = _player->getActiveRoundCards();
+    for (auto& card : cards)
+    {
+        auto cardStr = QString::fromStdString(card->str());
+        _cardsPlayed.append(cardStr).append(" ");
+    }
+    emit playedCardsChanged(_cardsPlayed);
+}
+
 void QPlayer::update(Player::ObservableEvent event)
 {
     switch (event)
     {
-    case Player::EV_PLAYER_WAIT_WINNER:
+    case Player::EV_PLAYER_WAITING:
         _active = false;
         emit activeChanged(_active);
         break;
@@ -72,29 +84,28 @@ void QPlayer::update(Player::ObservableEvent event)
         break;
     case Player::EV_CARD_PLAYED:
         {
-            auto cardStr = QString::fromStdString(_player->lastCardPlayed()->str());
-            _cardsPlayed.append(cardStr).append(" ");
-            emit playedCardsChanged(_cardsPlayed);
+            updateCardsPlayed();
         }
         break;
     case Player::EV_CARDS_CHANGED:
         emit unplayedCardCntChanged(getUnplayedCardCnt());
         emit playedCardCntChanged(getPlayedCardCnt());
+        updateCardsPlayed();
         break;
     case Player::EV_WINNER:
         _identifyWinner = true;
         emit winnerChanged(_identifyWinner);
         emit buttonTextChanged(getButtonText());
         break;
-    case Player::EV_PLAYER_WAIT_FLIP:
-        // TODO
+    case Player::EV_CARD_FLIPPED:
+        emit playedCardsChanged(_cardsPlayed);
         break;
     case Player::EV_WINNER_REQ_CARDS:
         _identifyWinner = false;
         emit winnerChanged(_identifyWinner);
         emit buttonTextChanged(getButtonText());
+        break;
     default:
         break;
     }
-
 }
