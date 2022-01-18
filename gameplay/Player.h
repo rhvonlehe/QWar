@@ -82,7 +82,7 @@ public:
         return (_name == rhs.name());
     }
 private:
-    void playCard(bool faceDown = false);
+    bool playCard(bool faceDown = false);
     void flipCard(void);
     std::shared_ptr<Card> getNextCard(void);
     void setEvalCard(void);

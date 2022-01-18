@@ -42,17 +42,21 @@ void Player::action(void)
                            boost::intrusive_ptr<EvAction>(new EvAction()));
 }
 
-void Player::playCard(bool faceDown)
+bool Player::playCard(bool faceDown)
 {
+    bool retVal = false;
     auto card = getNextCard();
 
     if (nullptr != card)
     {
+        retVal = true;
         card->flip(faceDown);
         _activeRoundCards.push_back(card);
         notifyEvent(EV_CARD_PLAYED);
         notifyEvent(EV_CARDS_CHANGED);
     }
+
+    return retVal;
 }
 
 void Player::flipCard(void)
@@ -94,12 +98,8 @@ void Player::addObserverCallback(const std::function<void (Player::ObservableEve
 
 std::shared_ptr<Card> Player::getNextCard()
 {
-    if (outOfCards())
-    {
-        _scheduler.queue_event(_processor,
-                               boost::intrusive_ptr<EvOutOfCards>(new EvOutOfCards()));
-        return nullptr;
-    }
+    assert(!outOfCards());
+
     // Shuffle played deck and make it current deck if needed
     //
     if (_unplayedPile.isEmpty())
@@ -111,7 +111,17 @@ std::shared_ptr<Card> Player::getNextCard()
         }
     }
 
-    return _unplayedPile.nextCard();
+    // This call decrements the pile
+    auto nextCard = _unplayedPile.nextCard();
+
+    // Check for out of cards situation to queue event to next state
+    if (outOfCards())
+    {
+        _scheduler.queue_event(_processor,
+                               boost::intrusive_ptr<EvOutOfCards>(new EvOutOfCards()));
+    }
+
+    return nextCard;
 }
 
 void Player::setEvalCard(void)

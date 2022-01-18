@@ -19,6 +19,7 @@ target_sources(gameplay
     Round.cpp
     RoundState.cpp
     Game.cpp
+    TimerService.cpp
     )
 
 target_compile_definitions(gameplay PUBLIC BOOST_BIND_GLOBAL_PLACEHOLDERS)

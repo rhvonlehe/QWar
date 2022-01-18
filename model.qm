@@ -13,13 +13,19 @@
      <entry brief="resetRoundDAta, notifyActive"/>
      <tran trig="ACTION" target="../../3/3">
       <action brief="playOneCard"/>
-      <tran_glyph conn="57,21,3,3,28,5,-76,16,12">
+      <tran_glyph conn="57,22,3,3,28,4,-76,17,15">
        <action box="0,-2,16,2"/>
       </tran_glyph>
      </tran>
      <tran trig="OUT_OF_CARDS" target="../../2">
-      <tran_glyph conn="57,18,3,3,32">
+      <tran_glyph conn="57,17,3,3,32">
        <action box="0,-2,15,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="TIMEOUT">
+      <action brief="postAction"/>
+      <tran_glyph conn="57,19,3,-1,20">
+       <action box="0,-2,18,2"/>
       </tran_glyph>
      </tran>
      <state_glyph node="57,10,26,14">
@@ -31,54 +37,83 @@
     </state>
     <state name="CARDS_PLAYED">
      <tran trig="WINNER" target="../../4">
-      <tran_glyph conn="14,37,3,3,105,-33,-110,13,4">
+      <tran_glyph conn="17,38,3,3,105,-33,-110,12,1">
        <action box="0,-2,22,2"/>
       </tran_glyph>
      </tran>
      <tran trig="LOSER" target="../../1">
       <action brief="giveUpCards"/>
-      <tran_glyph conn="14,34,3,3,103,-28,-68,7,8">
+      <tran_glyph conn="17,35,3,3,103,-28,-68,6,5">
        <action box="0,-2,18,2"/>
       </tran_glyph>
      </tran>
      <tran trig="OUT_OF_CARDS" target="../../2">
-      <tran_glyph conn="14,32,3,1,100,-17,-8">
+      <tran_glyph conn="17,33,3,1,100,-18,-11">
        <action box="0,-2,16,2"/>
       </tran_glyph>
      </tran>
      <state name="WaitForWinner">
+      <entry brief="set Waiting"/>
       <tran trig="TIE" target="../../4">
-       <tran_glyph conn="21,42,3,3,29">
+       <tran_glyph conn="24,45,3,3,29">
         <action box="0,-2,10,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="21,38,19,13"/>
+      <state_glyph node="24,39,19,13">
+       <entry box="1,2,12,2"/>
+      </state_glyph>
      </state>
      <state name="WaitHoleCard">
       <tran trig="ACTION" target="../../5">
-       <tran_glyph conn="50,43,3,3,30">
-        <action box="0,-2,10,2"/>
+       <action brief="playCard (down)"/>
+       <tran_glyph conn="53,44,3,3,28">
+        <action box="0,-2,20,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="50,39,17,12"/>
+      <tran trig="TIMEOUT">
+       <action brief="postAction"/>
+       <tran_glyph conn="53,48,3,-1,13">
+        <action box="0,-2,19,2"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="53,40,20,12"/>
      </state>
      <state name="WaitLastCard">
       <tran trig="ACTION" target="../../6">
-       <tran_glyph conn="80,45,3,1,21,12,-29">
-        <action box="0,-2,10,2"/>
+       <action brief="playCard"/>
+       <tran_glyph conn="81,46,3,1,28,9,-59">
+        <action box="0,-2,22,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="80,39,16,12"/>
+      <tran trig="OUT_OF_CARDS" target="../../6">
+       <tran_glyph conn="81,44,3,1,29,13,-60">
+        <action box="0,-2,17,2"/>
+       </tran_glyph>
+      </tran>
+      <tran trig="TIMEOUT">
+       <action brief="postAction"/>
+       <tran_glyph conn="81,49,3,-1,20">
+        <action box="0,-2,20,2"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="81,40,26,12"/>
      </state>
      <state name="WaitFlip">
       <tran trig="ACTION" target="../../3">
-       <tran_glyph conn="50,59,3,3,26,6,-57,-20,2">
-        <action box="0,-2,10,2"/>
+       <action brief="flipCard"/>
+       <tran_glyph conn="28,58,3,3,26,6,-33,-13,3">
+        <action box="0,-2,19,2"/>
        </tran_glyph>
       </tran>
-      <state_glyph node="50,54,22,10"/>
+      <tran trig="TIMEOUT">
+       <action brief="postAction"/>
+       <tran_glyph conn="28,60,3,-1,17">
+        <action box="0,-2,17,2"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="28,53,22,10"/>
      </state>
-     <state_glyph node="14,28,97,40"/>
+     <state_glyph node="17,29,97,40"/>
     </state>
     <state name="AcceptingCards">
      <entry brief="setTimeout"/>
@@ -91,6 +126,12 @@
      <tran trig="ACCEPT_CARDS" target="../../1">
       <tran_glyph conn="13,18,3,3,44">
        <action box="0,-2,18,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="TIMEOUT">
+      <action brief="postAccept"/>
+      <tran_glyph conn="13,15,3,-1,20">
+       <action box="0,-2,19,2"/>
       </tran_glyph>
      </tran>
      <state_glyph node="13,7,33,15">

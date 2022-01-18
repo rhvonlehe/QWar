@@ -118,8 +118,12 @@ WaitLastCard::~WaitLastCard(void)
 sc::result WaitLastCard::react(const EvAction& event)
 {
     auto& player = context<PlayerSM>()._player;
-    player.playCard();
-    return transit<WaitFlip>();
+    auto cardFound = player.playCard();
+    if (cardFound)
+    {
+        return transit<WaitFlip>();
+    }
+    return discard_event();
 }
 
 WaitFlip::WaitFlip(my_context ctx)
