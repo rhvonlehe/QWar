@@ -19,6 +19,7 @@ Player::Player(const std::string name)
         _scheduler();
     } );
 
+    // TODO 'work' so run doesn't complete until destructor
     _asioThread = std::thread( [&]() {
         std::cout << "starting player asio thread" << std::endl;
         _io.run();
@@ -29,6 +30,8 @@ Player::~Player(void)
 {
     _scheduler.terminate();
     _processorThread.join();
+
+    // todo work stop
 }
 
 void Player::reset(void)
@@ -188,4 +191,11 @@ void Player::startTimer(const boost::posix_time::milliseconds ms)
                                boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
     });
 }
+
+void Player::cancelTimer(void)
+{
+    // todo
+}
+
+
 
