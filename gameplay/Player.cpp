@@ -7,24 +7,28 @@ Player::Player(const std::string name)
     : _name(name),
       _scheduler(true)
 {
+    // NOTE: It might be a better idea to have 2-stage initialization of Player
+    // and start the thread during the 2nd stage outside of the construction.
+
     // Set up event processor
     _processor = _scheduler.create_processor<PlayerSM>(std::ref(*this));
     _scheduler.initiate_processor(_processor);
 
-    _processorThread =
-            std::make_unique<std::thread>(
-                [&]()
-    {
+    _processorThread = std::thread( [&]() {
         std::cout << "starting player SM thread" << std::endl;
         _scheduler();
-    }
-    );
+    } );
+
+    _asioThread = std::thread( [&]() {
+        std::cout << "starting player asio thread" << std::endl;
+        _io.run();
+    });
 }
 
 Player::~Player(void)
 {
     _scheduler.terminate();
-    _processorThread->join();
+    _processorThread.join();
 }
 
 void Player::reset(void)
@@ -157,7 +161,7 @@ void Player::acceptRoundCards(const Pile pile, const std::vector<std::shared_ptr
 void Player::acceptDealtCard(const Pile pile, const std::shared_ptr<Card> card)
 {
     PILE_UNPLAYED == pile ? _unplayedPile.addBack(card) :
-                      _playedPile.addBack(card);
+                            _playedPile.addBack(card);
 
     notifyEvent(EV_CARDS_CHANGED);
 }
@@ -175,3 +179,13 @@ void Player::notifyEvent(ObservableEvent event)
     std::for_each(_observerFuncs.begin(), _observerFuncs.end(),
                   [event](std::function<void(ObservableEvent)> f) { f(event); });
 }
+
+void Player::startTimer(const boost::posix_time::milliseconds ms)
+{
+    _timer = std::make_unique<boost::asio::deadline_timer>(_io, ms);
+    _timer->async_wait([&](const boost::system::error_code&) {
+        _scheduler.queue_event(_processor,
+                               boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
+    });
+}
+

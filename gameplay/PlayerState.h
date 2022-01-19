@@ -23,6 +23,7 @@ struct EvLost;
 struct EvAction;
 struct EvAcceptCards;
 struct EvReset;
+struct EvTimeout;
 
 // Player states
 //
@@ -86,6 +87,11 @@ struct EvReset      : sc::event < EvReset >
     EvReset(void) { TEMP_LOG("EvReset event"); }
 };
 
+struct EvTimeout    : sc::event < EvTimeout >
+{
+    EvTimeout(void) { TEMP_LOG("EvTimeout event"); }
+};
+
 // More definition for states
 //
 struct Idle : sc::state<Idle, PlayerSM>
@@ -109,12 +115,14 @@ struct AcceptingCards: sc::state<AcceptingCards, PlayerSM>
 {
     typedef boost::mpl::list<
     sc::custom_reaction< EvAction>,
+    sc::custom_reaction< EvTimeout>,
     sc::transition< EvAcceptCards, Idle> > reactions;
 
     AcceptingCards(my_context ctx);
     ~AcceptingCards(void);
 
     sc::result react(const EvAction& event);
+    sc::result react(const EvTimeout& event);
 };
 
 struct CardsPlayed : sc::state<CardsPlayed, PlayerSM, WaitForWinner>

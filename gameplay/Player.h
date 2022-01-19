@@ -3,6 +3,8 @@
 #include <Deck.h>
 #include <Card.h>
 #include <boost/statechart/asynchronous_state_machine.hpp>
+#include <boost/asio.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
 #include <vector>
 #include <memory>
@@ -89,6 +91,8 @@ private:
     void resetRoundData(void);
     void movePlayedToCurrent();
     void notifyEvent(ObservableEvent event);
+    void startTimer(const boost::posix_time::milliseconds ms);
+    void cancelTimer(void);
 
 private:
     friend class PlayerSM;
@@ -112,6 +116,11 @@ private:
     using FifoScheduler = boost::statechart::fifo_scheduler<>;
     FifoScheduler                   _scheduler;
     FifoScheduler::processor_handle _processor;
-    std::unique_ptr<std::thread>    _processorThread;
+    std::thread                     _processorThread;
+
+    // Asio stuff
+    std::unique_ptr<boost::asio::deadline_timer>    _timer;
+    boost::asio::io_context                         _io;
+    std::thread                                     _asioThread;
 };
 

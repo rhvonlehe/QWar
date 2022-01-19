@@ -117,7 +117,7 @@
     </state>
     <state name="AcceptingCards">
      <entry brief="setTimeout"/>
-     <tran trig="WINNER_REQ_CARDS">
+     <tran trig="ACTION">
       <action brief="send event to Round"/>
       <tran_glyph conn="13,13,3,-1,20">
        <action box="0,-2,35,3"/>
@@ -129,7 +129,7 @@
       </tran_glyph>
      </tran>
      <tran trig="TIMEOUT">
-      <action brief="postAccept"/>
+      <action brief="postAction"/>
       <tran_glyph conn="13,15,3,-1,20">
        <action box="0,-2,19,2"/>
       </tran_glyph>

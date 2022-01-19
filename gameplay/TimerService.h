@@ -4,6 +4,13 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <functional>
 
+
+// The design of this is such that it would be shared among many users.  This way
+// only one thread needs to be started to handle the io_context::run and it can
+// scale up to handle many timers.
+// TODO: does this even make sense?  For a small system this is fine, but it won't truly
+// scale up because every startTimer and timeout and cancel would require a lock on the vector.
+//
 class TimerService
 {
     struct TimerContext

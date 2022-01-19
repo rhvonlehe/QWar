@@ -51,6 +51,7 @@ Eliminated::~Eliminated()
 AcceptingCards::AcceptingCards(my_context ctx)
     : my_base(ctx)
 {
+
     context<PlayerSM>().notifyEvent(Player::EV_WINNER);
     context<PlayerSM>().notifyEvent(Player::EV_PLAYER_ACTIVE);
     TEMP_LOG("AcceptingCards state entered");
@@ -62,6 +63,13 @@ AcceptingCards::~AcceptingCards()
 sc::result AcceptingCards::react(const EvAction &event)
 {
     context<PlayerSM>().notifyEvent(Player::EV_WINNER_REQ_CARDS);
+
+    return discard_event();
+}
+
+sc::result AcceptingCards::react(const EvTimeout& event)
+{
+    post_event(EvAction());
 
     return discard_event();
 }
