@@ -5,7 +5,8 @@
 
 Player::Player(const std::string name)
     : _name(name),
-      _scheduler(true)
+      _scheduler(true),
+      _work(ba::make_work_guard(_io))
 {
     // NOTE: It might be a better idea to have 2-stage initialization of Player
     // and start the thread during the 2nd stage outside of the construction.
@@ -19,7 +20,6 @@ Player::Player(const std::string name)
         _scheduler();
     } );
 
-    // TODO 'work' so run doesn't complete until destructor
     _asioThread = std::thread( [&]() {
         std::cout << "starting player asio thread" << std::endl;
         _io.run();
@@ -30,6 +30,7 @@ Player::~Player(void)
 {
     _scheduler.terminate();
     _processorThread.join();
+    _work.reset();
 
     // todo work stop
 }
@@ -144,7 +145,6 @@ void Player::resetRoundData(void)
     notifyEvent(EV_PLAYER_ACTIVE);
 }
 
-// TODO: consider passing the pile,cards in the event
 void Player::acceptRoundCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
 {
     fflush(stdout);
@@ -185,7 +185,7 @@ void Player::notifyEvent(ObservableEvent event)
 
 void Player::startTimer(const boost::posix_time::milliseconds ms)
 {
-    _timer = std::make_unique<boost::asio::deadline_timer>(_io, ms);
+    _timer = std::make_unique<ba::deadline_timer>(_io, ms);
     _timer->async_wait([&](const boost::system::error_code&) {
         _scheduler.queue_event(_processor,
                                boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
@@ -194,6 +194,7 @@ void Player::startTimer(const boost::posix_time::milliseconds ms)
 
 void Player::cancelTimer(void)
 {
+
     // todo
 }
 

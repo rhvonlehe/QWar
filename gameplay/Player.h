@@ -12,6 +12,8 @@
 #include <map>
 #include <functional>
 
+namespace ba = boost::asio;
+
 class PlayerSM;
 
 class Player
@@ -119,8 +121,9 @@ private:
     std::thread                     _processorThread;
 
     // Asio stuff
-    std::unique_ptr<boost::asio::deadline_timer>    _timer;
-    boost::asio::io_context                         _io;
-    std::thread                                     _asioThread;
+    ba::executor_work_guard<ba::io_context::executor_type>  _work;
+    std::unique_ptr<ba::deadline_timer>                     _timer;
+    ba::io_context                                          _io;
+    std::thread                                             _asioThread;
 };
 
