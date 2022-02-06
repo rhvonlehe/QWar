@@ -5,8 +5,8 @@
 
 Player::Player(const std::string name)
     : _name(name),
-      _scheduler(true),
-      _work(ba::make_work_guard(_io))
+      _scheduler(true)
+//      _work(ba::make_work_guard(_io))
 {
     // NOTE: It might be a better idea to have 2-stage initialization of Player
     // and start the thread during the 2nd stage outside of the construction.
@@ -21,6 +21,7 @@ Player::Player(const std::string name)
     } );
 
     _asioThread = std::thread( [&]() {
+        _work = std::make_unique<ba::executor_work_guard<ba::io_context::executor_type>>(ba::make_work_guard(_io));
         std::cout << "starting player asio thread" << std::endl;
         _io.run();
     });
@@ -30,9 +31,10 @@ Player::~Player(void)
 {
     _scheduler.terminate();
     _processorThread.join();
-    _work.reset();
-
+    _work->reset();
+    _asioThread.join();
     // todo work stop
+//    _work.reset();
 }
 
 void Player::reset(void)

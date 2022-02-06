@@ -103,6 +103,7 @@ private:
     friend class WaitLastCard;
     friend class WaitFlip;
     friend class WaitForWinner;
+    friend class AcceptingCards;
 
     std::string         _name;
     Deck                _unplayedPile;
@@ -121,7 +122,7 @@ private:
     std::thread                     _processorThread;
 
     // Asio stuff
-    ba::executor_work_guard<ba::io_context::executor_type>  _work;
+    std::unique_ptr<ba::executor_work_guard<ba::io_context::executor_type>>  _work;
     std::unique_ptr<ba::deadline_timer>                     _timer;
     ba::io_context                                          _io;
     std::thread                                             _asioThread;

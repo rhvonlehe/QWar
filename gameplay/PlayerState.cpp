@@ -11,13 +11,6 @@ void PlayerSM::resetRoundData(void)
     _player.resetRoundData();
 }
 
-// todo remove?
-//void PlayerSM::handleFirstCard(const EvAction& event)
-//{
-//    _player.
-//}
-
-
 Idle::Idle(my_context ctx)
     : my_base(ctx)
 {
@@ -51,9 +44,11 @@ Eliminated::~Eliminated()
 AcceptingCards::AcceptingCards(my_context ctx)
     : my_base(ctx)
 {
-
-    context<PlayerSM>().notifyEvent(Player::EV_WINNER);
-    context<PlayerSM>().notifyEvent(Player::EV_PLAYER_ACTIVE);
+    auto& player = context<PlayerSM>()._player;
+    player.cancelTimer();
+    player.startTimer(boost::posix_time::milliseconds(500));
+    player.notifyEvent(Player::EV_WINNER);
+    player.notifyEvent(Player::EV_PLAYER_ACTIVE);
     TEMP_LOG("AcceptingCards state entered");
 }
 

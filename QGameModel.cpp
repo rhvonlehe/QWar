@@ -44,6 +44,10 @@ void QGameModel::deal(void)
 void QGameModel::reset(void)
 {
     std::cout << "Resetting gameModel" << std::endl;
+    for (auto player : _players)
+    {
+        delete player;
+    }
     _players.clear();
     _game = nullptr;
     _roundNumber = 0;
