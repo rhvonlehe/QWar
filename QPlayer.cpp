@@ -1,6 +1,6 @@
 #include "QPlayer.h"
 
-QPlayer::QPlayer(std::shared_ptr<Player> player, QObject *parent)
+QPlayer::QPlayer(Player* const player, QObject *parent)
     : QObject(parent),
       _player(player),
       _identifyWinner(false)

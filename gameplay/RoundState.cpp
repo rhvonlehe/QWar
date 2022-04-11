@@ -13,7 +13,7 @@ RoundSM::RoundSM(my_context ctx, Round& round)
     assert(_round._players.size());
 }
 
-void RoundSM::handlePlayerWaiting(std::shared_ptr<Player> player)
+void RoundSM::handlePlayerWaiting(Player* player)
 {
     assert(_round._players.size());
 
@@ -27,7 +27,7 @@ void RoundSM::initializeRound(void)
     _round.initializeRound();
 }
 
-void RoundSM::distributeCards(std::shared_ptr<Player> player)
+void RoundSM::distributeCards(Player* player)
 {
     assert(_round._players.size());
 
@@ -35,7 +35,7 @@ void RoundSM::distributeCards(std::shared_ptr<Player> player)
     _round.cullPlayerList();
 }
 
-EvWinner::EvWinner(std::shared_ptr<Player> player)
+EvWinner::EvWinner(Player *player)
     : player(player)
 {
     TEMP_LOG("EvWinner event");

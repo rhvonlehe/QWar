@@ -44,8 +44,8 @@ Item {
                     Layout.preferredWidth: 80
                     text: "End Game"
                     onClicked: {
-                        gameModel.reset()
                         gamePlay.endGame()
+                        gameModel.reset()
                     }
                 }
 

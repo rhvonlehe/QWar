@@ -10,13 +10,14 @@
 class Game
 {
 public:
-    Game(std::vector<std::shared_ptr<Player>>& players);
-
+    Game(std::vector<std::string>& playerNames);
 #if 0
     void autoPlay();
 #endif
 
-    std::vector<std::shared_ptr<Player>>& players(void) {return _activePlayers; }
+    Player& getPlayer(const std::string name);
+
+//    std::vector<Player>& players(void) {return _activePlayers; } // todo reimplement or remove
 
     bool isOver(void) const
     {
@@ -28,15 +29,16 @@ public:
 
     void handleRoundComplete(void);
 
-    void handlePlayerUpdate(std::shared_ptr<Player> player,
+    void handlePlayerUpdate(Player *player,
                             Player::ObservableEvent event);
 
 private:
 
-    std::vector<std::shared_ptr<Player>>    _activePlayers;
-    std::vector<std::shared_ptr<Player>>    _allPlayers;
-    std::unique_ptr<Deck>                   _deck;
-    std::unique_ptr<Round>                  _round;
-    uint32_t                                _roundNumber;
+//    std::vector<std::unique_ptr<Player>>    _allPlayers;
+    std::vector<Player*>                            _activePlayers;
+    std::map<std::string, std::unique_ptr<Player>>  _allPlayers;
+    std::unique_ptr<Deck>                           _deck;
+    std::unique_ptr<Round>                          _round;
+    uint32_t                                        _roundNumber;
 };
 

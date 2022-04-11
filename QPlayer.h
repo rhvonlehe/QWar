@@ -7,7 +7,7 @@ class QPlayer : public QObject
 {
     Q_OBJECT
 public:
-    explicit QPlayer(std::shared_ptr<Player> player, QObject *parent = nullptr);
+    explicit QPlayer(Player * const player, QObject *parent = nullptr);
     ~QPlayer(void) = default;
 
     Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged);
@@ -44,7 +44,7 @@ private:
 
 private:
 
-    std::shared_ptr<Player> _player;
+    Player*                 _player;
     bool                    _active;
     bool                    _identifyWinner;
     QString                 _cardsPlayed; // will change later to look better

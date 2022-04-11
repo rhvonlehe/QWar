@@ -119,12 +119,12 @@ private:
     using FifoScheduler = boost::statechart::fifo_scheduler<>;
     FifoScheduler                   _scheduler;
     FifoScheduler::processor_handle _processor;
-    std::thread                     _processorThread;
+    std::thread                     _stateThread;
 
     // Asio stuff
     std::unique_ptr<ba::executor_work_guard<ba::io_context::executor_type>>  _work;
     std::unique_ptr<ba::deadline_timer>                     _timer;
     ba::io_context                                          _io;
-    std::thread                                             _asioThread;
+    std::thread                                             _ioCtxThread;
 };
 

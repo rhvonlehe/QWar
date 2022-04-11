@@ -24,7 +24,7 @@ struct
 } greaterWarHand;
 #endif
 
-Round::Round(std::vector<std::shared_ptr<Player> >& players,
+Round::Round(std::vector<Player *>& players,
              const std::function<void ()> callback)
     : _players(players),
       _observerFunc(callback),
@@ -50,19 +50,19 @@ Round::~Round(void)
     _processorThread->join();
 }
 
-void Round::playerWaiting(std::shared_ptr<Player> player)
+void Round::playerWaiting(Player* player)
 {
     _scheduler.queue_event(_processor,
                            boost::intrusive_ptr<EvPlayerWaiting>(new EvPlayerWaiting(player)));
 }
 
-void Round::winnerReqCards(std::shared_ptr<Player> player)
+void Round::winnerReqCards(Player* player)
 {
     _scheduler.queue_event(_processor,
                            boost::intrusive_ptr<EvDistributeCards>(new EvDistributeCards(player)));
 }
 
-void Round::handlePlayerWaiting(std::shared_ptr<Player> player)
+void Round::handlePlayerWaiting(Player* player)
 {
     // Guaranteed that each player only does this once, so just count up to the total
     // player count
@@ -105,14 +105,14 @@ void Round::findWinner(void)
     // max_element should be more efficient than doing a full sort
     auto maxIt = std::max_element(_players.begin(),
                                   _players.end(),
-                                  [](std::shared_ptr<Player> p1, std::shared_ptr<Player> p2)
+                                  [](Player* p1, Player* p2)
     { return (*p1->evalCard() < *p2->evalCard()); } );
 
     auto highestValue = *(*maxIt)->evalCard();
 
     auto backHalfIt = std::stable_partition(_players.begin(),
                                             _players.end(),
-                                            [highestValue](std::shared_ptr<Player> p)
+                                            [highestValue](Player* p)
     { return (highestValue == *p->evalCard()); } );
 
     _losers.insert(_losers.end(), backHalfIt, _players.end());
@@ -123,7 +123,7 @@ void Round::cullPlayerList(void)
 {
     _players.erase(std::remove_if(
                              _players.begin(), _players.end(),
-                             [](const std::shared_ptr<Player>& p)
+                             [](const Player* p)
     {
         return p->outOfCards();
     }), _players.end());
@@ -138,7 +138,7 @@ void Round::initializeRound(void)
     _losers.clear();
 }
 
-void Round::distributeCards(std::shared_ptr<Player> winner)
+void Round::distributeCards(Player* winner)
 {
     std::vector<std::shared_ptr<Card>> allLoserCards;
 

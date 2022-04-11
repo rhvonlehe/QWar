@@ -5,20 +5,54 @@
 #include <functional>
 #include <iostream>
 
-Game::Game(std::vector<std::shared_ptr<Player>>& players)
-    : _activePlayers(players),
-      _allPlayers(players),
+#if 0
+Game::Game(std::vector<std::unique_ptr<Player> >& players)
+    : _allPlayers(std::move(players)),
       _roundNumber(0)
 {
-    _round = std::make_unique<Round>(_allPlayers, [&]() { handleRoundComplete(); }); // TODO make use of this
+    // Create a vector of pointers to player to give to the round
+    std::vector<Player*> roundPlayers;
+    for (auto& player : _allPlayers)
+    {
+        roundPlayers.push_back(player.get());
+        _activePlayers.push_back(player.get());
+    }
+
+    _round = std::make_unique<Round>(roundPlayers, [&]() { handleRoundComplete(); }); // TODO make use of this
 
     for (auto& player : _allPlayers)
     {
         player->addObserverCallback([&](Player::ObservableEvent event) {
-            handlePlayerUpdate(player, event);
+            handlePlayerUpdate(player.get(), event);
         } );
     }
 }
+#endif
+
+Game::Game(std::vector<std::string>& playerNames)
+{
+    std::vector<Player*> roundPlayers;
+
+    for_each(playerNames.begin(), playerNames.end(),
+             [&](std::string name) {
+        _allPlayers[name] = std::make_unique<Player>(name);
+        Player* player = _allPlayers[name].get();
+        _activePlayers.push_back(player);
+        roundPlayers.push_back(player);
+
+        player->addObserverCallback([&, player](Player::ObservableEvent event) {
+            handlePlayerUpdate(player, event);
+        } );
+    });
+
+    _round = std::make_unique<Round>(roundPlayers, [&]() { handleRoundComplete(); }); // TODO make use of this
+}
+
+Player& Game::getPlayer(const std::string name)
+{
+    return *_allPlayers[name];
+}
+
 
 #if 0 // todo
 // For test purposes - todo update with latest changes that better support view support
@@ -53,7 +87,7 @@ void Game::deal()
 
     // Also make sure no player is holding any cards
     std::for_each(_activePlayers.begin(), _activePlayers.end(),
-                  [](std::shared_ptr<Player> player) { player->reset(); } );
+                  [](Player* player) { player->reset(); } );
 
     while (!_deck->isEmpty())
     {
@@ -73,7 +107,7 @@ void Game::handleRoundComplete(void)
 {
 }
 
-void Game::handlePlayerUpdate(std::shared_ptr<Player> player,
+void Game::handlePlayerUpdate(Player* player,
                               Player::ObservableEvent event)
 {
     switch (event)

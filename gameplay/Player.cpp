@@ -6,7 +6,6 @@
 Player::Player(const std::string name)
     : _name(name),
       _scheduler(true)
-//      _work(ba::make_work_guard(_io))
 {
     // NOTE: It might be a better idea to have 2-stage initialization of Player
     // and start the thread during the 2nd stage outside of the construction.
@@ -15,12 +14,12 @@ Player::Player(const std::string name)
     _processor = _scheduler.create_processor<PlayerSM>(std::ref(*this));
     _scheduler.initiate_processor(_processor);
 
-    _processorThread = std::thread( [&]() {
+    _stateThread = std::thread( [&]() {
         std::cout << "starting player SM thread" << std::endl;
         _scheduler();
     } );
 
-    _asioThread = std::thread( [&]() {
+    _ioCtxThread = std::thread( [&]() {
         _work = std::make_unique<ba::executor_work_guard<ba::io_context::executor_type>>(ba::make_work_guard(_io));
         std::cout << "starting player asio thread" << std::endl;
         _io.run();
@@ -30,11 +29,9 @@ Player::Player(const std::string name)
 Player::~Player(void)
 {
     _scheduler.terminate();
-    _processorThread.join();
+    _stateThread.join();
     _work->reset();
-    _asioThread.join();
-    // todo work stop
-//    _work.reset();
+    _ioCtxThread.join();
 }
 
 void Player::reset(void)
@@ -191,6 +188,11 @@ void Player::startTimer(const boost::posix_time::milliseconds ms)
     _timer->async_wait([&](const boost::system::error_code&) {
         _scheduler.queue_event(_processor,
                                boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
+        // This is annoying that this must be done.  If the timer unique_ptr is
+        // left hanging around after it's been serviced like this it is no
+        // longer in a coherent state.  When the Player gets destroyed and timer
+        // is not null but also already it crashes.  The scheduler_ member is bogus.
+        _timer = nullptr;
     });
 }
 

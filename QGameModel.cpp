@@ -7,47 +7,34 @@ QGameModel::QGameModel()
 
 void QGameModel::populate(const QStringList& nameList)
 {
-    std::vector<std::shared_ptr<Player>> players;
+    // Create the game, passing the list of strings.
+    // The QGameModel needs its own QPlayer objects which need
+    // pointers to the non-UI Player, so ask for those pointers
+    // after Game object is created.
+
+    std::vector<std::string> playerNames;
+    for (const auto& name : nameList)
+    {
+        playerNames.push_back(name.toStdString());
+    }
+
+    _game = std::make_unique<Game>(playerNames);
 
     for (const auto& name : nameList)
     {
-        auto player = std::make_shared<Player>(name.toStdString());
-        players.push_back(player);
-        _players.push_back(new QPlayer(player));
+        auto& player = _game->getPlayer(name.toStdString());
+        _players.push_back(std::make_unique<QPlayer>(&player));
     }
-
-    _game = std::make_unique<Game>(players);
 }
 
 void QGameModel::deal(void)
 {
     _game->deal();
-
-#if 0
-    // TODO: Consider not doing all of this here.
-    // Collect names and create QPlayer and Player objects
-    // Each QPlayer has a reference to the corresponding Player that the GamePlay lib owns
-    std::vector<std::shared_ptr<Player>> players;
-
-    for (const auto& name: _playerNames)
-    {
-        auto newPlayer = std::make_shared<Player>(name.toStdString());
-        //        QPlayer player(newPlayer);
-        //        _players.push_back(player);
-        _players.emplace_back(std::make_unique<QPlayer>(newPlayer));
-    }
-
-    _game = std::make_unique<Game>(players);
-#endif
 }
 
 void QGameModel::reset(void)
 {
     std::cout << "Resetting gameModel" << std::endl;
-    for (auto player : _players)
-    {
-        delete player;
-    }
     _players.clear();
     _game = nullptr;
     _roundNumber = 0;
@@ -111,7 +98,7 @@ int QGameModel::rowCount(const QModelIndex &parent) const
 QVariant QGameModel::data(const QModelIndex& index, int role) const
 {
     Q_UNUSED(role);
-    return QVariant::fromValue(_players[index.row()]);
+    return QVariant::fromValue(_players[index.row()].get());
 }
 
 QHash<int, QByteArray> QGameModel::roleNames() const
@@ -125,10 +112,3 @@ QHash<int, QByteArray> QGameModel::roleNames() const
 
     return *pHash;
 }
-
-
-
-//QHash<int, QByteArray> QGameModel::roleNames() const
-//{
-
-//}

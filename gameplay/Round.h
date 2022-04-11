@@ -23,27 +23,27 @@ struct WarHand
 class Round
 {
 public:
-    Round(std::vector<std::shared_ptr<Player>>& players,
+    Round(std::vector<Player*>& players,
           const std::function<void(void)> callback);
 
     ~Round(void);
 
-    void playerWaiting(std::shared_ptr<Player> player);
-    void winnerReqCards(std::shared_ptr<Player> player);
+    void playerWaiting(Player* player);
+    void winnerReqCards(Player* player);
 
     const std::vector<std::shared_ptr<Player>>& winners(void) const;
 private:
     friend class RoundSM;
-    void handlePlayerWaiting(std::shared_ptr<Player> player);
+    void handlePlayerWaiting(Player *player);
     void evaluate(void);
     void findWinner(void);
     void cullPlayerList(void);
     void initializeRound(void);
-    void distributeCards(std::shared_ptr<Player> winner);
+    void distributeCards(Player *winner);
 
     int                                     _playersWaiting;
-    std::vector<std::shared_ptr<Player>>    _losers;
-    std::vector<std::shared_ptr<Player>>    _players;
+    std::vector<Player*>                    _losers;
+    std::vector<Player*>                    _players;
 
     std::function<void()>                   _observerFunc;
 

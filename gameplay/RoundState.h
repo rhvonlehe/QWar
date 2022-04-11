@@ -33,9 +33,9 @@ struct RoundSM : sc::asynchronous_state_machine<RoundSM, Active>
     ~RoundSM(void) { terminate(); }
 
     // common stuff done in state machine context since it has Round&
-    void handlePlayerWaiting(std::shared_ptr<Player> player);
+    void handlePlayerWaiting(Player *player);
     void initializeRound(void);
-    void distributeCards(std::shared_ptr<Player> player);
+    void distributeCards(Player* player);
 private:
     Round& _round;
 };
@@ -44,26 +44,26 @@ private:
 //
 struct EvWinner : sc::event < EvWinner >
 {
-    EvWinner(std::shared_ptr<Player> player);
+    EvWinner(Player* player);
     ~EvWinner(void) {};
 
-    std::shared_ptr<Player> player;
+    Player* player;
 };
 
 struct EvPlayerWaiting : sc::event < EvPlayerWaiting >
 {
-    EvPlayerWaiting(std::shared_ptr<Player> player)
+    EvPlayerWaiting(Player* player)
         : player(player){ TEMP_LOG("EvPlayerWaiting event"); }
 
-    std::shared_ptr<Player> player;
+    Player* player;
 };
 
 struct EvDistributeCards : sc::event < EvDistributeCards >
 {
-    EvDistributeCards(std::shared_ptr<Player> player)
+    EvDistributeCards(Player* player)
         : player(player) { TEMP_LOG("EvDistributeCards event"); }
 
-    std::shared_ptr<Player> player;
+    Player* player;
 };
 
 

@@ -34,10 +34,13 @@ public:
 private:
 
     // Must store ptrs to QObject-derived type.  They are not copyable.
-    std::vector<QPlayer*>           _players;
-    std::unique_ptr<Game>           _game;
-    int                             _roundNumber;
+    std::vector<std::unique_ptr<QPlayer>>   _players;
+    std::unique_ptr<Game>                   _game;
+    int                                     _roundNumber;
+
+#if 0 // todo old
     std::unique_ptr<Round>          _currentRound;
+#endif
 
 //    std::map<std::string, std::shared_ptr<Player>> _playerMap; // todo remove
 };
