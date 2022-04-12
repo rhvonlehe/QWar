@@ -28,6 +28,11 @@ Player::Player(const std::string name)
 
 Player::~Player(void)
 {
+    // Caution: one can't delete a deadline timer if the io object it is using
+    // is gone.  It stores that internally as a reference.  Calling cancel here
+    // makes sure that it won't try to use the _io it references when it is
+    // destroyed at the end of this destructor.
+    if (_timer) _timer->cancel();
     _scheduler.terminate();
     _stateThread.join();
     _work->reset();
@@ -187,12 +192,7 @@ void Player::startTimer(const boost::posix_time::milliseconds ms)
     _timer = std::make_unique<ba::deadline_timer>(_io, ms);
     _timer->async_wait([&](const boost::system::error_code&) {
         _scheduler.queue_event(_processor,
-                               boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
-        // This is annoying that this must be done.  If the timer unique_ptr is
-        // left hanging around after it's been serviced like this it is no
-        // longer in a coherent state.  When the Player gets destroyed and timer
-        // is not null but also already it crashes.  The scheduler_ member is bogus.
-        _timer = nullptr;
+                               boost::intrusive_ptr<EvTimeout>(new EvTimeout()));        
     });
 }
 
