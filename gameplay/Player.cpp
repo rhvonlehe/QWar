@@ -59,26 +59,23 @@ bool Player::playCard(bool faceDown)
     bool retVal = false;
     auto card = getNextCard();
 
-    if (nullptr != card)
-    {
-        retVal = true;
-        card->flip(faceDown);
-        _activeRoundCards.push_back(card);
-        notifyEvent(EV_CARD_PLAYED);
-        notifyEvent(EV_CARDS_CHANGED);
-    }
+    retVal = true;
+    card.flip(faceDown);
+    _activeRoundCards.push_back(card);
+    notifyEvent(EV_CARD_PLAYED);
+    notifyEvent(EV_CARDS_CHANGED);
 
     return retVal;
 }
 
 void Player::flipCard(void)
 {
-    _evalCard->flip(false);
+    _evalCard.flip(false);
     notifyEvent(EV_CARDS_CHANGED);
 }
 
 
-std::shared_ptr<Card> Player::evalCard(void)
+Card& Player::evalCard(void)
 {
     return _evalCard;
 }
@@ -95,7 +92,7 @@ void Player::won()
                            boost::intrusive_ptr<EvWon>(new EvWon()));
 }
 
-std::vector<std::shared_ptr<Card>> Player::lost(void)
+std::vector<Card> Player::lost(void)
 {
     auto retVal = _activeRoundCards;
     _scheduler.queue_event(_processor,
@@ -108,7 +105,7 @@ void Player::addObserverCallback(const std::function<void (Player::ObservableEve
     _observerFuncs.push_back(func);
 }
 
-std::shared_ptr<Card> Player::getNextCard()
+Card Player::getNextCard()
 {
     assert(!outOfCards());
 
@@ -144,12 +141,11 @@ void Player::setEvalCard(void)
 
 void Player::resetRoundData(void)
 {
-    _evalCard = nullptr;
     _activeRoundCards.clear();
     notifyEvent(EV_PLAYER_ACTIVE);
 }
 
-void Player::acceptRoundCards(const Pile pile, const std::vector<std::shared_ptr<Card>> cards)
+void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)
 {
     fflush(stdout);
     Deck& deck = (PILE_UNPLAYED == pile) ? _unplayedPile : _playedPile;
@@ -165,7 +161,7 @@ void Player::acceptRoundCards(const Pile pile, const std::vector<std::shared_ptr
                            boost::intrusive_ptr<EvAcceptCards>(new EvAcceptCards()));
 }
 
-void Player::acceptDealtCard(const Pile pile, const std::shared_ptr<Card> card)
+void Player::acceptDealtCard(const Pile pile, const Card card)
 {
     PILE_UNPLAYED == pile ? _unplayedPile.addBack(card) :
                             _playedPile.addBack(card);
@@ -192,7 +188,7 @@ void Player::startTimer(const boost::posix_time::milliseconds ms)
     _timer = std::make_unique<ba::deadline_timer>(_io, ms);
     _timer->async_wait([&](const boost::system::error_code&) {
         _scheduler.queue_event(_processor,
-                               boost::intrusive_ptr<EvTimeout>(new EvTimeout()));        
+                               boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
     });
 }
 

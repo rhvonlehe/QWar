@@ -22,7 +22,7 @@ Deck::Deck(bool full)
     {
         std::for_each(cardValues.begin(), cardValues.end(), [&](const Card::Value& value) {
             std::for_each(cardSuits.begin(), cardSuits.end(), [&](const Card::Suit& suit) {
-                _cards.push_back(std::make_shared<Card>(suit, value));
+                _cards.push_back(Card{suit, value});
             });
         }
         );
@@ -52,26 +52,26 @@ void Deck::shuffle(void)
     }
 }
 
-std::shared_ptr<Card> Deck::nextCard()
+Card Deck::nextCard()
 {
     auto card = _cards.front();
     _cards.pop_front();
     return card;
 }
 
-void Deck::addBack(const std::shared_ptr<Card> card)
+void Deck::addBack(const Card card)
 {
     _cards.push_back(card);
 }
 
-void Deck::addBack(const std::vector<std::shared_ptr<Card>> cards)
+void Deck::addBack(const std::vector<Card> cards)
 {
     _cards.insert(_cards.end(), cards.begin(), cards.end());
 }
 
 void Deck::print(void) const
 {
-    std::for_each(_cards.begin(), _cards.end(), [](const std::shared_ptr<Card>& card) { card->print(); });
+    std::for_each(_cards.begin(), _cards.end(), [](const Card& card) { card.print(); });
 }
 
 void Deck::swap(const int r1, const int r2)

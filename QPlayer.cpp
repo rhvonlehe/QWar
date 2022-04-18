@@ -64,7 +64,7 @@ void QPlayer::updateCardsPlayed(void)
     auto cards = _player->getActiveRoundCards();
     for (auto& card : cards)
     {
-        auto cardStr = QString::fromStdString(card->str());
+        auto cardStr = QString::fromStdString(card.str());
         _cardsPlayed.append(cardStr).append(" ");
     }
     emit playedCardsChanged(_cardsPlayed);

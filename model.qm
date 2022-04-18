@@ -10,7 +10,7 @@
      </initial_glyph>
     </initial>
     <state name="Idle">
-     <entry brief="resetRoundDAta, notifyActive"/>
+     <entry brief="resetRoundData, notifyActive"/>
      <tran trig="ACTION" target="../../3/3">
       <action brief="playOneCard"/>
       <tran_glyph conn="57,22,3,3,28,4,-76,17,15">

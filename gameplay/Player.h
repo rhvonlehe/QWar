@@ -39,22 +39,22 @@ public:
     Player(const std::string name);
     ~Player(void);
     void reset(void);
-    void acceptRoundCards(const Pile pile, const std::vector<std::shared_ptr<Card> > cards);
-    void acceptDealtCard(const Pile pile, const std::shared_ptr<Card> card);
+    void acceptRoundCards(const Pile pile, const std::vector<Card> cards);
+    void acceptDealtCard(const Pile pile, const Card card);
     void action(void);
-    std::shared_ptr<Card> evalCard(void);
+    Card& evalCard(void);
     void tie(void);
     void won();
-    std::vector<std::shared_ptr<Card> > lost(void);
+    std::vector<Card> lost(void);
     void addObserverCallback(const std::function<void (Player::ObservableEvent)> callback);
 
-    std::shared_ptr<Card> lastCardPlayed(void) const
+    Card lastCardPlayed(void) const
     {
         assert(_activeRoundCards.size());
         return _activeRoundCards.back();
     }
 
-    std::vector<std::shared_ptr<Card>> getActiveRoundCards(void)
+    std::vector<Card> getActiveRoundCards(void)
     {
         return _activeRoundCards;
     }
@@ -88,7 +88,7 @@ public:
 private:
     bool playCard(bool faceDown = false);
     void flipCard(void);
-    std::shared_ptr<Card> getNextCard(void);
+    Card getNextCard(void);
     void setEvalCard(void);
     void resetRoundData(void);
     void movePlayedToCurrent();
@@ -109,8 +109,8 @@ private:
     Deck                _unplayedPile;
     Deck                _playedPile;
 
-    std::vector<std::shared_ptr<Card>>  _activeRoundCards;
-    std::shared_ptr<Card>               _evalCard;
+    std::vector<Card>  _activeRoundCards;
+    Card               _evalCard;
 
     // Observer variable - simplified for just one observer
     std::vector<std::function<void(ObservableEvent)>> _observerFuncs;

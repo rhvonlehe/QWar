@@ -4,26 +4,6 @@
 #include <algorithm>
 #include <iostream>
 
-struct
-{
-    bool operator()(std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>> a,
-                    std::pair<std::shared_ptr<Player>, std::shared_ptr<Card>> b) const
-    {
-        return *(a.second) > *(b.second);
-    }
-
-} greaterPair;
-
-#if 0 // todo remove
-struct
-{
-    bool operator()(WarHand a, WarHand b) const
-    {
-        return *(a.downCard) > *(b.downCard);
-    }
-} greaterWarHand;
-#endif
-
 Round::Round(std::vector<Player *>& players,
              const std::function<void ()> callback)
     : _players(players),
@@ -106,14 +86,14 @@ void Round::findWinner(void)
     auto maxIt = std::max_element(_players.begin(),
                                   _players.end(),
                                   [](Player* p1, Player* p2)
-    { return (*p1->evalCard() < *p2->evalCard()); } );
+    { return (p1->evalCard() < p2->evalCard()); } );
 
-    auto highestValue = *(*maxIt)->evalCard();
+    auto highestValue = (*maxIt)->evalCard();
 
     auto backHalfIt = std::stable_partition(_players.begin(),
                                             _players.end(),
                                             [highestValue](Player* p)
-    { return (highestValue == *p->evalCard()); } );
+    { return (highestValue == p->evalCard()); } );
 
     _losers.insert(_losers.end(), backHalfIt, _players.end());
     _players.erase(backHalfIt, _players.end());
@@ -140,7 +120,7 @@ void Round::initializeRound(void)
 
 void Round::distributeCards(Player* winner)
 {
-    std::vector<std::shared_ptr<Card>> allLoserCards;
+    std::vector<Card> allLoserCards;
 
     for (auto loser : _losers)
     {
@@ -153,97 +133,4 @@ void Round::distributeCards(Player* winner)
     // Notify the game object the round is done.
     _observerFunc();
 }
-
-#if 0 // todo old remove
-std::vector<std::shared_ptr<Player>> Round::findWinner(std::vector<WarHand>& played)
-{
-    std::vector<std::shared_ptr<Player>> winners;
-
-    std::sort(played.begin(), played.end(), greaterWarHand);
-
-    for (auto pair : played)
-    {
-        std::cout << "Player " << pair.player->name();
-        std::cout << " played " << pair.downCard->str() << " down" << std::endl;
-
-        std::cout << "and " << pair.upCard->str() << " up" << std::endl;
-    }
-
-    // Iterate until the first card that is a lower value and truncate from
-    // there on, return the results which will be all Players with the
-    // highest card value
-    //
-    WarHand highest = played[0];
-
-    for (auto& item : played)
-    {
-        if (item.downCard == highest.downCard)
-        {
-            winners.push_back(item.player);
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    return winners;
-}
-#endif
-
-
-#if 0
-std::vector<std::shared_ptr<Player>> Round::playWar(std::vector<std::shared_ptr<Player>>& players)
-{
-    // NOTE: in this function, potentially only a subset of all active
-    // players are involved.  Remove a player from the local player
-    // list when they can't complete a war due to lack of cards.
-    // Let the game determine who has dropped out after the round
-    // has finished playing.
-    //
-    std::vector<WarHand> played;
-
-    auto it = std::begin(players);
-
-    while (it != std::end(players))
-    {
-        auto player = *it;
-        if (player->hasTwoCards())
-        {
-            auto downCard = player->playCard();
-            auto upCard = player->playCard();
-            WarHand hand(player, downCard, upCard);
-            _cardsInRound.push_back(downCard);
-            _cardsInRound.push_back(upCard);
-            played.push_back(hand);
-            it++;
-        }
-        else
-        {
-            // Remove this player from the active player list,
-            // but force him to forfeit any single card he may still have
-            //
-            if (!player->outOfCards())
-            {
-                _cardsInRound.push_back(player->playCard());
-            }
-            it = players.erase(it);  // remove from local vector
-        }
-    }
-
-    std::vector<std::shared_ptr<Player>> winners = findWinner(played);
-
-    return winners;
-}
-
-void Round::removePlayer(std::shared_ptr<Player> player)
-{
-    auto it = std::find(_players.begin(), _players.end(), player);
-    if (it != _players.end())
-    {
-        _players.erase(it);
-    }
-}
-#endif
-
 

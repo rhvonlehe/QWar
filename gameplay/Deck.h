@@ -11,9 +11,9 @@ public:
     Deck(bool full = false);
     void clear(void);
     void shuffle(void);
-    std::shared_ptr<Card> nextCard(void);
-    void addBack(const std::shared_ptr<Card> card);
-    void addBack(const std::vector<std::shared_ptr<Card>> cards);
+    Card nextCard(void);
+    void addBack(const Card card);
+    void addBack(const std::vector<Card> cards);
     void print(void) const;
     uint8_t size(void) const
     {
@@ -27,6 +27,6 @@ public:
 private:
     void swap(const int r1, const int r2);
 
-    std::deque<std::shared_ptr<Card>> _cards;
+    std::deque<Card> _cards;
 };
 
