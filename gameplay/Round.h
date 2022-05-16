@@ -26,11 +26,11 @@ private:
     void initializeRound(void);
     void distributeCards(Player *winner);
 
-    int                                     _playersWaiting;
-    std::vector<Player*>                    _losers;
-    std::vector<Player*>                    _players;
+    int                             _playersWaiting;
+    std::vector<Player*>            _losers;
+    std::vector<Player*>            _players;
 
-    std::function<void()>                   _observerFunc;
+    std::function<void()>           _observerFunc;
 
     // StateChart variables
     using FifoScheduler = boost::statechart::fifo_scheduler<>;
