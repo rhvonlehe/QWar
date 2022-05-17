@@ -7,6 +7,7 @@
 #define ASIO_STANDALONE
 #include <boost/asio.hpp>
 
+namespace ba = boost::asio;
 
 namespace net
 {
@@ -28,7 +29,7 @@ public:
 public:
     // Constructor: Specify Owner, connect to context, transfer the socket
     //				Provide reference to incoming message queue
-    connection(owner parent, asio::io_context& asioContext, asio::ip::tcp::socket socket, tsqueue<owned_message<T>>& qIn)
+    connection(owner parent, ba::io_context& asioContext, ba::ip::tcp::socket socket, tsqueue<owned_message<T>>& qIn)
         : m_asioContext(asioContext), m_socket(std::move(socket)), m_qMessagesIn(qIn)
     {
         m_nOwnerType = parent;
@@ -41,7 +42,7 @@ public:
             _handshakeOut = uint64_t(std::chrono::system_clock::now().time_since_epoch().count());
 
             // Pre-calculate the result for checking when the client responds
-            m_nHandshakeCheck = scramble(_handshakeOut);
+            _handshakeCheck = scramble(_handshakeOut);
         }
         else
         {
@@ -84,14 +85,14 @@ public:
         }
     }
 
-    void ConnectToServer(const asio::ip::tcp::resolver::results_type& endpoints)
+    void ConnectToServer(const ba::ip::tcp::resolver::results_type& endpoints)
     {
         // Only clients can connect to servers
         if (m_nOwnerType == owner::client)
         {
             // Request asio attempts to connect to an endpoint
-            asio::async_connect(m_socket, endpoints,
-                                [this](std::error_code ec, asio::ip::tcp::endpoint endpoint)
+            ba::async_connect(m_socket, endpoints,
+                                [this](std::error_code ec, ba::ip::tcp::endpoint endpoint)
             {
                 if (!ec)
                 {
@@ -109,7 +110,7 @@ public:
     void Disconnect()
     {
         if (IsConnected())
-            asio::post(m_asioContext, [this]() { m_socket.close(); });
+            ba::post(m_asioContext, [this]() { m_socket.close(); });
     }
 
     bool IsConnected() const
@@ -128,7 +129,7 @@ public:
     // the target, for a client, the target is the server and vice versa
     void Send(const message<T>& msg)
     {
-        asio::post(m_asioContext,
+        ba::post(m_asioContext,
                    [this, msg]()
         {
             // If the queue has a message in it, then we must
@@ -154,7 +155,7 @@ private:
         // If this function is called, we know the outgoing message queue must have
         // at least one message to send. So allocate a transmission buffer to hold
         // the message, and issue the work - asio, send these bytes
-        asio::async_write(m_socket, asio::buffer(&m_qMessagesOut.front().header, sizeof(message_header<T>)),
+        ba::async_write(m_socket, ba::buffer(&m_qMessagesOut.front().header, sizeof(message_header<T>)),
                           [this](std::error_code ec, std::size_t length)
         {
             // asio has now sent the bytes - if there was a problem
@@ -200,7 +201,7 @@ private:
         // If this function is called, a header has just been sent, and that header
         // indicated a body existed for this message. Fill a transmission buffer
         // with the body data, and send it!
-        asio::async_write(m_socket, asio::buffer(m_qMessagesOut.front().body.data(), m_qMessagesOut.front().body.size()),
+        ba::async_write(m_socket, ba::buffer(m_qMessagesOut.front().body.data(), m_qMessagesOut.front().body.size()),
                           [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
@@ -233,7 +234,7 @@ private:
         // size, so allocate a transmission buffer large enough to store it. In fact,
         // we will construct the message in a "temporary" message object as it's
         // convenient to work with.
-        asio::async_read(m_socket, asio::buffer(&_msgTemporaryIn.header, sizeof(message_header<T>)),
+        ba::async_read(m_socket, ba::buffer(&_msgTemporaryIn.header, sizeof(message_header<T>)),
                          [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
@@ -270,7 +271,7 @@ private:
         // If this function is called, a header has already been read, and that header
         // request we read a body, The space for that body has already been allocated
         // in the temporary message object, so just wait for the bytes to arrive...
-        asio::async_read(m_socket, asio::buffer(_msgTemporaryIn.body.data(), _msgTemporaryIn.body.size()),
+        ba::async_read(m_socket, ba::buffer(_msgTemporaryIn.body.data(), _msgTemporaryIn.body.size()),
                          [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
@@ -299,7 +300,7 @@ private:
     // ASYNC - Used by both client and server to write validation packet
     void WriteValidation()
     {
-        asio::async_write(m_socket, asio::buffer(&m_nHandshakeOut, sizeof(uint64_t)),
+        ba::async_write(m_socket, ba::buffer(&_handshakeOut, sizeof(uint64_t)),
                           [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
@@ -318,7 +319,7 @@ private:
 
     void ReadValidation(net::server_interface<T>* server = nullptr)
     {
-        asio::async_read(m_socket, asio::buffer(&_handshakeIn, sizeof(uint64_t)),
+        ba::async_read(m_socket, ba::buffer(&_handshakeIn, sizeof(uint64_t)),
                          [this, server](std::error_code ec, std::size_t length)
         {
             if (!ec)
@@ -328,7 +329,7 @@ private:
                     // Connection is a server, so check response from client
 
                     // Compare sent data to actual solution
-                    if (_handshakeIn == m_nHandshakeCheck)
+                    if (_handshakeIn == _handshakeCheck)
                     {
                         // Client has provided valid solution, so allow it to connect properly
                         std::cout << "Client Validated" << std::endl;
@@ -347,7 +348,7 @@ private:
                 else
                 {
                     // Connection is a client, so solve puzzle
-                    m_nHandshakeOut = scramble(_handshakeIn);
+                    _handshakeOut = scramble(_handshakeIn);
 
                     // Write the result
                     WriteValidation();
@@ -380,10 +381,10 @@ private:
 
 protected:
     // Each connection has a unique socket to a remote
-    asio::ip::tcp::socket m_socket;
+    ba::ip::tcp::socket m_socket;
 
     // This context is shared with the whole asio instance
-    asio::io_context& m_asioContext;
+    ba::io_context& m_asioContext;
 
     // This queue holds all messages to be sent to the remote side
     // of this connection
@@ -402,7 +403,7 @@ protected:
     // Handshake Validation
     uint64_t _handshakeOut = 0;
     uint64_t _handshakeIn = 0;
-    uint64_t m_nHandshakeCheck = 0;
+    uint64_t _handshakeCheck = 0;
 
     bool _validHandshake = false;
     bool _connectionEstablished = false;
