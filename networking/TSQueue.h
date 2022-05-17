@@ -4,6 +4,9 @@
 #include <mutex>
 #include <deque>
 
+namespace net
+{
+
 // thread-safe queue
 template<typename T>
 class TSQueue
@@ -103,4 +106,5 @@ protected:
     std::mutex              mtxBlocking;
 };
 
+} // namespace net
 #endif // TSQUEUE_H

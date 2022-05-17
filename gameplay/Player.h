@@ -3,7 +3,6 @@
 #include <Deck.h>
 #include <Card.h>
 #include <boost/statechart/asynchronous_state_machine.hpp>
-#include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
 #include <vector>
@@ -11,6 +10,9 @@
 #include <thread>
 #include <map>
 #include <functional>
+#define ASIO_STANDALONE
+#include <boost/asio.hpp>
+
 
 namespace ba = boost::asio;
 

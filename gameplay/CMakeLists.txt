@@ -4,7 +4,6 @@ add_library(gameplay STATIC)
 target_include_directories(gameplay
     PUBLIC
     .
-    ${Boost_INCLUDE_DIR}
     )
 
 target_sources(gameplay
@@ -22,6 +21,9 @@ target_sources(gameplay
 target_compile_definitions(gameplay PUBLIC BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 target_link_libraries(gameplay
+    PUBLIC
+    Boost::boost
     PRIVATE
-    ${Boost_LIBRARIES}
+    Boost::system
+    Boost::thread
     )
