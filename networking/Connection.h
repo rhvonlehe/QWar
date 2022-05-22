@@ -29,16 +29,15 @@ public:
         client
     };
 
-public:
     // Constructor: Specify Owner, connect to context, transfer the socket
     //				Provide reference to incoming message queue
     Connection(Owner parent, ba::io_context& asioContext, ba::ip::tcp::socket socket, TSQueue<owned_message<T>>& qIn)
-        : m_asioContext(asioContext), m_socket(std::move(socket)), m_qMessagesIn(qIn)
+        : _asioContext(asioContext), _socket(std::move(socket)), _qMessagesIn(qIn)
     {
-        m_nOwnerType = parent;
+        _ownerType = parent;
 
         // Construct validation check data
-        if (m_nOwnerType == Owner::server)
+        if (_ownerType == Owner::server)
         {
             // Connection is Server -> Client, construct random data for the client
             // to transform and send back for validation
@@ -55,8 +54,7 @@ public:
         }
     }
 
-    virtual ~Connection()
-    {}
+    virtual ~Connection() {}
 
     // This ID is used system wide - its how clients will understand other clients
     // exist across the whole system.
@@ -65,12 +63,11 @@ public:
         return id;
     }
 
-public:
     void ConnectToClient(net::server_interface<T>* server, uint32_t uid = 0)
     {
-        if (m_nOwnerType == Owner::server)
+        if (_ownerType == Owner::server)
         {
-            if (m_socket.is_open())
+            if (_socket.is_open())
             {
                 id = uid;
 
@@ -91,10 +88,10 @@ public:
     void ConnectToServer(const ba::ip::tcp::resolver::results_type& endpoints)
     {
         // Only clients can connect to servers
-        if (m_nOwnerType == Owner::client)
+        if (_ownerType == Owner::client)
         {
             // Request asio attempts to connect to an endpoint
-            ba::async_connect(m_socket, endpoints,
+            ba::async_connect(_socket, endpoints,
                                 [this](std::error_code ec, ba::ip::tcp::endpoint endpoint)
             {
                 if (!ec)
@@ -113,12 +110,12 @@ public:
     void Disconnect()
     {
         if (IsConnected())
-            ba::post(m_asioContext, [this]() { m_socket.close(); });
+            ba::post(_asioContext, [this]() { _socket.close(); });
     }
 
     bool IsConnected() const
     {
-        return m_socket.is_open();
+        return _socket.is_open();
     }
 
     // Prime the Connection to wait for incoming messages
@@ -127,12 +124,11 @@ public:
 
     }
 
-public:
     // ASYNC - Send a message, Connections are one-to-one so no need to specify
     // the target, for a client, the target is the server and vice versa
     void Send(const message<T>& msg)
     {
-        ba::post(m_asioContext,
+        ba::post(_asioContext,
                    [this, msg]()
         {
             // If the queue has a message in it, then we must
@@ -140,15 +136,14 @@ public:
             // Either way add the message to the queue to be output. If no messages
             // were available to be written, then start the process of writing the
             // message at the front of the queue.
-            bool bWritingMessage = !m_qMessagesOut.empty();
-            m_qMessagesOut.push_back(msg);
+            bool bWritingMessage = !_qMessagesOut.empty();
+            _qMessagesOut.push_back(msg);
             if (!bWritingMessage)
             {
                 WriteHeader();
             }
         });
     }
-
 
 
 private:
@@ -158,7 +153,7 @@ private:
         // If this function is called, we know the outgoing message queue must have
         // at least one message to send. So allocate a transmission buffer to hold
         // the message, and issue the work - asio, send these bytes
-        ba::async_write(m_socket, ba::buffer(&m_qMessagesOut.front().header, sizeof(message_header<T>)),
+        ba::async_write(_socket, ba::buffer(&_qMessagesOut.front().header, sizeof(message_header<T>)),
                           [this](std::error_code ec, std::size_t length)
         {
             // asio has now sent the bytes - if there was a problem
@@ -167,7 +162,7 @@ private:
             {
                 // ... no error, so check if the message header just sent also
                 // has a message body...
-                if (m_qMessagesOut.front().body.size() > 0)
+                if (_qMessagesOut.front().body.size() > 0)
                 {
                     // ...it does, so issue the task to write the body bytes
                     WriteBody();
@@ -176,11 +171,11 @@ private:
                 {
                     // ...it didnt, so we are done with this message. Remove it from
                     // the outgoing message queue
-                    m_qMessagesOut.popFront();
+                    _qMessagesOut.popFront();
 
                     // If the queue is not empty, there are more messages to send, so
                     // make this happen by issuing the task to send the next header.
-                    if (!m_qMessagesOut.empty())
+                    if (!_qMessagesOut.empty())
                     {
                         WriteHeader();
                     }
@@ -193,7 +188,7 @@ private:
                 // socket. When a future attempt to write to this client fails due
                 // to the closed socket, it will be tidied up.
                 std::cout << "[" << id << "] Write Header Fail.\n";
-                m_socket.close();
+                _socket.close();
             }
         });
     }
@@ -204,18 +199,18 @@ private:
         // If this function is called, a header has just been sent, and that header
         // indicated a body existed for this message. Fill a transmission buffer
         // with the body data, and send it!
-        ba::async_write(m_socket, ba::buffer(m_qMessagesOut.front().body.data(), m_qMessagesOut.front().body.size()),
+        ba::async_write(_socket, ba::buffer(_qMessagesOut.front().body.data(), _qMessagesOut.front().body.size()),
                           [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
             {
                 // Sending was successful, so we are done with the message
                 // and remove it from the queue
-                m_qMessagesOut.popFront();
+                _qMessagesOut.popFront();
 
                 // If the queue still has messages in it, then issue the task to
                 // send the next messages' header.
-                if (!m_qMessagesOut.empty())
+                if (!_qMessagesOut.empty())
                 {
                     WriteHeader();
                 }
@@ -224,7 +219,7 @@ private:
             {
                 // Sending failed, see WriteHeader() equivalent for description :P
                 std::cout << "[" << id << "] Write Body Fail.\n";
-                m_socket.close();
+                _socket.close();
             }
         });
     }
@@ -237,7 +232,7 @@ private:
         // size, so allocate a transmission buffer large enough to store it. In fact,
         // we will construct the message in a "temporary" message object as it's
         // convenient to work with.
-        ba::async_read(m_socket, ba::buffer(&_msgTemporaryIn.header, sizeof(message_header<T>)),
+        ba::async_read(_socket, ba::buffer(&_msgTemporaryIn.header, sizeof(message_header<T>)),
                          [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
@@ -263,7 +258,7 @@ private:
                 // Reading form the client went wrong, most likely a disconnect
                 // has occurred. Close the socket and let the system tidy it up later.
                 std::cout << "[" << id << "] Read Header Fail.\n";
-                m_socket.close();
+                _socket.close();
             }
         });
     }
@@ -274,7 +269,7 @@ private:
         // If this function is called, a header has already been read, and that header
         // request we read a body, The space for that body has already been allocated
         // in the temporary message object, so just wait for the bytes to arrive...
-        ba::async_read(m_socket, ba::buffer(_msgTemporaryIn.body.data(), _msgTemporaryIn.body.size()),
+        ba::async_read(_socket, ba::buffer(_msgTemporaryIn.body.data(), _msgTemporaryIn.body.size()),
                          [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
@@ -287,7 +282,7 @@ private:
             {
                 // As above!
                 std::cout << "[" << id << "] Read Body Fail.\n";
-                m_socket.close();
+                _socket.close();
             }
         });
     }
@@ -303,31 +298,31 @@ private:
     // ASYNC - Used by both client and server to write validation packet
     void WriteValidation()
     {
-        ba::async_write(m_socket, ba::buffer(&_handshakeOut, sizeof(uint64_t)),
+        ba::async_write(_socket, ba::buffer(&_handshakeOut, sizeof(uint64_t)),
                           [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
             {
                 // Validation data sent, clients should sit and wait
                 // for a response (or a closure)
-                if (m_nOwnerType == Owner::client)
+                if (_ownerType == Owner::client)
                     ReadHeader();
             }
             else
             {
-                m_socket.close();
+                _socket.close();
             }
         });
     }
 
     void ReadValidation(net::server_interface<T>* server = nullptr)
     {
-        ba::async_read(m_socket, ba::buffer(&_handshakeIn, sizeof(uint64_t)),
+        ba::async_read(_socket, ba::buffer(&_handshakeIn, sizeof(uint64_t)),
                          [this, server](std::error_code ec, std::size_t length)
         {
             if (!ec)
             {
-                if (m_nOwnerType == Owner::server)
+                if (_ownerType == Owner::server)
                 {
                     // Connection is a server, so check response from client
 
@@ -345,7 +340,7 @@ private:
                     {
                         // Client gave incorrect data, so disconnect
                         std::cout << "Client Disconnected (Fail Validation)" << std::endl;
-                        m_socket.close();
+                        _socket.close();
                     }
                 }
                 else
@@ -361,7 +356,7 @@ private:
             {
                 // Some biggerfailure occured
                 std::cout << "Client Disconnected (ReadValidation)" << std::endl;
-                m_socket.close();
+                _socket.close();
             }
         });
     }
@@ -371,10 +366,10 @@ private:
     {
         // Shove it in queue, converting it to an "owned message", by initialising
         // with the a shared pointer from this Connection object
-        if(m_nOwnerType == Owner::server)
-            m_qMessagesIn.push_back({ this->shared_from_this(), _msgTemporaryIn });
+        if(_ownerType == Owner::server)
+            _qMessagesIn.push_back({ this->shared_from_this(), _msgTemporaryIn });
         else
-            m_qMessagesIn.push_back({ nullptr, _msgTemporaryIn });
+            _qMessagesIn.push_back({ nullptr, _msgTemporaryIn });
 
         // We must now prime the asio context to receive the next message. It
         // wil just sit and wait for bytes to arrive, and the message construction
@@ -384,24 +379,24 @@ private:
 
 protected:
     // Each Connection has a unique socket to a remote
-    ba::ip::tcp::socket m_socket;
+    ba::ip::tcp::socket _socket;
 
     // This context is shared with the whole asio instance
-    ba::io_context& m_asioContext;
+    ba::io_context& _asioContext;
 
     // This queue holds all messages to be sent to the remote side
     // of this Connection
-    TSQueue<message<T>> m_qMessagesOut;
+    TSQueue<message<T>> _qMessagesOut;
 
     // This references the incoming queue of the parent object
-    TSQueue<owned_message<T>>& m_qMessagesIn;
+    TSQueue<owned_message<T>>& _qMessagesIn;
 
     // Incoming messages are constructed asynchronously, so we will
     // store the part assembled message here, until it is ready
     message<T> _msgTemporaryIn;
 
     // The "owner" decides how some of the Connection behaves
-    Owner m_nOwnerType = Owner::server;
+    Owner _ownerType = Owner::server;
 
     // Handshake Validation
     uint64_t _handshakeOut = 0;
@@ -413,4 +408,4 @@ protected:
 
     uint32_t id = 0;
 };
-}
+} // namespace net
