@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Message.h"
+#include "TSQueue.h"
+
 #include <memory>
 #include <system_error>
 #include <chrono>
@@ -15,12 +18,12 @@ template<typename T>
 class server_interface;
 
 template<typename T>
-class connection : public std::enable_shared_from_this<connection<T>>
+class Connection : public std::enable_shared_from_this<Connection<T>>
 {
 public:
-    // A connection is "owned" by either a server or a client, and its
+    // A Connection is "owned" by either a server or a client, and its
     // behaviour is slightly different bewteen the two.
-    enum class owner
+    enum class Owner
     {
         server,
         client
@@ -29,13 +32,13 @@ public:
 public:
     // Constructor: Specify Owner, connect to context, transfer the socket
     //				Provide reference to incoming message queue
-    connection(owner parent, ba::io_context& asioContext, ba::ip::tcp::socket socket, tsqueue<owned_message<T>>& qIn)
+    Connection(Owner parent, ba::io_context& asioContext, ba::ip::tcp::socket socket, TSQueue<owned_message<T>>& qIn)
         : m_asioContext(asioContext), m_socket(std::move(socket)), m_qMessagesIn(qIn)
     {
         m_nOwnerType = parent;
 
         // Construct validation check data
-        if (m_nOwnerType == owner::server)
+        if (m_nOwnerType == Owner::server)
         {
             // Connection is Server -> Client, construct random data for the client
             // to transform and send back for validation
@@ -52,7 +55,7 @@ public:
         }
     }
 
-    virtual ~connection()
+    virtual ~Connection()
     {}
 
     // This ID is used system wide - its how clients will understand other clients
@@ -65,7 +68,7 @@ public:
 public:
     void ConnectToClient(net::server_interface<T>* server, uint32_t uid = 0)
     {
-        if (m_nOwnerType == owner::server)
+        if (m_nOwnerType == Owner::server)
         {
             if (m_socket.is_open())
             {
@@ -88,7 +91,7 @@ public:
     void ConnectToServer(const ba::ip::tcp::resolver::results_type& endpoints)
     {
         // Only clients can connect to servers
-        if (m_nOwnerType == owner::client)
+        if (m_nOwnerType == Owner::client)
         {
             // Request asio attempts to connect to an endpoint
             ba::async_connect(m_socket, endpoints,
@@ -118,14 +121,14 @@ public:
         return m_socket.is_open();
     }
 
-    // Prime the connection to wait for incoming messages
+    // Prime the Connection to wait for incoming messages
     void StartListening()
     {
 
     }
 
 public:
-    // ASYNC - Send a message, connections are one-to-one so no need to specifiy
+    // ASYNC - Send a message, Connections are one-to-one so no need to specify
     // the target, for a client, the target is the server and vice versa
     void Send(const message<T>& msg)
     {
@@ -173,7 +176,7 @@ private:
                 {
                     // ...it didnt, so we are done with this message. Remove it from
                     // the outgoing message queue
-                    m_qMessagesOut.pop_front();
+                    m_qMessagesOut.popFront();
 
                     // If the queue is not empty, there are more messages to send, so
                     // make this happen by issuing the task to send the next header.
@@ -186,7 +189,7 @@ private:
             else
             {
                 // ...asio failed to write the message, we could analyse why but
-                // for now simply assume the connection has died by closing the
+                // for now simply assume the Connection has died by closing the
                 // socket. When a future attempt to write to this client fails due
                 // to the closed socket, it will be tidied up.
                 std::cout << "[" << id << "] Write Header Fail.\n";
@@ -208,7 +211,7 @@ private:
             {
                 // Sending was successful, so we are done with the message
                 // and remove it from the queue
-                m_qMessagesOut.pop_front();
+                m_qMessagesOut.popFront();
 
                 // If the queue still has messages in it, then issue the task to
                 // send the next messages' header.
@@ -250,7 +253,7 @@ private:
                 }
                 else
                 {
-                    // it doesn't, so add this bodyless message to the connections
+                    // it doesn't, so add this bodyless message to the Connections
                     // incoming message queue
                     AddToIncomingMessageQueue();
                 }
@@ -307,7 +310,7 @@ private:
             {
                 // Validation data sent, clients should sit and wait
                 // for a response (or a closure)
-                if (m_nOwnerType == owner::client)
+                if (m_nOwnerType == Owner::client)
                     ReadHeader();
             }
             else
@@ -324,7 +327,7 @@ private:
         {
             if (!ec)
             {
-                if (m_nOwnerType == owner::server)
+                if (m_nOwnerType == Owner::server)
                 {
                     // Connection is a server, so check response from client
 
@@ -367,8 +370,8 @@ private:
     void AddToIncomingMessageQueue()
     {
         // Shove it in queue, converting it to an "owned message", by initialising
-        // with the a shared pointer from this connection object
-        if(m_nOwnerType == owner::server)
+        // with the a shared pointer from this Connection object
+        if(m_nOwnerType == Owner::server)
             m_qMessagesIn.push_back({ this->shared_from_this(), _msgTemporaryIn });
         else
             m_qMessagesIn.push_back({ nullptr, _msgTemporaryIn });
@@ -380,25 +383,25 @@ private:
     }
 
 protected:
-    // Each connection has a unique socket to a remote
+    // Each Connection has a unique socket to a remote
     ba::ip::tcp::socket m_socket;
 
     // This context is shared with the whole asio instance
     ba::io_context& m_asioContext;
 
     // This queue holds all messages to be sent to the remote side
-    // of this connection
-    tsqueue<message<T>> m_qMessagesOut;
+    // of this Connection
+    TSQueue<message<T>> m_qMessagesOut;
 
     // This references the incoming queue of the parent object
-    tsqueue<owned_message<T>>& m_qMessagesIn;
+    TSQueue<owned_message<T>>& m_qMessagesIn;
 
     // Incoming messages are constructed asynchronously, so we will
     // store the part assembled message here, until it is ready
     message<T> _msgTemporaryIn;
 
-    // The "owner" decides how some of the connection behaves
-    owner m_nOwnerType = owner::server;
+    // The "owner" decides how some of the Connection behaves
+    Owner m_nOwnerType = Owner::server;
 
     // Handshake Validation
     uint64_t _handshakeOut = 0;

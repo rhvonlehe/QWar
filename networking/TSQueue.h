@@ -32,20 +32,20 @@ public:
     }
 
     // Removes and returns item from front of Queue
-    T pop_front()
+    T popFront()
     {
         std::scoped_lock lock(mtxQueue);
         auto t = std::move(deqQueue.front());
-        deqQueue.pop_front();
+        deqQueue.popFront();
         return t;
     }
 
     // Removes and returns item from back of Queue
-    T pop_back()
+    T popBack()
     {
         std::scoped_lock lock(mtxQueue);
         auto t = std::move(deqQueue.back());
-        deqQueue.pop_back();
+        deqQueue.popBack();
         return t;
     }
 
