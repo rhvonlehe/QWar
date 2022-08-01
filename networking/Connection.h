@@ -92,7 +92,7 @@ public:
         {
             // Request asio attempts to connect to an endpoint
             ba::async_connect(_socket, endpoints,
-                                [this](std::error_code ec, ba::ip::tcp::endpoint endpoint)
+                              [this](std::error_code ec, ba::ip::tcp::endpoint endpoint)
             {
                 if (!ec)
                 {
@@ -129,7 +129,7 @@ public:
     void Send(const message<T>& msg)
     {
         ba::post(_asioContext,
-                   [this, msg]()
+                 [this, msg]()
         {
             // If the queue has a message in it, then we must
             // assume that it is in the process of asynchronously being written.
@@ -154,7 +154,7 @@ private:
         // at least one message to send. So allocate a transmission buffer to hold
         // the message, and issue the work - asio, send these bytes
         ba::async_write(_socket, ba::buffer(&_qMessagesOut.front().header, sizeof(message_header<T>)),
-                          [this](std::error_code ec, std::size_t length)
+                        [this](std::error_code ec, std::size_t length)
         {
             // asio has now sent the bytes - if there was a problem
             // an error would be available...
@@ -200,7 +200,7 @@ private:
         // indicated a body existed for this message. Fill a transmission buffer
         // with the body data, and send it!
         ba::async_write(_socket, ba::buffer(_qMessagesOut.front().body.data(), _qMessagesOut.front().body.size()),
-                          [this](std::error_code ec, std::size_t length)
+                        [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
             {
@@ -233,7 +233,7 @@ private:
         // we will construct the message in a "temporary" message object as it's
         // convenient to work with.
         ba::async_read(_socket, ba::buffer(&_msgTemporaryIn.header, sizeof(message_header<T>)),
-                         [this](std::error_code ec, std::size_t length)
+                       [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
             {
@@ -270,7 +270,7 @@ private:
         // request we read a body, The space for that body has already been allocated
         // in the temporary message object, so just wait for the bytes to arrive...
         ba::async_read(_socket, ba::buffer(_msgTemporaryIn.body.data(), _msgTemporaryIn.body.size()),
-                         [this](std::error_code ec, std::size_t length)
+                       [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
             {
@@ -299,7 +299,7 @@ private:
     void WriteValidation()
     {
         ba::async_write(_socket, ba::buffer(&_handshakeOut, sizeof(uint64_t)),
-                          [this](std::error_code ec, std::size_t length)
+                        [this](std::error_code ec, std::size_t length)
         {
             if (!ec)
             {
@@ -318,7 +318,7 @@ private:
     void ReadValidation(net::server_interface<T>* server = nullptr)
     {
         ba::async_read(_socket, ba::buffer(&_handshakeIn, sizeof(uint64_t)),
-                         [this, server](std::error_code ec, std::size_t length)
+                       [this, server](std::error_code ec, std::size_t length)
         {
             if (!ec)
             {
