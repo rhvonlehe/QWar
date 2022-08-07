@@ -2,6 +2,26 @@ cmake_minimum_required(VERSION 3.17)
 
 project(QWar)
 
+set(ENABLE_PRECOMPILED OFF CACHE INTERNAL "turn off precompiled headers (zeromq)")
+
+include(FetchContent)
+FetchContent_Declare(
+    Sodium
+    GIT_REPOSITORY https://github.com/jedisct1/libsodium.git
+    GIT_TAG 1.0.18
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+FetchContent_Declare(
+    zeromq
+    GIT_REPOSITORY https://github.com/zeromq/libzmq
+    GIT_TAG v4.3.4
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(sodium zeromq)
+
+
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
