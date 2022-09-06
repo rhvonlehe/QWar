@@ -6,22 +6,26 @@ set(ENABLE_PRECOMPILED OFF CACHE INTERNAL "turn off precompiled headers (zeromq)
 
 include(FetchContent)
 FetchContent_Declare(
-    Sodium
-    GIT_REPOSITORY https://github.com/jedisct1/libsodium.git
-    GIT_TAG 1.0.18
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-)
-FetchContent_Declare(
-    zeromq
+    ZeroMQ
     GIT_REPOSITORY https://github.com/zeromq/libzmq
     GIT_TAG v4.3.4
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE
 )
-FetchContent_MakeAvailable(sodium zeromq)
+FetchContent_Declare(
+    azmq
+    GIT_REPOSITORY https://github.com/rhvonlehe/azmq
+#    GIT_TAG v1.0.3
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(ZeroMQ)
+FetchContent_MakeAvailable(azmq)
 
-
+#find_package(ZeroMQ 4.0 REQUIRED)
+#find_package(azmq)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
