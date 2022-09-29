@@ -14,8 +14,10 @@ void PlayerSM::resetRoundData(void)
 Idle::Idle(my_context ctx)
     : my_base(ctx)
 {
+    auto& player = context<PlayerSM>()._player;
     TEMP_LOG("Idle state entered");
-    context<PlayerSM>().resetRoundData();
+    player.resetRoundData();
+    player.notifyEvent(Player::EV_PLAYER_ACTIVE);
 }
 
 Idle::~Idle()
@@ -34,7 +36,7 @@ sc::result Idle::react(const EvAction& event)
 Eliminated::Eliminated(my_context ctx)
     : my_base(ctx)
 {
-    context<PlayerSM>().notifyEvent(Player::EV_PLAYER_WAITING);
+    context<PlayerSM>().notifyEvent(Player::EV_PLAYER_ELIMINATED);
     TEMP_LOG("Eliminated state entered");
 }
 
@@ -79,22 +81,49 @@ CardsPlayed::~CardsPlayed()
 {
 }
 
+sc::result CardsPlayed::react(const EvLost& event)
+{
+    auto& player = context<PlayerSM>()._player;
+
+    if (player.outOfCards())
+    {
+        return transit<Eliminated>();
+    }
+
+    return transit<Idle>();
+
+}
+
 WaitForWinner::WaitForWinner(my_context ctx)
     : my_base(ctx)
 {
+    TEMP_LOG("WaitForWinner state entered");
     auto& player = context<PlayerSM>()._player;
     player.notifyEvent(Player::EV_PLAYER_WAITING);
-    TEMP_LOG("WaitForWinner state entered");
 }
 
 WaitForWinner::~WaitForWinner(void)
 {}
 
+sc::result WaitForWinner::react(const EvTie& event)
+{
+    auto& player = context<PlayerSM>()._player;
+
+    if (player.outOfCards())
+    {
+        return transit<Eliminated>();
+    }
+
+    return transit<WaitHoleCard>();
+}
+
 WaitHoleCard::WaitHoleCard(my_context ctx)
     : my_base(ctx)
 {
     TEMP_LOG("WaitHoleCard state entered");
-    context<PlayerSM>().notifyEvent(Player::EV_PLAYER_ACTIVE);
+    auto& player = context<PlayerSM>()._player;
+
+    player.notifyEvent(Player::EV_PLAYER_ACTIVE);
 }
 
 WaitHoleCard::~WaitHoleCard(void)
@@ -105,6 +134,12 @@ sc::result WaitHoleCard::react(const EvAction& event)
     auto& player = context<PlayerSM>()._player;
     player.playCard(true);
     player.setEvalCard();
+
+    if (player.outOfCards())
+    {
+        return transit<WaitFlip>();
+    }
+
     return transit<WaitLastCard>();
 }
 
@@ -113,6 +148,16 @@ WaitLastCard::WaitLastCard(my_context ctx)
     : my_base(ctx)
 {
     TEMP_LOG("WaitLastCard state entered");
+    auto& player = context<PlayerSM>()._player;
+
+    if (player.outOfCards())
+    {
+        post_event(EvOutOfCards());
+    }
+    else
+    {
+        player.notifyEvent(Player::EV_PLAYER_ACTIVE);
+    }
 }
 
 WaitLastCard::~WaitLastCard(void)
@@ -121,12 +166,8 @@ WaitLastCard::~WaitLastCard(void)
 sc::result WaitLastCard::react(const EvAction& event)
 {
     auto& player = context<PlayerSM>()._player;
-    auto cardFound = player.playCard();
-    if (cardFound)
-    {
-        return transit<WaitFlip>();
-    }
-    return discard_event();
+    player.playCard();
+    return transit<WaitFlip>();
 }
 
 WaitFlip::WaitFlip(my_context ctx)

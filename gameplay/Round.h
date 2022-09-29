@@ -15,11 +15,13 @@ public:
     ~Round(void);
 
     void playerWaiting(Player* player);
+    void playerEliminated(Player* player);
     void winnerReqCards(Player* player);
 
 private:
     friend class RoundSM;
     void handlePlayerWaiting(Player *player);
+    void handlePlayerEliminated(Player* player);
     void evaluate(void);
     void findWinner(void);
     void cullPlayerList(void);

@@ -20,6 +20,14 @@ void RoundSM::handlePlayerWaiting(Player* player)
     _round.handlePlayerWaiting(player);
 }
 
+void RoundSM::handlePlayerEliminated(Player* player)
+{
+    assert(_round._players.size());
+
+    _round.handlePlayerEliminated(player);
+}
+
+
 void RoundSM::initializeRound(void)
 {
     assert(_round._players.size());
@@ -57,6 +65,14 @@ sc::result Active::react( const EvPlayerWaiting& event )
 
     return discard_event();
 }
+
+sc::result Active::react(const EvPlayerEliminated& event)
+{
+    context<RoundSM>().handlePlayerEliminated(event.player);
+
+    return discard_event();
+}
+
 
 sc::result Active::react(const EvWinner& event)
 {

@@ -34,6 +34,7 @@ struct RoundSM : sc::asynchronous_state_machine<RoundSM, Active>
 
     // common stuff done in state machine context since it has Round&
     void handlePlayerWaiting(Player *player);
+    void handlePlayerEliminated(Player* player);
     void initializeRound(void);
     void distributeCards(Player* player);
 private:
@@ -54,6 +55,14 @@ struct EvPlayerWaiting : sc::event < EvPlayerWaiting >
 {
     EvPlayerWaiting(Player* player)
         : player(player){ TEMP_LOG("EvPlayerWaiting event"); }
+
+    Player* player;
+};
+
+struct EvPlayerEliminated : sc::event < EvPlayerEliminated >
+{
+    EvPlayerEliminated(Player* player)
+        : player(player) { TEMP_LOG("EvPlayerEliminated event"); }
 
     Player* player;
 };
@@ -79,6 +88,7 @@ struct Active : sc::state<Active, RoundSM>
     ~Active(void);
 
     sc::result react(const EvPlayerWaiting& event);
+    sc::result react(const EvPlayerEliminated& event);
     sc::result react(const EvWinner& event);
 };
 

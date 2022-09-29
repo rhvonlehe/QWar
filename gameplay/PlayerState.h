@@ -45,7 +45,6 @@ struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
 
     void notifyEvent(Player::ObservableEvent event);
     void resetRoundData(void);
-//    void handleFirstCard(const EvAction& event); // todo remove
 
     Player&   _player;
 };
@@ -97,7 +96,8 @@ struct EvTimeout    : sc::event < EvTimeout >
 struct Idle : sc::state<Idle, PlayerSM>
 {
     typedef boost::mpl::list<
-    sc::custom_reaction< EvAction > > reactions;
+    sc::custom_reaction< EvAction >,
+    sc::transition< EvOutOfCards, Eliminated > > reactions;
 
     Idle(my_context ctx);
     ~Idle(void);
@@ -129,27 +129,31 @@ struct CardsPlayed : sc::state<CardsPlayed, PlayerSM, WaitForWinner>
 {
     typedef boost::mpl::list<
     sc::transition< EvOutOfCards, Eliminated >,
-    sc::transition< EvLost, Idle>,
+    sc::custom_reaction< EvLost >,
     sc::transition< EvWon, AcceptingCards> > reactions;
 
     CardsPlayed(my_context ctx);
     ~CardsPlayed(void);
+
+    sc::result react(const EvLost& event);
 };
 
 struct WaitForWinner : sc::state<WaitForWinner, CardsPlayed>
 {
     typedef boost::mpl::list<
-    sc::transition< EvTie, WaitHoleCard> > reactions;
+    sc::custom_reaction< EvTie> > reactions;
 
     WaitForWinner(my_context ctx);
     ~WaitForWinner(void);
+
+    sc::result react(const EvTie& event);
 };
 
 struct WaitHoleCard : sc::state<WaitHoleCard, CardsPlayed>
 {
     typedef boost::mpl::list<
-    sc::custom_reaction< EvAction >
-    /*sc::transition< EvAction, WaitHoleCard >*/ > reactions;
+    sc::transition< EvOutOfCards, Eliminated >,
+    sc::custom_reaction< EvAction > > reactions;
 
     WaitHoleCard(my_context ctx);
     ~WaitHoleCard(void);

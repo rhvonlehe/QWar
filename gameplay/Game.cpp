@@ -115,9 +115,12 @@ void Game::handlePlayerUpdate(Player* player,
     case Player::EV_PLAYER_WAITING:
         _round->playerWaiting(player);
         break;
+    case Player::EV_PLAYER_ELIMINATED:
+        _round->playerEliminated(player);
+        break;
     case Player::EV_WINNER_REQ_CARDS:
         _round->winnerReqCards(player);
-        break;
+        break;        
     default: break;
     }
 }

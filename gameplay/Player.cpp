@@ -54,30 +54,28 @@ void Player::action(void)
                            boost::intrusive_ptr<EvAction>(new EvAction()));
 }
 
-bool Player::playCard(bool faceDown)
+void Player::playCard(bool faceDown)
 {
-    bool retVal = false;
     auto card = getNextCard();
 
-    retVal = true;
     card.flip(faceDown);
     _activeRoundCards.push_back(card);
     notifyEvent(EV_CARD_PLAYED);
     notifyEvent(EV_CARDS_CHANGED);
-
-    return retVal;
 }
 
 void Player::flipCard(void)
 {
-    _evalCard.flip(false);
+    assert(_activeRoundCards.size() > _evalCard);
+    _activeRoundCards[_evalCard].flip(false);
     notifyEvent(EV_CARDS_CHANGED);
 }
 
 
 Card& Player::evalCard(void)
 {
-    return _evalCard;
+    assert(_activeRoundCards.size() > _evalCard);
+    return _activeRoundCards[_evalCard];
 }
 
 void Player::tie(void)
@@ -123,26 +121,29 @@ Card Player::getNextCard()
     // This call decrements the pile
     auto nextCard = _unplayedPile.nextCard();
 
+#if 0 // TODO remove
     // Check for out of cards situation to queue event to next state
     if (outOfCards())
     {
         _scheduler.queue_event(_processor,
                                boost::intrusive_ptr<EvOutOfCards>(new EvOutOfCards()));
     }
+#endif
 
     return nextCard;
 }
 
 void Player::setEvalCard(void)
 {
-    assert(_activeRoundCards.size());
-    _evalCard = _activeRoundCards.back();
+    assert(_activeRoundCards.size() > 0);
+    _evalCard = _activeRoundCards.size() - 1;
 }
 
 void Player::resetRoundData(void)
 {
+    TEMP_LOG("Resetting round data");
     _activeRoundCards.clear();
-    notifyEvent(EV_PLAYER_ACTIVE);
+    _evalCard = 0;
 }
 
 void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)

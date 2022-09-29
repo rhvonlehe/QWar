@@ -24,68 +24,57 @@ Rectangle {
 
     currentCards: playerInstance.playedCards
 
-//    Rectangle {
-//        border.width: 2
-//        border.color: "white"
-//        anchors.horizontalCenter: parent.horizontalCenter
 
-//        Component.onCompleted: {
-//            console.log("rectangle size: ", width, height)
-//        }
+    ColumnLayout {
+        //        Card {
+        //        }
 
-
-
-        ColumnLayout {
-            //        Card {
-            //        }
-
-            //        Rectangle { // TODO remove when graphical card ready
-            //            height: 20
-            //            width: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+        //        Rectangle { // TODO remove when graphical card ready
+        //            height: 20
+        //            width: 20
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
 
 
-            Label {
-                id: cardsPlayed
-                color: "dark blue"
-                height: 50
-                width: 50
-                text: currentCards
-            }
-            //        }
+        Label {
+            id: cardsPlayed
+            color: "dark blue"
+            height: 50
+            width: 50
+            text: currentCards
+        }
+        //        }
 
-            Label {
-                id: nameLabel
-                height: 50
-                width: 50
-                text: playerInstance.name
-            }
+        Label {
+            id: nameLabel
+            height: 50
+            width: 50
+            text: playerInstance.name
+        }
 
-            Label {
-                height: 50
-                width: 50
-                text: "unplayed: " + playerInstance.unplayedCardCnt
-            }
+        Label {
+            height: 50
+            width: 50
+            text: "unplayed: " + playerInstance.unplayedCardCnt
+        }
 
-            Label {
-                height: 50
-                width: 50
-                text: "played: " + playerInstance.playedCardCnt
-            }
+        Label {
+            height: 50
+            width: 50
+            text: "played: " + playerInstance.playedCardCnt
+        }
 
-            Button {
-                id: playButton
-                height: 50
-                width: 50
-                enabled: playerInstance.active
-                text: playerInstance.buttonText
+        Button {
+            id: playButton
+            height: 50
+            width: 50
+            enabled: playerInstance.active
+            text: playerInstance.buttonText
 
-                onClicked: {
-                    playerInstance.action()
-                }
+            onClicked: {
+                playerInstance.action()
             }
         }
-//    }
+    }
 }
 

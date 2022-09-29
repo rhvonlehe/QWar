@@ -34,7 +34,6 @@ public:
 
 private:
 
-//    std::vector<std::unique_ptr<Player>>    _allPlayers;
     std::vector<Player*>                            _activePlayers;
     std::map<std::string, std::unique_ptr<Player>>  _allPlayers;
     std::unique_ptr<Deck>                           _deck;

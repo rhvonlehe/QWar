@@ -30,6 +30,7 @@ public:
     {
         EV_PLAYER_WAITING,
         EV_PLAYER_ACTIVE,
+        EV_PLAYER_ELIMINATED,
         EV_WINNER_REQ_CARDS,
         EV_CARD_PLAYED,
         EV_CARD_FLIPPED,
@@ -88,7 +89,7 @@ public:
         return (_name == rhs.name());
     }
 private:
-    bool playCard(bool faceDown = false);
+    void playCard(bool faceDown = false);
     void flipCard(void);
     Card getNextCard(void);
     void setEvalCard(void);
@@ -111,8 +112,8 @@ private:
     Deck                _unplayedPile;
     Deck                _playedPile;
 
-    std::vector<Card>  _activeRoundCards;
-    Card               _evalCard;
+    std::vector<Card>   _activeRoundCards;
+    uint8_t             _evalCard;
 
     // Observer variable - simplified for just one observer
     std::vector<std::function<void(ObservableEvent)>> _observerFuncs;

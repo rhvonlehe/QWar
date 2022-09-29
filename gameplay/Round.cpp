@@ -36,6 +36,12 @@ void Round::playerWaiting(Player* player)
                            boost::intrusive_ptr<EvPlayerWaiting>(new EvPlayerWaiting(player)));
 }
 
+void Round::playerEliminated(Player* player)
+{
+    _scheduler.queue_event(_processor,
+                           boost::intrusive_ptr<EvPlayerEliminated>(new EvPlayerEliminated(player)));
+}
+
 void Round::winnerReqCards(Player* player)
 {
     _scheduler.queue_event(_processor,
@@ -52,6 +58,16 @@ void Round::handlePlayerWaiting(Player* player)
         evaluate();
     }
 }
+
+void Round::handlePlayerEliminated(Player* player)
+{
+    // remove this player from _players, add to _losers, then call evaluate TODO: test
+    _losers.push_back(player);
+    _players.erase(std::remove(_players.begin(), _players.end(), player));
+
+    evaluate();
+}
+
 
 void Round::evaluate(void)
 {
