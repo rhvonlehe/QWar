@@ -14,7 +14,6 @@ namespace sc = boost::statechart;
 
 // Player events
 //
-struct EvOutOfCards;
 struct EvAction;
 struct EvFlip;
 struct EvWon;
@@ -51,10 +50,6 @@ struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
 
 // More definition for events
 //
-struct EvOutOfCards : sc::event < EvOutOfCards >
-{
-    EvOutOfCards(void) { TEMP_LOG("EvOutOfCards event"); }
-};
 struct EvAction       : sc::event < EvAction >
 {
     EvAction(void) { TEMP_LOG("EvAction event"); }
@@ -96,8 +91,7 @@ struct EvTimeout    : sc::event < EvTimeout >
 struct Idle : sc::state<Idle, PlayerSM>
 {
     typedef boost::mpl::list<
-    sc::custom_reaction< EvAction >,
-    sc::transition< EvOutOfCards, Eliminated > > reactions;
+    sc::custom_reaction< EvAction > > reactions;
 
     Idle(my_context ctx);
     ~Idle(void);
@@ -128,7 +122,6 @@ struct AcceptingCards: sc::state<AcceptingCards, PlayerSM>
 struct CardsPlayed : sc::state<CardsPlayed, PlayerSM, WaitForWinner>
 {
     typedef boost::mpl::list<
-    sc::transition< EvOutOfCards, Eliminated >,
     sc::custom_reaction< EvLost >,
     sc::transition< EvWon, AcceptingCards> > reactions;
 
@@ -152,7 +145,6 @@ struct WaitForWinner : sc::state<WaitForWinner, CardsPlayed>
 struct WaitHoleCard : sc::state<WaitHoleCard, CardsPlayed>
 {
     typedef boost::mpl::list<
-    sc::transition< EvOutOfCards, Eliminated >,
     sc::custom_reaction< EvAction > > reactions;
 
     WaitHoleCard(my_context ctx);
@@ -164,7 +156,6 @@ struct WaitHoleCard : sc::state<WaitHoleCard, CardsPlayed>
 struct WaitLastCard : sc::state<WaitLastCard, CardsPlayed>
 {
     typedef boost::mpl::list<
-    sc::transition< EvOutOfCards, WaitFlip >,
     sc::custom_reaction< EvAction > > reactions;
 
     WaitLastCard(my_context ctx);

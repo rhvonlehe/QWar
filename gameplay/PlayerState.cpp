@@ -150,14 +150,7 @@ WaitLastCard::WaitLastCard(my_context ctx)
     TEMP_LOG("WaitLastCard state entered");
     auto& player = context<PlayerSM>()._player;
 
-    if (player.outOfCards())
-    {
-        post_event(EvOutOfCards());
-    }
-    else
-    {
-        player.notifyEvent(Player::EV_PLAYER_ACTIVE);
-    }
+    player.notifyEvent(Player::EV_PLAYER_ACTIVE);
 }
 
 WaitLastCard::~WaitLastCard(void)

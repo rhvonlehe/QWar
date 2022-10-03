@@ -121,15 +121,6 @@ Card Player::getNextCard()
     // This call decrements the pile
     auto nextCard = _unplayedPile.nextCard();
 
-#if 0 // TODO remove
-    // Check for out of cards situation to queue event to next state
-    if (outOfCards())
-    {
-        _scheduler.queue_event(_processor,
-                               boost::intrusive_ptr<EvOutOfCards>(new EvOutOfCards()));
-    }
-#endif
-
     return nextCard;
 }
 
