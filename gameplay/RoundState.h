@@ -32,12 +32,9 @@ struct RoundSM : sc::asynchronous_state_machine<RoundSM, Active>
     RoundSM(my_context ctx, Round& round);
     ~RoundSM(void) { terminate(); }
 
-    // common stuff done in state machine context since it has Round&
-    void handlePlayerWaiting(Player *player);
-    void handlePlayerEliminated(Player* player);
     void initializeRound(void);
     void distributeCards(Player* player);
-private:
+
     Round& _round;
 };
 
@@ -95,11 +92,13 @@ struct Active : sc::state<Active, RoundSM>
 struct Done : sc::state<Done, RoundSM>
 {
     typedef boost::mpl::list<
-    sc::custom_reaction< EvDistributeCards> > reactions;
+    sc::custom_reaction< EvDistributeCards>,
+    sc::custom_reaction< EvPlayerEliminated> > reactions;
 
     Done(my_context ctx);
     ~Done(void);
 
     sc::result react(const EvDistributeCards& event);
+    sc::result react(const EvPlayerEliminated& event);
 };
 

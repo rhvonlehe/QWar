@@ -58,22 +58,6 @@ Player& Game::getPlayer(const std::string name)
 // For test purposes - todo update with latest changes that better support view support
 void Game::autoPlay()
 {
-    while (!isOver())
-    {
-        _roundNumber++;
-        std::cout << "Round: " << _roundNumber << std::endl;
-
-        Round round(_activePlayers);
-        round.play();
-
-        cullPlayerList();
-    }
-
-    if (_activePlayers.size() == 1)
-    {
-        std::cout << "Player " << _activePlayers[0]->name() << " has won!" << std::endl;
-    }
-
 }
 #endif
 

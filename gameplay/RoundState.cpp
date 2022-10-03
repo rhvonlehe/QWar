@@ -1,9 +1,6 @@
 #include "RoundState.h"
 #include <Round.h>
 
-#include <cstdio> // temp todo remove
-
-
 
 RoundSM::RoundSM(my_context ctx, Round& round)
     : my_base(ctx),
@@ -13,34 +10,11 @@ RoundSM::RoundSM(my_context ctx, Round& round)
     assert(_round._players.size());
 }
 
-void RoundSM::handlePlayerWaiting(Player* player)
-{
-    assert(_round._players.size());
-
-    _round.handlePlayerWaiting(player);
-}
-
-void RoundSM::handlePlayerEliminated(Player* player)
-{
-    assert(_round._players.size());
-
-    _round.handlePlayerEliminated(player);
-}
-
-
-void RoundSM::initializeRound(void)
-{
-    assert(_round._players.size());
-
-    _round.initializeRound();
-}
-
 void RoundSM::distributeCards(Player* player)
 {
     assert(_round._players.size());
 
     _round.distributeCards(player);
-    _round.cullPlayerList();
 }
 
 EvWinner::EvWinner(Player *player)
@@ -52,7 +26,7 @@ EvWinner::EvWinner(Player *player)
 Active::Active(my_context ctx)
     : my_base(ctx)
 {
-    context<RoundSM>().initializeRound();
+    context<RoundSM>()._round.initializeRound();
     TEMP_LOG("Normal state entered");
 }
 
@@ -61,14 +35,19 @@ Active::~Active(void)
 
 sc::result Active::react( const EvPlayerWaiting& event )
 {
-    context<RoundSM>().handlePlayerWaiting(event.player);
+    auto& round = context<RoundSM>()._round;
+
+    round.handlePlayerWaiting(event.player);
 
     return discard_event();
 }
 
 sc::result Active::react(const EvPlayerEliminated& event)
 {
-    context<RoundSM>().handlePlayerEliminated(event.player);
+    auto& round = context<RoundSM>()._round;
+
+    round.handlePlayerEliminated(event.player);
+    round.evaluate();
 
     return discard_event();
 }
@@ -96,4 +75,14 @@ sc::result Done::react(const EvDistributeCards& event)
 
     return transit<Active>();
 }
+
+sc::result Done::react(const EvPlayerEliminated& event)
+{
+    auto& round = context<RoundSM>()._round;
+
+    round.handlePlayerEliminated(event.player);
+
+    return discard_event();
+}
+
 

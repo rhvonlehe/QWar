@@ -181,9 +181,15 @@
     </initial>
     <state name="DONE">
      <tran trig="DISTRIBUTE_CARDS" target="../../2">
-      <action brief="distributeCards, cullPlayerList"/>
-      <tran_glyph conn="20,15,3,3,36,8,-35,20,7">
+      <action brief="distributeCards"/>
+      <tran_glyph conn="20,14,3,3,36,9,-35,20,7">
        <action box="0,-2,41,2"/>
+      </tran_glyph>
+     </tran>
+     <tran trig="PLAYER_ELIMINATED">
+      <action brief="remove"/>
+      <tran_glyph conn="20,17,3,-1,33">
+       <action box="0,-2,26,2"/>
       </tran_glyph>
      </tran>
      <state_glyph node="20,6,39,13"/>

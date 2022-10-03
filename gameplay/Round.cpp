@@ -50,6 +50,8 @@ void Round::winnerReqCards(Player* player)
 
 void Round::handlePlayerWaiting(Player* player)
 {
+    assert(_players.size());
+
     // Guaranteed that each player only does this once, so just count up to the total
     // player count
     if (++_playersWaiting == _players.size())
@@ -61,11 +63,11 @@ void Round::handlePlayerWaiting(Player* player)
 
 void Round::handlePlayerEliminated(Player* player)
 {
-    // remove this player from _players, add to _losers, then call evaluate TODO: test
+    assert(_players.size());
+
+    // remove this player from _players, add to _losers
     _losers.push_back(player);
     _players.erase(std::remove(_players.begin(), _players.end(), player));
-
-    evaluate();
 }
 
 
@@ -115,19 +117,23 @@ void Round::findWinner(void)
     _players.erase(backHalfIt, _players.end());
 }
 
-void Round::cullPlayerList(void)
+void Round::cullLoserList(void)
 {
-    _players.erase(std::remove_if(
-                             _players.begin(), _players.end(),
+    // This now culls loser list only
+    _losers.erase(std::remove_if(
+                             _losers.begin(), _losers.end(),
                              [](const Player* p)
     {
         return p->outOfCards();
-    }), _players.end());
+    }), _losers.end());
 }
 
 void Round::initializeRound(void)
 {
+    assert(_players.size());
+
     _playersWaiting = 0;
+    cullLoserList();
 
     // Put losers back with players
     _players.insert(_players.end(), _losers.begin(), _losers.end());

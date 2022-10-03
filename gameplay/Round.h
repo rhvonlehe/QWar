@@ -20,11 +20,13 @@ public:
 
 private:
     friend class RoundSM;
+    friend class Done;
+    friend class Active;
     void handlePlayerWaiting(Player *player);
     void handlePlayerEliminated(Player* player);
     void evaluate(void);
     void findWinner(void);
-    void cullPlayerList(void);
+    void cullLoserList(void);
     void initializeRound(void);
     void distributeCards(Player *winner);
 
