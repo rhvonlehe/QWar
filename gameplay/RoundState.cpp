@@ -10,13 +10,6 @@ RoundSM::RoundSM(my_context ctx, Round& round)
     assert(_round._players.size());
 }
 
-void RoundSM::distributeCards(Player* player)
-{
-    assert(_round._players.size());
-
-    _round.distributeCards(player);
-}
-
 EvWinner::EvWinner(Player *player)
     : player(player)
 {
@@ -47,7 +40,7 @@ sc::result Active::react(const EvPlayerEliminated& event)
     auto& round = context<RoundSM>()._round;
 
     round.handlePlayerEliminated(event.player);
-    round.evaluate();
+    round.evaluate();  // Need this in the Active state in case he's the last player left
 
     return discard_event();
 }
@@ -71,7 +64,7 @@ Done::~Done(void)
 
 sc::result Done::react(const EvDistributeCards& event)
 {
-    context<RoundSM>().distributeCards(event.player);
+    context<RoundSM>()._round.distributeCards(event.player);
 
     return transit<Active>();
 }

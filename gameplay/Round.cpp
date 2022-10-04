@@ -142,6 +142,7 @@ void Round::initializeRound(void)
 
 void Round::distributeCards(Player* winner)
 {
+    assert(_players.size());
     std::vector<Card> allLoserCards;
 
     for (auto loser : _losers)

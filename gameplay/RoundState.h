@@ -32,9 +32,6 @@ struct RoundSM : sc::asynchronous_state_machine<RoundSM, Active>
     RoundSM(my_context ctx, Round& round);
     ~RoundSM(void) { terminate(); }
 
-    void initializeRound(void);
-    void distributeCards(Player* player);
-
     Round& _round;
 };
 
