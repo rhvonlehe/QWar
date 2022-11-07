@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include <QtQml/qqmlapplicationengine.h>
 #include <QGameController.h>
 #include <QGameModel.h>
 

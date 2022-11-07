@@ -16,7 +16,7 @@ FetchContent_Declare(
 FetchContent_Declare(
     azmq
     GIT_REPOSITORY https://github.com/rhvonlehe/azmq
-#    GIT_TAG v1.0.3
+#    GIT_TAG v1.0.3  # the fork I made has a fix we need beyond v1.0.3
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
     OVERRIDE_FIND_PACKAGE
@@ -24,8 +24,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(ZeroMQ)
 FetchContent_MakeAvailable(azmq)
 
-#find_package(ZeroMQ 4.0 REQUIRED)
-#find_package(azmq)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
@@ -35,6 +33,7 @@ add_compile_definitions(_WIN32_WINDOWS=0x0a00)
 
 add_subdirectory(gameplay)
 add_subdirectory(networking)
+add_subdirectory(client)
 
 set(CMAKE_AUTOMOC ON)
 set(QML_IMPORT_PATH ${CMAKE_PREFIX_PATH}/qml CACHE PATH "qml import path")
