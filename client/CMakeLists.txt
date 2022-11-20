@@ -1,4 +1,4 @@
-find_package(Qt5 COMPONENTS Core Gui REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui Qml REQUIRED)
 
 add_executable(QWarClient)
 
@@ -10,6 +10,7 @@ target_sources(QWarClient
 
 target_link_libraries(QWarClient
     PRIVATE
-    Qt5::Core
-    Qt5::Gui
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Qml
 )

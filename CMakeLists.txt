@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.19)
 
 project(QWar)
 
@@ -13,6 +13,8 @@ FetchContent_Declare(
     GIT_PROGRESS TRUE
     OVERRIDE_FIND_PACKAGE
 )
+FetchContent_MakeAvailable(ZeroMQ)
+
 FetchContent_Declare(
     azmq
     GIT_REPOSITORY https://github.com/rhvonlehe/azmq
@@ -21,7 +23,6 @@ FetchContent_Declare(
     GIT_PROGRESS TRUE
     OVERRIDE_FIND_PACKAGE
 )
-FetchContent_MakeAvailable(ZeroMQ)
 FetchContent_MakeAvailable(azmq)
 
 set(Boost_USE_STATIC_LIBS ON)
@@ -38,6 +39,7 @@ add_subdirectory(client)
 set(CMAKE_AUTOMOC ON)
 set(QML_IMPORT_PATH ${CMAKE_PREFIX_PATH}/qml CACHE PATH "qml import path")
 
+if(0)
 find_package(Qt5 COMPONENTS Core Gui Quick Qml QuickCompiler REQUIRED)
 
 add_executable(QWar)
@@ -64,3 +66,4 @@ target_link_libraries(QWar
     Qt5::Qml
     gameplay
     )
+endif()
