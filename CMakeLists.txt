@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 
 project(QWar)
+option(test-azmq "developer tests" OFF)
 
 set(ENABLE_PRECOMPILED OFF CACHE INTERNAL "turn off precompiled headers (zeromq)")
 
@@ -35,6 +36,9 @@ add_compile_definitions(_WIN32_WINDOWS=0x0a00)
 add_subdirectory(gameplay)
 add_subdirectory(networking)
 add_subdirectory(client)
+if(test-azmq)
+    add_subdirectory(azmq-test)
+endif()
 
 set(CMAKE_AUTOMOC ON)
 set(QML_IMPORT_PATH ${CMAKE_PREFIX_PATH}/qml CACHE PATH "qml import path")
