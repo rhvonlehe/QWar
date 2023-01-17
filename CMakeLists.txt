@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 
 project(QWar)
-option(test-azmq "developer tests" OFF)
+option(test-azmq "tests for azmq" OFF)
+option(test-msgpack "tests for msgpack" OFF)
 
 set(ENABLE_PRECOMPILED OFF CACHE INTERNAL "turn off precompiled headers (zeromq)")
 
@@ -26,6 +27,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(azmq)
 
+FetchContent_Declare(
+    msgpackc-cxx
+    GIT_REPOSITORY https://github.com/msgpack/msgpack-c
+    GIT_TAG cpp-5.0.0
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(msgpackc-cxx)
+
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
@@ -38,6 +49,9 @@ add_subdirectory(networking)
 add_subdirectory(client)
 if(test-azmq)
     add_subdirectory(azmq-test)
+endif()
+if(test-msgpack)
+    add_subdirectory(msgpack-test)
 endif()
 
 set(CMAKE_AUTOMOC ON)
