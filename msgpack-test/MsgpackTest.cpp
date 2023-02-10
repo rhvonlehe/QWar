@@ -29,8 +29,10 @@ int main()
              asio::buffer(buffer)
          }};
 
-        server.async_receive(rcv_bufs,
-                             [&](boost::system::error_code const& ec, size_t bytes_transferred) {
+        std::function<void(boost::system::error_code const, size_t)> receive_handler;
+
+        receive_handler = [&](boost::system::error_code const& ec, size_t bytes_transferred)
+        {
             std::cout << "rcvd size: " << bytes_transferred << "\n" << std::flush;
             msgpack::object_handle oh = msgpack::unpack(static_cast<char*>(rcv_bufs[1].data()), bytes_transferred);
             msgpack::object deserialized = oh.get();
@@ -38,8 +40,11 @@ int main()
 
             msgpack::type::tuple<int, bool, string> dst;
             deserialized.convert(dst);
-//            ioc_server.stop();
-        });
+
+            server.async_receive(rcv_bufs, receive_handler);
+        };
+
+        server.async_receive(rcv_bufs, receive_handler);
 
         ioc_server.run();
     };
@@ -62,8 +67,8 @@ int main()
     thread serverThread(runServer);
     thread clientThread(runClient);
 
-//    ioc_server.run();
-//    ioc_client.run();
+    //    ioc_server.run();
+    //    ioc_client.run();
 
     while(1) {}
 }
