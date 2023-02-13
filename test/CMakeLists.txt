@@ -1,0 +1,6 @@
+if(test-azmq)
+    add_subdirectory(azmq-test)
+endif()
+if(test-msgpack)
+    add_subdirectory(msgpack-test)
+endif()
