@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     auto publish = [&]() {
         for (int n = 0;; n++)
         {
-            std::string text = "NASDAQ" + std::to_string(n%10);
+            std::string text = "NASDAQ" + std::to_string(n % 10);
             publisher.send(asio::buffer(text));
             cout << "sending " << text << "\n" << flush;
             std::this_thread::sleep_for(std::chrono::seconds(1));

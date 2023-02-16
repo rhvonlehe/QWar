@@ -8,7 +8,7 @@ ApplicationWindow {
     visible:        true
     color:          "turquoise"
 
-    property string currentScreen: "GameStart.qml"
+    property string currentScreen: "Intro.qml"
 
     Loader {
         id:             dynamicLoader
