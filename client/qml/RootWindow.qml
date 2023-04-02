@@ -20,5 +20,17 @@ ApplicationWindow {
         }
     }
 
+    Connections {
+        target: dynamicLoader.item  // target property means src of signal
+        ignoreUnknownSignals: true
+        function onConnectToServer() {
+            currentScreen = "ServerConnect.qml"
+
+        }
+        function onCreateServer() {
+            currentScreen = "ServerCreate.qml"
+
+        }
+    }
 
 }

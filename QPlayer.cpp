@@ -5,7 +5,7 @@ QPlayer::QPlayer(Player* const player, QObject *parent)
       _player(player),
       _identifyWinner(false)
 {
-    // Register some actions with the player model
+    // Register some actions with the player model   TODO: the server
     _player->addObserverCallback([&](Player::ObservableEvent event) { update(event); });
 }
 
@@ -13,7 +13,7 @@ void QPlayer::action()
 {
     printf("Player %s hit their button\n", getName().toStdString().c_str());
     fflush(stdout);
-    _player->action();
+    _player->action(); // TODO: go to server
 }
 
 QString QPlayer::getButtonText(void) const
