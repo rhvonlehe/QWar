@@ -37,9 +37,24 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(msgpackc-cxx)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
+find_package(Qt6 COMPONENTS Core Gui Quick Qml QuickCompiler REQUIRED)
+
+message("boost_FOUND is ${Boost_FOUND}")
+message("boost_include_dirs: ${Boost_INCLUDE_DIRS}")
+message("boost  libraries: ${Boost_LIBRARIES}")
+
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+  message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
+execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
+
 
 set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(_WIN32_WINDOWS=0x0a00)
@@ -52,8 +67,8 @@ add_subdirectory(test)
 set(CMAKE_AUTOMOC ON)
 set(QML_IMPORT_PATH ${CMAKE_PREFIX_PATH}/qml CACHE PATH "qml import path")
 
+
 if(0)
-find_package(Qt5 COMPONENTS Core Gui Quick Qml QuickCompiler REQUIRED)
 
 add_executable(QWar)
 

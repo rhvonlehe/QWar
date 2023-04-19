@@ -1,3 +1,5 @@
+get_property(propVal TARGET Boost::boost PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "Boost::boost include dirs: ${propVal}")
 
 add_library(gameplay STATIC)
 
@@ -22,7 +24,7 @@ target_compile_definitions(gameplay PUBLIC BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 target_link_libraries(gameplay
     PUBLIC
-    Boost::boost
+    boost::boost
     PRIVATE
     Boost::system
     Boost::thread
