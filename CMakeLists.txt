@@ -44,16 +44,18 @@ find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
 find_package(Qt6 COMPONENTS Core Gui Quick Qml QuickCompiler REQUIRED)
 
-message("boost_FOUND is ${Boost_FOUND}")
-message("boost_include_dirs: ${Boost_INCLUDE_DIRS}")
-message("boost  libraries: ${Boost_LIBRARIES}")
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake ${CMAKE_MODULE_PATH})
 
-get_cmake_property(_variableNames VARIABLES)
-list (SORT _variableNames)
-foreach (_variableName ${_variableNames})
-  message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
-execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
+#message("boost_FOUND is ${Boost_FOUND}")
+#message("boost_include_dirs: ${Boost_INCLUDE_DIRS}")
+#message("boost  libraries: ${Boost_LIBRARIES}")
+
+#get_cmake_property(_variableNames VARIABLES)
+#list (SORT _variableNames)
+#foreach (_variableName ${_variableNames})
+#  message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
+#execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 
 
 set(CMAKE_CXX_STANDARD 17)

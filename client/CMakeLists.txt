@@ -1,5 +1,5 @@
 find_package(Qt6 COMPONENTS Core Gui Qml REQUIRED)
-set(CMAKE_AUTOMOC ON)
+qt_standard_project_setup()
 
 set(QML_FILES
     qml/Intro.qml
@@ -27,3 +27,21 @@ target_link_libraries(QWarClient
     Qt6::Gui
     Qt6::Qml
 )
+
+install(TARGETS QWarClient
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+#qt_finalize_target(QWarClient)
+
+qt_generate_deploy_qml_app_script(
+    TARGET QWarClient
+    FILENAME_VARIABLE deploy_script
+    NO_UNSUPPORTED_PLATFORM_ERROR
+)
+
+message("deploy script name: ${deploy_script}")
+message("qt_deploy_support: ${QT_DEPLOY_SUPPORT}")
+install(SCRIPT ${deploy_script})
+
+

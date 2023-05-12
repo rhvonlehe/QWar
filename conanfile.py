@@ -13,6 +13,7 @@ class QWar(ConanFile):
         # requiring qt doesn't get all modules, some have to be explicitly added as
         # shown here
         self.options["qt"].qtdeclarative = True
+        self.options["qt"].shared = True
 
     def build(self):
         cmake = CMake(self)
