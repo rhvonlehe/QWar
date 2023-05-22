@@ -1,5 +1,5 @@
 from conans import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake
+from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
 
 class QWar(ConanFile):
     name = "QWar"
@@ -15,7 +15,13 @@ class QWar(ConanFile):
         self.options["qt"].qtdeclarative = True
         self.options["qt"].shared = True
 
+    def generate(self):
+        tc = CMakeToolchain(self)
+
     def build(self):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
+
+    def layout(self):
+        cmake_layout(self, src_folder=".")
