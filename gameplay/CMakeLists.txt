@@ -24,7 +24,7 @@ target_compile_definitions(gameplay PUBLIC BOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 target_link_libraries(gameplay
     PUBLIC
-    boost::boost
+    Boost::boost
     PRIVATE
     Boost::system
     Boost::thread

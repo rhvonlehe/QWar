@@ -37,7 +37,7 @@ install(TARGETS QWarClient
 qt_generate_deploy_qml_app_script(
     TARGET QWarClient
     FILENAME_VARIABLE deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
+#    NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
 message("deploy script name: ${deploy_script}")

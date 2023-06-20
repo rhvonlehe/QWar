@@ -42,7 +42,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
-find_package(Qt6 COMPONENTS Core Gui Quick Qml QuickCompiler REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui Quick Qml  REQUIRED)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake ${CMAKE_MODULE_PATH})
 
