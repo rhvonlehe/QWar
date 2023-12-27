@@ -95,5 +95,5 @@ target_link_libraries(QWar
     Qt5::Quick
     Qt5::Qml
     gameplay
-    )
+)
 endif()

@@ -1,5 +1,6 @@
 find_package(Qt6 COMPONENTS Core Gui Qml REQUIRED)
 qt_standard_project_setup()
+qt_policy(SET QTP0001 OLD)
 
 set(QML_FILES
     qml/Intro.qml

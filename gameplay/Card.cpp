@@ -3,6 +3,27 @@
 #include <iostream>
 #include <map>
 
+#include <optional>
+
+
+#if 0 // todo remove
+class Simple
+{
+public:
+    Simple() {};
+    Simple(Simple&& other) : _data(std::exchange(other._data, {})) {};
+    Simple(const Simple& other) = delete;
+private:
+    int _data;
+};
+
+std::optional<Simple> test(void)
+{
+    std::optional<Simple> s;
+    return std::move(s);      // std::optional<Simple>()
+}
+#endif
+
 
 static std::map<Card::Suit, char> suitStr
 {
