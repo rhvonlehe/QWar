@@ -20,6 +20,8 @@ qt_add_qml_module(QWarClient
     URI "QWarClient"
     QML_FILES ${QML_FILES}
     SOURCES ${CPP_FILES}
+    QML_FILES qml/ServerConnect.qml
+    QML_FILES qml/ServerCreate.qml
 )
 
 target_link_libraries(QWarClient

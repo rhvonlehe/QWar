@@ -20,8 +20,7 @@ FetchContent_MakeAvailable(ZeroMQ)
 FetchContent_Declare(
     azmq
     GIT_REPOSITORY https://github.com/rhvonlehe/azmq
-    GIT_TAG origin/richv-finder-mods
-#    GIT_TAG v1.0.3  # the fork I made has a fix we need beyond v1.0.3
+    GIT_TAG 9ce6f13a388e8072f4835c2fb238ede15c6cfa5b
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
     OVERRIDE_FIND_PACKAGE
