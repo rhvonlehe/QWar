@@ -62,9 +62,11 @@ set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(_WIN32_WINDOWS=0x0a00)
 
 add_subdirectory(gameplay)
-add_subdirectory(networking)
 add_subdirectory(client)
+add_subdirectory(server)
 add_subdirectory(test)
+
+# add_subdirectory(networking) # todo remove
 
 set(CMAKE_AUTOMOC ON)
 set(QML_IMPORT_PATH ${CMAKE_PREFIX_PATH}/qml CACHE PATH "qml import path")
