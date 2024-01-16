@@ -41,20 +41,6 @@ void QGameModel::reset(void)
 }
 
 
-
-#if 0 // todo
-void QGameMode::playWar(void)
-{
-    while (winners.size() > 1)
-    {
-        winners = round.playWar(winners);
-    }
-
-    _winner
-}
-#endif
-
-
 int QGameModel::rowCount(const QModelIndex &parent) const
 {
     return _players.size();

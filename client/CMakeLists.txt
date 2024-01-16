@@ -13,6 +13,7 @@ set(CPP_FILES
 
 qt_add_executable(QWarClient
     main.cpp
+    ServerCtrlSocket.cpp
 )
 
 qt_add_qml_module(QWarClient
