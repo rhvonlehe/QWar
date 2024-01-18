@@ -23,6 +23,7 @@ qt_add_qml_module(QWarClient
     SOURCES ${CPP_FILES}
     QML_FILES qml/ServerConnect.qml
     QML_FILES qml/ServerCreate.qml
+    SOURCES ServerCtrlSocketAdapter.h ServerCtrlSocketAdapter.cpp
 )
 
 target_link_libraries(QWarClient
@@ -30,6 +31,8 @@ target_link_libraries(QWarClient
     Qt6::Core
     Qt6::Gui
     Qt6::Qml
+    Boost::boost
+    azmq
 )
 
 install(TARGETS QWarClient
