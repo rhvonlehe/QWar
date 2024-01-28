@@ -1,0 +1,28 @@
+@startuml
+
+title gameplay classes - QWar
+
+
+class Player {
+  +Card lastCardPlayed()
+  
+  
+  -String _name
+}
+
+Player *-> Deck
+
+class Deck {
+
+}
+
+Deck *-> Card
+
+class Card {
+
+}
+
+
+
+
+@enduml
