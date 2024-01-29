@@ -8,8 +8,6 @@ import QtQml 2.12
 Item {
     id: gamePlay
     signal endGame
-    signal deal
-//    property var playerArray : game.getPlayers()
 
     property var playerRow: [ 1, 1, 0, 2 ]
     property var playerCol: [ 0, 2, 1, 1 ]

@@ -53,40 +53,40 @@ public:
 
     Card lastCardPlayed(void) const
     {
-        assert(_activeRoundCards.size());
-        return _activeRoundCards.back();
+        assert(activeRoundCards_.size());
+        return activeRoundCards_.back();
     }
 
     std::vector<Card> getActiveRoundCards(void)
     {
-        return _activeRoundCards;
+        return activeRoundCards_;
     }
 
     uint8_t totalPlayed(void) const
     {
-        return _playedPile.size();
+        return playedPile_.size();
     }
     uint8_t totalUnplayed(void) const
     {
-        return _unplayedPile.size();
+        return unplayedPile_.size();
     }
 
     bool hasTwoCards(void) const
     {
-        return ((_unplayedPile.size() + _playedPile.size()) >= 2);
+        return ((unplayedPile_.size() + playedPile_.size()) >= 2);
     }
     bool outOfCards(void) const
     {
-        return (_unplayedPile.isEmpty() && _playedPile.isEmpty());
+        return (unplayedPile_.isEmpty() && playedPile_.isEmpty());
     }
     std::string name(void) const
     {
-        return _name;
+        return name_;
     }
-    void name(std::string n)  { _name = n; }
+    void name(std::string n)  { name_ = n; }
     bool operator==(const Player& rhs)
     {
-        return (_name == rhs.name());
+        return (name_ == rhs.name());
     }
 private:
     void playCard(bool faceDown = false);
@@ -108,26 +108,26 @@ private:
     friend class WaitForWinner;
     friend class AcceptingCards;
 
-    std::string         _name;
-    Deck                _unplayedPile;
-    Deck                _playedPile;
+    std::string         name_;
+    Deck                unplayedPile_;
+    Deck                playedPile_;
 
-    std::vector<Card>   _activeRoundCards;
-    uint8_t             _evalCard;
+    std::vector<Card>   activeRoundCards_;
+    uint8_t             evalCard_;
 
     // Observer variable - simplified for just one observer
-    std::vector<std::function<void(ObservableEvent)>> _observerFuncs;
+    std::vector<std::function<void(ObservableEvent)>> observerFuncs_;
 
     // StateChart variables
     using FifoScheduler = boost::statechart::fifo_scheduler<>;
-    FifoScheduler                   _scheduler;
-    FifoScheduler::processor_handle _processor;
-    std::thread                     _stateThread;
+    FifoScheduler                   scheduler_;
+    FifoScheduler::processor_handle processor_;
+    std::thread                     stateThread_;
 
     // Asio stuff
-    std::unique_ptr<ba::executor_work_guard<ba::io_context::executor_type>>  _work;
-    std::unique_ptr<ba::deadline_timer>                     _timer;
-    ba::io_context                                          _io;
-    std::thread                                             _ioCtxThread;
+    std::unique_ptr<ba::executor_work_guard<ba::io_context::executor_type>>  work_;
+    std::unique_ptr<ba::deadline_timer>                     timer_;
+    ba::io_context                                          io_;
+    std::thread                                             ioCtxThread_;
 };
 

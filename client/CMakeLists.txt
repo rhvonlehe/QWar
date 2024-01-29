@@ -14,6 +14,7 @@ set(CPP_FILES
 qt_add_executable(QWarClient
     main.cpp
     ServerCtrlSocket.cpp
+    ServerCtrlSocketAdapter.cpp
 )
 
 qt_add_qml_module(QWarClient
@@ -23,11 +24,11 @@ qt_add_qml_module(QWarClient
     SOURCES ${CPP_FILES}
     QML_FILES qml/ServerConnect.qml
     QML_FILES qml/ServerCreate.qml
-    SOURCES ServerCtrlSocketAdapter.h ServerCtrlSocketAdapter.cpp
 )
 
 target_link_libraries(QWarClient
     PRIVATE
+    QWarServer
     Qt6::Core
     Qt6::Gui
     Qt6::Qml

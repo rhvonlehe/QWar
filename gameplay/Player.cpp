@@ -4,25 +4,25 @@
 #include <thread>
 
 Player::Player(const std::string name)
-    : _name(name),
-      _scheduler(true)
+    : name_(name),
+      scheduler_(true)
 {
     // NOTE: It might be a better idea to have 2-stage initialization of Player
     // and start the thread during the 2nd stage outside of the construction.
 
     // Set up event processor
-    _processor = _scheduler.create_processor<PlayerSM>(std::ref(*this));
-    _scheduler.initiate_processor(_processor);
+    processor_ = scheduler_.create_processor<PlayerSM>(std::ref(*this));
+    scheduler_.initiate_processor(processor_);
 
-    _stateThread = std::thread( [&]() {
+    stateThread_ = std::thread( [&]() {
         std::cout << "starting player SM thread" << std::endl;
-        _scheduler();
+        scheduler_();
     } );
 
-    _ioCtxThread = std::thread( [&]() {
-        _work = std::make_unique<ba::executor_work_guard<ba::io_context::executor_type>>(ba::make_work_guard(_io));
+    ioCtxThread_ = std::thread( [&]() {
+        work_ = std::make_unique<ba::executor_work_guard<ba::io_context::executor_type>>(ba::make_work_guard(io_));
         std::cout << "starting player asio thread" << std::endl;
-        _io.run();
+        io_.run();
     });
 }
 
@@ -32,25 +32,25 @@ Player::~Player(void)
     // is gone.  It stores that internally as a reference.  Calling cancel here
     // makes sure that it won't try to use the _io it references when it is
     // destroyed at the end of this destructor.
-    if (_timer) _timer->cancel();
-    _scheduler.terminate();
-    _stateThread.join();
-    _work->reset();
-    _ioCtxThread.join();
+    if (timer_) timer_->cancel();
+    scheduler_.terminate();
+    stateThread_.join();
+    work_->reset();
+    ioCtxThread_.join();
 }
 
 void Player::reset(void)
 {
-    _unplayedPile.clear();
-    _playedPile.clear();
+    unplayedPile_.clear();
+    playedPile_.clear();
 
-    _scheduler.queue_event(_processor,
+    scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvReset>(new EvReset()));
 }
 
 void Player::action(void)
 {
-    _scheduler.queue_event(_processor,
+    scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvAction>(new EvAction()));
 }
 
@@ -59,48 +59,48 @@ void Player::playCard(bool faceDown)
     auto card = getNextCard();
 
     card.flip(faceDown);
-    _activeRoundCards.push_back(card);
+    activeRoundCards_.push_back(card);
     notifyEvent(EV_CARD_PLAYED);
     notifyEvent(EV_CARDS_CHANGED);
 }
 
 void Player::flipCard(void)
 {
-    assert(_activeRoundCards.size() > _evalCard);
-    _activeRoundCards[_evalCard].flip(false);
+    assert(activeRoundCards_.size() > evalCard_);
+    activeRoundCards_[evalCard_].flip(false);
     notifyEvent(EV_CARDS_CHANGED);
 }
 
 
 Card& Player::evalCard(void)
 {
-    assert(_activeRoundCards.size() > _evalCard);
-    return _activeRoundCards[_evalCard];
+    assert(activeRoundCards_.size() > evalCard_);
+    return activeRoundCards_[evalCard_];
 }
 
 void Player::tie(void)
 {
-    _scheduler.queue_event(_processor,
+    scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvTie>(new EvTie()));
 }
 
 void Player::won()
 {
-    _scheduler.queue_event(_processor,
+    scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvWon>(new EvWon()));
 }
 
 std::vector<Card> Player::lost(void)
 {
-    auto retVal = _activeRoundCards;
-    _scheduler.queue_event(_processor,
+    auto retVal = activeRoundCards_;
+    scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvLost>(new EvLost()));
     return retVal;
 }
 
 void Player::addObserverCallback(const std::function<void (Player::ObservableEvent)> func)
 {
-    _observerFuncs.push_back(func);
+    observerFuncs_.push_back(func);
 }
 
 Card Player::getNextCard()
@@ -109,77 +109,77 @@ Card Player::getNextCard()
 
     // Shuffle played deck and make it current deck if needed
     //
-    if (_unplayedPile.isEmpty())
+    if (unplayedPile_.isEmpty())
     {
-        if (!_playedPile.isEmpty())
+        if (!playedPile_.isEmpty())
         {
-            _playedPile.shuffle();
+            playedPile_.shuffle();
             movePlayedToCurrent();
         }
     }
 
     // This call decrements the pile
-    auto nextCard = _unplayedPile.nextCard();
+    auto nextCard = unplayedPile_.nextCard();
 
     return nextCard;
 }
 
 void Player::setEvalCard(void)
 {
-    assert(_activeRoundCards.size() > 0);
-    _evalCard = _activeRoundCards.size() - 1;
+    assert(activeRoundCards_.size() > 0);
+    evalCard_ = activeRoundCards_.size() - 1;
 }
 
 void Player::resetRoundData(void)
 {
     TEMP_LOG("Resetting round data");
-    _activeRoundCards.clear();
-    _evalCard = 0;
+    activeRoundCards_.clear();
+    evalCard_ = 0;
 }
 
 void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)
 {
     fflush(stdout);
-    Deck& deck = (PILE_UNPLAYED == pile) ? _unplayedPile : _playedPile;
+    Deck& deck = (PILE_UNPLAYED == pile) ? unplayedPile_ : playedPile_;
 
-    std::cout << "player " << _name << " accepting " << cards.size() << " loser cards" << std::endl;
+    std::cout << "player " << name_ << " accepting " << cards.size() << " loser cards" << std::endl;
     deck.addBack(cards);
-    std::cout << "player " << _name << " accepting " << _activeRoundCards.size() << " own cards" << std::endl;
-    deck.addBack(_activeRoundCards);
+    std::cout << "player " << name_ << " accepting " << activeRoundCards_.size() << " own cards" << std::endl;
+    deck.addBack(activeRoundCards_);
 
     notifyEvent(EV_CARDS_CHANGED);
 
-    _scheduler.queue_event(_processor,
+    scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvAcceptCards>(new EvAcceptCards()));
 }
 
 void Player::acceptDealtCard(const Pile pile, const Card card)
 {
-    PILE_UNPLAYED == pile ? _unplayedPile.addBack(card) :
-                            _playedPile.addBack(card);
+    PILE_UNPLAYED == pile ? unplayedPile_.addBack(card) :
+                            playedPile_.addBack(card);
 
     notifyEvent(EV_CARDS_CHANGED);
 }
 
 void Player::movePlayedToCurrent()
 {
-    while (false == _playedPile.isEmpty())
+    while (false == playedPile_.isEmpty())
     {
-        _unplayedPile.addBack(_playedPile.nextCard());
+        unplayedPile_.addBack(playedPile_.nextCard());
     }
 }
 
 void Player::notifyEvent(ObservableEvent event)
 {
-    std::for_each(_observerFuncs.begin(), _observerFuncs.end(),
+    std::for_each(observerFuncs_.begin(), observerFuncs_.end(),
                   [event](std::function<void(ObservableEvent)> f) { f(event); });
 }
 
 void Player::startTimer(const boost::posix_time::milliseconds ms)
 {
-    _timer = std::make_unique<ba::deadline_timer>(_io, ms);
-    _timer->async_wait([&](const boost::system::error_code&) {
-        _scheduler.queue_event(_processor,
+    timer_ = std::make_unique<ba::deadline_timer>(io_, ms);
+    timer_->async_wait([&](const boost::system::error_code&) {
+        scheduler_.queue_event(processor_,
                                boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
     });
 }

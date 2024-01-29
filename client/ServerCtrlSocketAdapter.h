@@ -9,7 +9,7 @@ class ServerCtrlSocketAdapter : public QObject
 public:
     explicit ServerCtrlSocketAdapter(QObject *parent = nullptr);
 
-    Q_INVOKABLE void Connect(void);
+    Q_INVOKABLE void connectLocal(void);
 signals:
 
 private:
