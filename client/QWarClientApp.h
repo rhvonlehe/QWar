@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ServerCtrlSocketAdapter.h"
 #include <QGuiApplication>
 #include <QtQml/qqmlapplicationengine.h>
 
@@ -12,6 +13,6 @@ public:
 
 private:
     std::unique_ptr<QQmlApplicationEngine>  _qmlAppEngine;
-
+    ServerCtrlSocketAdapter                 serverSocket_;
 };
 

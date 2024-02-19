@@ -29,7 +29,7 @@ ApplicationWindow {
         }
         function onCreateServer() {
             currentScreen = "ServerCreate.qml"
-
+            serverSocket.connectLocal();
         }
     }
 
