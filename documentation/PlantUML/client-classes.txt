@@ -1,0 +1,42 @@
+@startuml
+
+title client classes - QWar
+
+class QWarClientApp {
+}
+
+QWarClientApp *-> ServerCtrlSocketAdapter
+
+class ServerCtrlSocket {
+}
+
+class ServerCtrlSocketAdapter {
+}
+
+QObject <|-- ServerCtrlSocketAdapter
+ServerCtrlSocketAdapter *-> ServerCtrlSocket
+
+
+class Player {
+  +Card lastCardPlayed()
+  
+  
+  -String _name
+}
+
+Player *-> Deck
+
+class Deck {
+
+}
+
+Deck *-> Card
+
+class Card {
+
+}
+
+
+
+
+@enduml

@@ -1,0 +1,33 @@
+@startuml
+
+participant QWarApplication
+participant QML
+participant QGameModel
+participant Game
+participant Player 
+participant PlayerStateMachine
+
+QWarApplication -> QGameModel ** : create
+QGameModel -> Game ** : create
+loop all players
+	Game -> Player ** : create
+	Game -> Player : add PlayerUpdate callback
+end
+
+QML -> QGameModel : click Play
+QGameModel -> Game : deal
+
+group Deal Cards
+	loop until cards dealt evenly
+		Game -> Player : deal card
+		Player -> QPlayer : notify (EV_CARDS_UPDATED)
+	end
+end
+
+group Each Player Per Round
+	QPlayer -> Player : Play Card
+	Player -> PlayerStateMachine : queue action event
+end
+
+
+@enduml
