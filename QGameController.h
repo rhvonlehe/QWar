@@ -5,7 +5,6 @@
 #include <QString>
 #include <QStringList>
 #include <QObject>
-#include <memory>
 
 class QGameController : public QObject
 {
