@@ -7,21 +7,20 @@
 Round::Round(std::vector<Player *>& players,
              const std::function<void ()> callback)
     : _players(players),
-      _observerFunc(callback),
-      _scheduler(true)
+    _observerFunc(callback),
+    _scheduler(true)
 {
     // Set up event processor
     _processor = _scheduler.create_processor<RoundSM>(std::ref(*this));
     _scheduler.initiate_processor(_processor);
 
     _processorThread =
-            std::make_unique<std::thread>(
-                [&]()
-    {
-        std::cout << "starting round SM thread" << std::endl;
-        _scheduler();
-    }
-    );
+        std::make_unique<std::thread>(
+            [&]()    {
+                std::cout << "starting round SM thread" << std::endl;
+                _scheduler();
+            }
+            );
 }
 
 Round::~Round(void)
@@ -104,14 +103,14 @@ void Round::findWinner(void)
     auto maxIt = std::max_element(_players.begin(),
                                   _players.end(),
                                   [](Player* p1, Player* p2)
-    { return (p1->evalCard() < p2->evalCard()); } );
+                                  { return (p1->evalCard() < p2->evalCard()); } );
 
     auto highestValue = (*maxIt)->evalCard();
 
     auto backHalfIt = std::stable_partition(_players.begin(),
                                             _players.end(),
                                             [highestValue](Player* p)
-    { return (highestValue == p->evalCard()); } );
+                                            { return (highestValue == p->evalCard()); } );
 
     _losers.insert(_losers.end(), backHalfIt, _players.end());
     _players.erase(backHalfIt, _players.end());
@@ -121,11 +120,11 @@ void Round::cullLoserList(void)
 {
     // This now culls loser list only
     _losers.erase(std::remove_if(
-                             _losers.begin(), _losers.end(),
-                             [](const Player* p)
-    {
-        return p->outOfCards();
-    }), _losers.end());
+                      _losers.begin(), _losers.end(),
+                      [](const Player* p)
+                      {
+                          return p->outOfCards();
+                      }), _losers.end());
 }
 
 void Round::initializeRound(void)

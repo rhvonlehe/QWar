@@ -4,7 +4,13 @@ ServerCtrlSocketAdapter::ServerCtrlSocketAdapter(QObject *parent)
     : QObject{parent}
 {}
 
-void ServerCtrlSocketAdapter::connectLocal(void)
+void ServerCtrlSocketAdapter::startAndConnectLocal(void)
 {
-    socket_.StartAndConnect();
+    socket_.StartLocalServer();
+    socket_.ConnectLocalServer();
+}
+
+void ServerCtrlSocketAdapter::connectRemote(void)
+{
+    socket_.ConnectRemoteServer();
 }

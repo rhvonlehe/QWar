@@ -12,6 +12,8 @@ Server::Server(void) :
 void Server::operator()(void)
 {
     cout << "server started" << endl;
+
+
 }
 
 

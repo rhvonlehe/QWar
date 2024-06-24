@@ -8,4 +8,5 @@ QWarClientApp::QWarClientApp(int argc, char *argv[])
     _qmlAppEngine->load(QUrl("qrc:/QWarClient/qml/RootWindow.qml"));
 
     _qmlAppEngine->rootContext()->setContextProperty("serverSocket", &serverSocket_);
+    // _qmlAppEngine->rootContext()->setContextProperty("")
 }

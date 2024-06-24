@@ -34,4 +34,17 @@ Item {
             }
         }
     }
+
+    Connections {
+        target: clientIntro
+        ignoreUnknownSignals: true
+        function onConnectToServer() {
+            currentScreen = "ServerConnect.qml"
+            serverSocket.connectRemote();  // TODO: fix hard-coding here
+        }
+        function onCreateServer() {
+            currentScreen = "ServerCreate.qml"
+            serverSocket.startAndConnectOwn();
+        }
+    }
 }
