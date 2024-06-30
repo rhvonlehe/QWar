@@ -6,8 +6,6 @@ ServerCtrlSocketAdapter::ServerCtrlSocketAdapter(QObject *parent)
 
 void ServerCtrlSocketAdapter::startAndConnectLocal(void)
 {
-    socket_.StartLocalServer();
-    socket_.ConnectLocalServer();
 }
 
 void ServerCtrlSocketAdapter::connectRemote(void)

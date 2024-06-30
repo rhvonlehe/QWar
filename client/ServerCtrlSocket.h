@@ -14,12 +14,11 @@ public:
     ServerCtrlSocket(void);
 
     void StartLocalServer(void);
-    void ConnectLocalServer(void);
-    void ConnectRemoteServer(void);
+    void Connect(void);
 
-    void Send(void);
+    // void Send(void);
 
-    void RegisterCB();
+    // void RegisterCB();
 
 
 private:

@@ -19,7 +19,7 @@ Item {
             text: "Test sending a message"
             font.pointSize: 13
             onClicked: {
-                clientIntro.testSend()
+                serverConnect.testSend()
             }
         }
 
@@ -28,7 +28,7 @@ Item {
     Connections {
         target: serverConnect  // target property means src of signal
         function onTestSend() {
-
+            clientAdapter.testSend()
         }
     }
 

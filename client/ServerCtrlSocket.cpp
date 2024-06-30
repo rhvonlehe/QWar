@@ -2,8 +2,7 @@
 #include <iostream>
 #include <string>
 
-const std::string LOCAL_SERVER_SOCKET_URL= "inproc://localhost:11999";
-const std::string DEFAULT_SERVER_URL= "tcp://localhost:11999";
+const std::string LOCAL_SERVER_CTRL_URL= "inproc://server_ctrl";
 
 ServerCtrlSocket::ServerCtrlSocket(void)
     : socket_(ctx_)
@@ -18,12 +17,8 @@ void ServerCtrlSocket::StartLocalServer(void)
     });
 }
 
-void ServerCtrlSocket::ConnectLocalServer(void)
+void ServerCtrlSocket::Connect(void)
 {
-    socket_.connect(LOCAL_SERVER_SOCKET_URL);
+    socket_.connect(LOCAL_SERVER_CTRL_URL);
 }
 
-void ServerCtrlSocket::ConnectRemoteServer(void)
-{
-    socket_.connect(DEFAULT_SERVER_URL);
-}
