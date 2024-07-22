@@ -1,5 +1,7 @@
 
-add_library(QWarServer STATIC)
+add_library(QWarServer STATIC
+    StatePublisher.h StatePublisher.cpp
+    StateReceiver.h StateReceiver.cpp)
 
 target_include_directories(QWarServer PUBLIC .)
 

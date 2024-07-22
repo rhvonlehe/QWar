@@ -5,15 +5,15 @@
 
 namespace ba = boost::asio;
 
-class ServerPlaySocket
+class StatePushSocket
 {
 public:
-    ServerPlaySocket();
+    StatePushSocket();
 
     void Connect(void);
     void Send(void);  // TODO
 
 private:
     ba::io_context          ctx_;
-    azmq::dealer_socket     socket_;
+    azmq::push_socket       socket_;
 };

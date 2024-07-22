@@ -1,7 +1,9 @@
 #pragma once
 
-#include <ServerCtrlSocket.h>
-#include <ServerPlaySocket.h>
+// #include <ServerCtrlSocket.h> // TODO remove
+#include <StatePushSocket.h>
+#include <Server.h>
+#include <thread>
 #include <QObject>
 
 class ClientAdapter : public QObject
@@ -18,6 +20,8 @@ public:
 signals:
 
 private:
-    ServerCtrlSocket ctrlSocket_;
-    ServerPlaySocket playSocket_;
+    // ServerCtrlSocket ctrlSocket_; // TODO remove
+    std::unique_ptr<Server>     server_;
+    std::thread                 serverThread_;
+    StatePushSocket             pushSocket_;
 };

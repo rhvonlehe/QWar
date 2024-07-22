@@ -14,7 +14,7 @@ set(CPP_FILES
 qt_add_executable(QWarClient
     main.cpp
     ServerCtrlSocket.cpp
-    ServerPlaySocket.cpp
+    StatePushSocket.cpp
     ClientAdapter.cpp
 )
 

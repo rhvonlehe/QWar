@@ -1,4 +1,7 @@
 #include "ClientAdapter.h"
+#include <iostream>
+
+using namespace std;
 
 ClientAdapter::ClientAdapter(QObject *parent)
     : QObject{parent}
@@ -6,20 +9,24 @@ ClientAdapter::ClientAdapter(QObject *parent)
 
 void ClientAdapter::startAndConnectLocal(void)
 {
-    ctrlSocket_.StartLocalServer();
+    server_ = make_unique<Server>();
+    serverThread_ = std::thread([&]() {
+        cout <<"starting server thread" << endl;
+        server_->operator()();
+    });
 
 
-    ctrlSocket_.Connect();
-    playSocket_.Connect();
+
+    pushSocket_.Connect();
 
 }
 
 void ClientAdapter::connectRemote(void)
 {
-    playSocket_.Connect();
+    pushSocket_.Connect();
 }
 
 void ClientAdapter::testSend(void)
 {
-    playSocket_.Send();
+    pushSocket_.Send();
 }
