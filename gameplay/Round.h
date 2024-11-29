@@ -3,7 +3,6 @@
 #include <Player.h>
 #include <boost/statechart/asynchronous_state_machine.hpp>
 #include <vector>
-#include <map>
 #include <memory>
 
 class Round

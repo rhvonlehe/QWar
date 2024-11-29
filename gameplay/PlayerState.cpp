@@ -3,18 +3,18 @@
 
 void PlayerSM::notifyEvent(Player::ObservableEvent event)
 {
-    _player.notifyEvent(event);
+    player_.notifyEvent(event);
 }
 
 void PlayerSM::resetRoundData(void)
 {
-    _player.resetRoundData();
+    player_.resetRoundData();
 }
 
 Idle::Idle(my_context ctx)
     : my_base(ctx)
 {
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
     TEMP_LOG("Idle state entered");
     player.resetRoundData();
     player.notifyEvent(Player::EV_PLAYER_ACTIVE);
@@ -25,7 +25,7 @@ Idle::~Idle()
 
 sc::result Idle::react(const EvAction& event)
 {
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
     player.playCard();
     player.setEvalCard();
 
@@ -46,7 +46,7 @@ Eliminated::~Eliminated()
 AcceptingCards::AcceptingCards(my_context ctx)
     : my_base(ctx)
 {
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
     player.cancelTimer();
     player.startTimer(boost::posix_time::milliseconds(500));
     player.notifyEvent(Player::EV_WINNER);
@@ -83,7 +83,7 @@ CardsPlayed::~CardsPlayed()
 
 sc::result CardsPlayed::react(const EvLost& event)
 {
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
 
     if (player.outOfCards())
     {
@@ -98,7 +98,7 @@ WaitForWinner::WaitForWinner(my_context ctx)
     : my_base(ctx)
 {
     TEMP_LOG("WaitForWinner state entered");
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
     player.notifyEvent(Player::EV_PLAYER_WAITING);
 }
 
@@ -107,7 +107,7 @@ WaitForWinner::~WaitForWinner(void)
 
 sc::result WaitForWinner::react(const EvTie& event)
 {
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
 
     if (player.outOfCards())
     {
@@ -121,7 +121,7 @@ WaitHoleCard::WaitHoleCard(my_context ctx)
     : my_base(ctx)
 {
     TEMP_LOG("WaitHoleCard state entered");
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
 
     player.notifyEvent(Player::EV_PLAYER_ACTIVE);
 }
@@ -131,7 +131,7 @@ WaitHoleCard::~WaitHoleCard(void)
 
 sc::result WaitHoleCard::react(const EvAction& event)
 {
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
     player.playCard(true);
     player.setEvalCard();
 
@@ -148,7 +148,7 @@ WaitLastCard::WaitLastCard(my_context ctx)
     : my_base(ctx)
 {
     TEMP_LOG("WaitLastCard state entered");
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
 
     player.notifyEvent(Player::EV_PLAYER_ACTIVE);
 }
@@ -158,7 +158,7 @@ WaitLastCard::~WaitLastCard(void)
 
 sc::result WaitLastCard::react(const EvAction& event)
 {
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
     player.playCard();
     return transit<WaitFlip>();
 }
@@ -174,7 +174,7 @@ WaitFlip::~WaitFlip(void)
 
 sc::result WaitFlip::react(const EvAction& event)
 {
-    auto& player = context<PlayerSM>()._player;
+    auto& player = context<PlayerSM>().player_;
     player.flipCard();
     player.notifyEvent(Player::EV_CARD_FLIPPED);
     return transit<WaitForWinner>();

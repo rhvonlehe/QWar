@@ -8,7 +8,6 @@
 #include <vector>
 #include <memory>
 #include <thread>
-#include <map>
 #include <functional>
 #define ASIO_STANDALONE
 #include <boost/asio.hpp>

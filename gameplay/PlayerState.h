@@ -39,13 +39,13 @@ struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
 {
     PlayerSM(my_context ctx, Player& player)
         : my_base(ctx),
-          _player(player) {}
+          player_(player) {}
     ~PlayerSM(void) { terminate(); }
 
     void notifyEvent(Player::ObservableEvent event);
     void resetRoundData(void);
 
-    Player&   _player;
+    Player&   player_;
 };
 
 // More definition for events

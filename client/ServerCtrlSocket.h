@@ -23,7 +23,7 @@ public:
 
 private:
     std::thread             serverThread_;
-    Server                  server_;
+    std::unique_ptr<Server> server_;
     ba::io_context          ctx_;
     azmq::dealer_socket     socket_;
 };
