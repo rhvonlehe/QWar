@@ -186,8 +186,7 @@ void Player::startTimer(const boost::posix_time::milliseconds ms)
 
 void Player::cancelTimer(void)
 {
-
-    // todo
+    timer_->cancel();
 }
 
 

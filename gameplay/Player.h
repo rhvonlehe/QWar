@@ -87,8 +87,10 @@ public:
     {
         return (name_ == rhs.name());
     }
-private:
+
     void playCard(bool faceDown = false);
+
+private:
     void flipCard(void);
     Card getNextCard(void);
     void setEvalCard(void);
