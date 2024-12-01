@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+namespace gameplay {
+
 class Deck
 {
 public:
@@ -30,3 +32,4 @@ private:
     std::deque<Card> _cards;
 };
 
+} // gameplay

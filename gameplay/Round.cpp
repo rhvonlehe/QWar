@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <iostream>
 
+namespace gameplay {
+
 Round::Round(std::vector<Player *>& players,
              const std::function<void ()> callback)
     : _players(players),
@@ -156,3 +158,4 @@ void Round::distributeCards(Player* winner)
     _observerFunc();
 }
 
+} // gameplay

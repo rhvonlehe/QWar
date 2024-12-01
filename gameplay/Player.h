@@ -15,6 +15,9 @@
 
 namespace ba = boost::asio;
 
+namespace gameplay {
+
+
 class PlayerSM;
 
 class Player
@@ -56,58 +59,35 @@ public:
         return activeRoundCards_.back();
     }
 
-    std::vector<Card> getActiveRoundCards(void)
-    {
-        return activeRoundCards_;
-    }
+    std::vector<Card> getActiveRoundCards(void)  { return activeRoundCards_; }
 
-    uint8_t totalPlayed(void) const
-    {
-        return playedPile_.size();
-    }
-    uint8_t totalUnplayed(void) const
-    {
-        return unplayedPile_.size();
-    }
+    uint8_t totalPlayed(void) const { return playedPile_.size(); }
 
-    bool hasTwoCards(void) const
-    {
-        return ((unplayedPile_.size() + playedPile_.size()) >= 2);
-    }
-    bool outOfCards(void) const
-    {
-        return (unplayedPile_.isEmpty() && playedPile_.isEmpty());
-    }
-    std::string name(void) const
-    {
-        return name_;
-    }
+    uint8_t totalUnplayed(void) const { return unplayedPile_.size(); }
+
+    bool hasTwoCards(void) const { return ((unplayedPile_.size() + playedPile_.size()) >= 2); }
+
+    bool outOfCards(void) const { return (unplayedPile_.isEmpty() && playedPile_.isEmpty()); }
+
+    std::string name(void) const { return name_; }
+
     void name(std::string n)  { name_ = n; }
-    bool operator==(const Player& rhs)
-    {
-        return (name_ == rhs.name());
-    }
 
-    void playCard(bool faceDown = false);
+    bool operator==(const Player& rhs) { return (name_ == rhs.name()); }
 
 private:
-    void flipCard(void);
     Card getNextCard(void);
-    void setEvalCard(void);
-    void resetRoundData(void);
     void movePlayedToCurrent();
-    void notifyEvent(ObservableEvent event);
-    void startTimer(const boost::posix_time::milliseconds ms);
-    void cancelTimer(void);
 
 private:
-    friend class PlayerSM;
-    friend class Idle;
-    friend class WaitHoleCard;
-    friend class WaitLastCard;
-    friend class WaitFlip;
-    friend class WaitForWinner;
-    friend class AcceptingCards;
+    // "hidden friends", better than friend classes - see Klaus Iglberger C++ Software Design
+    friend void flipCard(Player& player);
+    friend void playCard(Player& player, Card::Face face);
+    friend void setEvalCard(Player& player);
+    friend void notifyObservers(Player& player, ObservableEvent event);
+    friend void resetRoundData(Player& player);
+    friend void startTimer(Player& player, const boost::posix_time::milliseconds ms);
+    friend void cancelTimer(Player& player);
 
     std::string         name_;
     Deck                unplayedPile_;
@@ -132,3 +112,5 @@ private:
     std::thread                                             ioCtxThread_;
 };
 
+
+} // namespace gameplay

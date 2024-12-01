@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <thread>
 
+namespace gameplay {
+
 Player::Player(const std::string name)
     : name_(name),
       scheduler_(true)
@@ -53,24 +55,6 @@ void Player::action(void)
     scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvAction>(new EvAction()));
 }
-
-void Player::playCard(bool faceDown)
-{
-    auto card = getNextCard();
-
-    card.flip(faceDown);
-    activeRoundCards_.push_back(card);
-    notifyEvent(EV_CARD_PLAYED);
-    notifyEvent(EV_CARDS_CHANGED);
-}
-
-void Player::flipCard(void)
-{
-    assert(activeRoundCards_.size() > evalCard_);
-    activeRoundCards_[evalCard_].flip(false);
-    notifyEvent(EV_CARDS_CHANGED);
-}
-
 
 Card& Player::evalCard(void)
 {
@@ -124,19 +108,6 @@ Card Player::getNextCard()
     return nextCard;
 }
 
-void Player::setEvalCard(void)
-{
-    assert(activeRoundCards_.size() > 0);
-    evalCard_ = activeRoundCards_.size() - 1;
-}
-
-void Player::resetRoundData(void)
-{
-    TEMP_LOG("Resetting round data");
-    activeRoundCards_.clear();
-    evalCard_ = 0;
-}
-
 void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)
 {
     fflush(stdout);
@@ -147,7 +118,7 @@ void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)
     std::cout << "player " << name_ << " accepting " << activeRoundCards_.size() << " own cards" << std::endl;
     deck.addBack(activeRoundCards_);
 
-    notifyEvent(EV_CARDS_CHANGED);
+    notifyObservers(*this, EV_CARDS_CHANGED);
 
     scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvAcceptCards>(new EvAcceptCards()));
@@ -158,7 +129,7 @@ void Player::acceptDealtCard(const Pile pile, const Card card)
     PILE_UNPLAYED == pile ? unplayedPile_.addBack(card) :
                             playedPile_.addBack(card);
 
-    notifyEvent(EV_CARDS_CHANGED);
+    notifyObservers(*this, EV_CARDS_CHANGED);
 }
 
 void Player::movePlayedToCurrent()
@@ -169,25 +140,59 @@ void Player::movePlayedToCurrent()
     }
 }
 
-void Player::notifyEvent(ObservableEvent event)
+// Hidden Friends
+//
+
+void flipCard(Player& player)
 {
-    std::for_each(observerFuncs_.begin(), observerFuncs_.end(),
-                  [event](std::function<void(ObservableEvent)> f) { f(event); });
+    assert(player.activeRoundCards_.size() > player.evalCard_);
+    player.activeRoundCards_[player.evalCard_].flip(Card::FACEUP);
+    notifyObservers(player, Player::EV_CARDS_CHANGED);
 }
 
-void Player::startTimer(const boost::posix_time::milliseconds ms)
+void playCard(Player& player, Card::Face face)
 {
-    timer_ = std::make_unique<ba::deadline_timer>(io_, ms);
-    timer_->async_wait([&](const boost::system::error_code&) {
-        scheduler_.queue_event(processor_,
+    auto card = player.getNextCard();
+
+    card.flip(face);
+    player.activeRoundCards_.push_back(card);
+    notifyObservers(player, Player::EV_CARD_PLAYED);
+    notifyObservers(player, Player::EV_CARDS_CHANGED);
+}
+
+void startTimer(Player& player, const boost::posix_time::milliseconds ms)
+{
+    player.timer_ = std::make_unique<ba::deadline_timer>(player.io_, ms);
+    player.timer_->async_wait([&](const boost::system::error_code&) {
+        player.scheduler_.queue_event(player.processor_,
                                boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
     });
 }
 
-void Player::cancelTimer(void)
+void cancelTimer(Player& player)
 {
-    timer_->cancel();
+    player.timer_->cancel();
+}
+
+void setEvalCard(Player& player)
+{
+    assert(player.activeRoundCards_.size() > 0);
+    player.evalCard_ = player.activeRoundCards_.size() - 1;
+}
+
+void notifyObservers(Player& player, Player::ObservableEvent event)
+{
+    std::for_each(player.observerFuncs_.begin(), player.observerFuncs_.end(),
+                  [event](std::function<void(Player::ObservableEvent)> f) { f(event); });
+}
+
+void resetRoundData(Player& player)
+{
+    TEMP_LOG("Resetting round data");
+    player.activeRoundCards_.clear();
+    player.evalCard_ = 0;
 }
 
 
 
+} // gameplay

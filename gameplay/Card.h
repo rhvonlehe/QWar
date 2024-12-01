@@ -2,9 +2,16 @@
 
 #include <string>
 
+namespace gameplay {
+
 class Card
 {
 public:
+    enum Face
+    {
+        FACEDOWN,
+        FACEUP
+    };
     enum Suit
     {
         SPADES,
@@ -31,42 +38,43 @@ public:
     };
 
     Card() = default;
-    Card(Suit suit, Value value, bool faceDown = false);
+    Card(Suit suit, Value value, Face face);
 
     inline Suit suit(void) const
     {
-        return _suit;
+        return suit_;
     }
 
     inline Value value(void) const
     {
-        return _value;
+        return value_;
     }
 
     bool operator==(Card& rhs) const
     {
-        return (_value == rhs._value);
+        return (value_ == rhs.value_);
     }
 
     bool operator>(Card& rhs) const
     {
-        return (_value > rhs._value);
+        return (value_ > rhs.value_);
     }
 
     bool operator<(Card& rhv) const
     {
-        return (_value < rhv._value);
+        return (value_ < rhv.value_);
     }
 
     void print() const;
 
     std::string str(void) const;
 
-    void flip(bool faceDown);
+    void flip(Face face);
 private:
 
-    Suit  _suit;
-    Value _value;
-    bool  _faceDown;
+    Suit  suit_;
+    Value value_;
+    Face  face_;
 };
 
+} // gameplay

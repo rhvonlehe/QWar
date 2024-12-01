@@ -12,6 +12,8 @@
 
 namespace sc = boost::statechart;
 
+namespace gameplay {
+
 // Player events
 //
 struct EvAction;
@@ -41,9 +43,6 @@ struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
         : my_base(ctx),
           player_(player) {}
     ~PlayerSM(void) { terminate(); }
-
-    void notifyEvent(Player::ObservableEvent event);
-    void resetRoundData(void);
 
     Player&   player_;
 };
@@ -176,4 +175,4 @@ struct WaitFlip : sc::state<WaitFlip, CardsPlayed>
 };
 
 
-
+} // gameplay

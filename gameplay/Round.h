@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+namespace gameplay {
+
 class Round
 {
 public:
@@ -42,3 +44,5 @@ private:
     std::unique_ptr<std::thread>    _processorThread;
 
 };
+
+} // gameplay

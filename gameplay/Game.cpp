@@ -5,6 +5,8 @@
 #include <functional>
 #include <iostream>
 
+namespace gameplay {
+
 #if 0
 Game::Game(std::vector<std::unique_ptr<Player> >& players)
     : _allPlayers(std::move(players)),
@@ -109,7 +111,7 @@ void Game::handlePlayerUpdate(Player* player,
     }
 }
 
-
+} // gameplay
 
 
 

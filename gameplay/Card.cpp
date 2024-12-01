@@ -5,6 +5,7 @@
 
 #include <optional>
 
+namespace gameplay {
 
 #if 0 // todo remove
 class Simple
@@ -50,10 +51,9 @@ static std::map<Card::Value, char> valStr
     {Card::ACE,   'A'}
 };
 
-Card::Card(Suit suit, Value value, bool faceDown)
-    : _suit(suit), _value(value), _faceDown(faceDown)
+Card::Card(Suit suit, Value value, Face face)
+    : suit_(suit), value_(value), face_(face)
 {
-
 }
 
 void Card::print(void) const
@@ -65,20 +65,22 @@ std::string Card::str() const
 {
     std::string printable;
 
-    if (_faceDown)
+    if (FACEDOWN)
     {
         printable += "XX";
     }
     else
     {
-        printable += valStr[_value];
-        printable += suitStr[_suit];
+        printable += valStr[value_];
+        printable += suitStr[suit_];
     }
 
     return printable;
 }
 
-void Card::flip(bool faceDown)
+void Card::flip(Face face)
 {
-    _faceDown = faceDown;
+    face_ = face;
 }
+
+} // gameplay

@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 
+namespace gameplay {
 
 class Game
 {
@@ -41,3 +42,4 @@ private:
     uint32_t                                        _roundNumber;
 };
 
+}

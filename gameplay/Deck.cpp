@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <array>
 
+namespace gameplay {
+
 const std::array<Card::Suit, 4> cardSuits
 {
     Card::SPADES, Card::CLUBS, Card::DIAMONDS, Card::HEARTS
@@ -22,7 +24,7 @@ Deck::Deck(bool full)
     {
         std::for_each(cardValues.begin(), cardValues.end(), [&](const Card::Value& value) {
             std::for_each(cardSuits.begin(), cardSuits.end(), [&](const Card::Suit& suit) {
-                _cards.push_back(Card{suit, value});
+                _cards.push_back(Card{suit, value, Card::FACEDOWN});
             });
         }
         );
@@ -80,3 +82,5 @@ void Deck::swap(const int r1, const int r2)
     _cards[r1] = _cards[r2];
     _cards[r2] = temp;
 }
+
+} // gameplay

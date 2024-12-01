@@ -1,6 +1,7 @@
 #include "RoundState.h"
 #include <Round.h>
 
+namespace gameplay {
 
 RoundSM::RoundSM(my_context ctx, Round& round)
     : my_base(ctx),
@@ -79,3 +80,4 @@ sc::result Done::react(const EvPlayerEliminated& event)
 }
 
 
+} // gameplay

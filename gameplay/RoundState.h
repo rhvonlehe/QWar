@@ -13,6 +13,8 @@
 
 namespace sc = boost::statechart;
 
+namespace gameplay {
+
 class Round;
 class Player;
 
@@ -99,3 +101,4 @@ struct Done : sc::state<Done, RoundSM>
     sc::result react(const EvPlayerEliminated& event);
 };
 
+} // gameplay
