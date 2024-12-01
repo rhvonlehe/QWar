@@ -140,7 +140,7 @@ void Player::movePlayedToCurrent()
     }
 }
 
-// Hidden Friends
+// ---------------------- Hidden Friends ----------------------------
 //
 
 void flipCard(Player& player)

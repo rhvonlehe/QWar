@@ -17,9 +17,6 @@ namespace ba = boost::asio;
 
 namespace gameplay {
 
-
-class PlayerSM;
-
 class Player
 {
 public:
