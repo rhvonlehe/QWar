@@ -171,7 +171,10 @@ void startTimer(Player& player, const boost::posix_time::milliseconds ms)
 
 void cancelTimer(Player& player)
 {
-    player.timer_->cancel();
+    if (player.timer_)
+    {
+        player.timer_->cancel();
+    }
 }
 
 void setEvalCard(Player& player)
