@@ -12,11 +12,14 @@ target_sources(gameplay
     PRIVATE
     Card.cpp
     Deck.cpp
+    EventScheduler.h
+    EventScheduler.cpp
+    Game.cpp
     Player.cpp
+    PlayerEvents.h
     PlayerState.cpp
     Round.cpp
     RoundState.cpp
-    Game.cpp
     TimerService.cpp
     )
 

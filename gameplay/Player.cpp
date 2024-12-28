@@ -3,6 +3,10 @@
 #include <assert.h>
 #include <thread>
 
+// If I had really wanted to abstract away Boost::StateChart types here, I could have gone
+// with an abstract factory for the creation of the event types. This would be huge overkill
+// with likely no advantage.
+
 namespace gameplay {
 
 Player::Player(const std::string name)

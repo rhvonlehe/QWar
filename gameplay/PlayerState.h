@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Player.h"
+#include "PlayerEvents.h"
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/asynchronous_state_machine.hpp>
 #include <boost/statechart/state.hpp>
@@ -14,18 +14,6 @@ namespace sc = boost::statechart;
 
 namespace gameplay {
 
-// Player events
-//
-struct EvAction;
-struct EvFlip;
-struct EvWon;
-struct EvTie;
-struct EvLost;
-struct EvAction;
-struct EvAcceptCards;
-struct EvReset;
-struct EvTimeout;
-
 // Player states
 //
 struct Idle;
@@ -37,6 +25,8 @@ struct WaitHoleCard;
 struct WaitLastCard;
 struct WaitFlip;
 
+class Player;
+
 struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
 {
     PlayerSM(my_context ctx, Player& player)
@@ -45,44 +35,6 @@ struct PlayerSM : sc::asynchronous_state_machine<PlayerSM, Idle>
     ~PlayerSM(void) { terminate(); }
 
     Player&   player_;
-};
-
-// More definition for events
-//
-struct EvAction       : sc::event < EvAction >
-{
-    EvAction(void) { TEMP_LOG("EvAction event"); }
-};
-struct EvFlip       : sc::event < EvFlip >
-{
-    EvFlip(void) { TEMP_LOG("EvFlip event"); }
-};
-struct EvWon     : sc::event < EvWon>
-{
-    EvWon(void) { TEMP_LOG("EvWinner event"); }
-};
-struct EvTie  : sc::event < EvTie >
-{
-    EvTie(void) { TEMP_LOG("EvWinnerTie event"); }
-};
-struct EvLost      : sc::event < EvLost >
-{
-    EvLost() { TEMP_LOG("EvLoser event"); }
-};
-
-struct EvAcceptCards : sc::event < EvAcceptCards>
-{
-    EvAcceptCards() { TEMP_LOG("EvWinnerReqCards event"); }
-};
-
-struct EvReset      : sc::event < EvReset >
-{
-    EvReset(void) { TEMP_LOG("EvReset event"); }
-};
-
-struct EvTimeout    : sc::event < EvTimeout >
-{
-    EvTimeout(void) { TEMP_LOG("EvTimeout event"); }
 };
 
 // More definition for states
@@ -173,6 +125,5 @@ struct WaitFlip : sc::state<WaitFlip, CardsPlayed>
 
     sc::result react(const EvAction& event);
 };
-
 
 } // gameplay
