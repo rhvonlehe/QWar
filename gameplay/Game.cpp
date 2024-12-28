@@ -33,13 +33,14 @@ Game::Game(std::vector<std::unique_ptr<Player> >& players)
 
 Game::Game(std::vector<std::string>& playerNames)
 {
+
     std::vector<Player*> roundPlayers;
 
     for_each(playerNames.begin(), playerNames.end(),
              [&](std::string name) {
-        _allPlayers[name] = std::make_unique<Player>(name);
-        Player* player = _allPlayers[name].get();
-        _activePlayers.push_back(player);
+        allPlayers_[name] = std::make_unique<Player>(name);
+        Player* player = allPlayers_[name].get();
+        activePlayers_.push_back(player);
         roundPlayers.push_back(player);
 
         player->addObserverCallback([&, player](Player::ObservableEvent event) {
@@ -47,12 +48,12 @@ Game::Game(std::vector<std::string>& playerNames)
         } );
     });
 
-    _round = std::make_unique<Round>(roundPlayers, [&]() { handleRoundComplete(); }); // TODO make use of this
+    round_ = std::make_unique<Round>(roundPlayers, [&]() { handleRoundComplete(); }); // TODO make use of this
 }
 
 Player& Game::getPlayer(const std::string name)
 {
-    return *_allPlayers[name];
+    return *allPlayers_[name];
 }
 
 
@@ -65,22 +66,22 @@ void Game::autoPlay()
 
 void Game::deal()
 {
-    _deck = std::make_unique<Deck>(true);
+    deck_ = std::make_unique<Deck>(true);
 
-    _deck->print();
-    _deck->shuffle();
-    _deck->print();
+    deck_->print();
+    deck_->shuffle();
+    deck_->print();
 
     // Also make sure no player is holding any cards
-    std::for_each(_activePlayers.begin(), _activePlayers.end(),
+    std::for_each(activePlayers_.begin(), activePlayers_.end(),
                   [](Player* player) { player->reset(); } );
 
-    while (!_deck->isEmpty())
+    while (!deck_->isEmpty())
     {
-        for (auto& player : _activePlayers)
+        for (auto& player : activePlayers_)
         {
-            player->acceptDealtCard(Player::PILE_UNPLAYED, _deck->nextCard());
-            if (_deck->isEmpty())
+            player->acceptDealtCard(Player::PILE_UNPLAYED, deck_->nextCard());
+            if (deck_->isEmpty())
             {
                 break;
             }
@@ -99,13 +100,13 @@ void Game::handlePlayerUpdate(Player* player,
     switch (event)
     {
     case Player::EV_PLAYER_WAITING:
-        _round->playerWaiting(player);
+        round_->playerWaiting(player);
         break;
     case Player::EV_PLAYER_ELIMINATED:
-        _round->playerEliminated(player);
+        round_->playerEliminated(player);
         break;
     case Player::EV_WINNER_REQ_CARDS:
-        _round->winnerReqCards(player);
+        round_->winnerReqCards(player);
         break;        
     default: break;
     }

@@ -16,7 +16,8 @@ class EventScheduler
 public:
     using Handle = uint32_t;
 
-    EventScheduler() = default;
+    EventScheduler();
+    ~EventScheduler();
 
     template <class Processor, typename Arg1>
     Handle createProcessor(Arg1 arg1);

@@ -21,6 +21,13 @@ struct EventScheduler::Pimpl
 {
     Pimpl() : scheduler_(true) { }
 
+    ~Pimpl() {
+        scheduler_.terminate();
+        schedulerThread_.join();
+        work_.reset();  // <--- can this be removed since the unique_ptr goes out of scope anyway?
+        ioCtxThread_.join();
+    }
+
     template <class Processor, typename Arg1>
     Handle createProcessor(Arg1 arg1) {
         Handle handle = std::distance(processors_.begin(), processors_.end()); // just the index
@@ -70,6 +77,13 @@ struct EventScheduler::Pimpl
 
 //---------------------------- Public API ----------------------------------
 //
+
+// Must specify compiler-defined constructor & destructor in cpp file to avoid
+// compiler error about undefined type for pimpl.
+//
+EventScheduler::EventScheduler() = default;
+EventScheduler::~EventScheduler() = default;
+
 template <class Processor, typename Arg1>
 EventScheduler::Handle EventScheduler::createProcessor(Arg1 arg1)
 {
