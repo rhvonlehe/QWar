@@ -1,12 +1,12 @@
 #include "EventScheduler.h"
-#include "PlayerEvents.h"
+// #include "PlayerEvents.h"
 
 #include <boost/statechart/asynchronous_state_machine.hpp>
 #define ASIO_STANDALONE
 #include <boost/asio.hpp>
 
 #include <thread>
-#include <vector>
+#include <map>
 
 namespace sc = boost::statechart;
 namespace ba = boost::asio;
@@ -29,30 +29,45 @@ struct EventScheduler::Pimpl
     }
 
     template <class Processor, typename Arg1>
-    Handle createProcessor(Arg1 arg1) {
-        Handle handle = std::distance(processors_.begin(), processors_.end()); // just the index
+    const ProcessorHandle createProcessor(Arg1 arg1) {
+        auto procHandle = nextProcHandle_++;
+        auto processor = scheduler_.create_processor<Processor>(arg1);
 
-        auto iter = processors_.emplace_back(scheduler_.create_processor<Processor>(arg1));
-        scheduler_.initiate_processor(*iter);
+        processors_[procHandle] = processor;
+        scheduler_.initiate_processor(processor);
 
-        return handle;
+        return procHandle;
     }
 
     template<class T>
-    void queueEvent(Handle handle, T event) {
+    void queueEvent(ProcessorHandle handle) {
         auto processor = processors_[handle];
 
         scheduler_.queue_event(processor,
                                boost::intrusive_ptr<T>(new T()));
     }
 
-    void startTimer(Handle handle, uint32_t msecs) {
-        auto processor = processors_[handle];
-        auto timer = std::make_shared<ba::deadline_timer>(io_, msecs);
+    const TimerHandle startTimer(ProcessorHandle procHandle, uint32_t msecs) {
+        boost::posix_time::milliseconds boost_ms(msecs);
+        auto processor = processors_[procHandle];
+        TimerHandle timerHandle = nextTimerHandle_++;
 
-        timer->async_wait([this, timer, processor](const boost::system::error_code&) {
+        timers_.emplace(std::make_pair(timerHandle, ba::deadline_timer(io_, boost_ms)));
+
+        timers_[timerHandle].async_wait([this, timerHandle, processor](const boost::system::error_code&) {
+            timers_.erase(timerHandle);
             this->scheduler_.queue_event(processor, boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
         });
+
+        return timerHandle;
+    }
+
+    void stopTimer(TimerHandle timerHandle)
+    {
+        if (timers_.find(timerHandle) != timers_.end())
+        {
+            timers_[timerHandle].cancel();
+        }
     }
 
     void run(void) {
@@ -65,12 +80,15 @@ struct EventScheduler::Pimpl
         });
     }
 
-    FifoScheduler       scheduler_;
-    std::thread         schedulerThread_;
-    ba::io_context      io_;
-    std::thread         ioCtxThread_;
+    std::atomic<uint64_t>   nextProcHandle_ = 0;
+    std::atomic<uint64_t>   nextTimerHandle_ = 0;
+    FifoScheduler           scheduler_;
+    std::thread             schedulerThread_;
+    ba::io_context          io_;
+    std::thread             ioCtxThread_;
 
-    std::vector<FifoScheduler::processor_handle>                            processors_;
+    std::map<uint64_t, FifoScheduler::processor_handle>                     processors_;
+    std::map<uint64_t, ba::deadline_timer>                                  timers_;
     std::unique_ptr<ba::executor_work_guard<ba::io_context::executor_type>> work_;
 };
 
@@ -85,20 +103,26 @@ EventScheduler::EventScheduler() = default;
 EventScheduler::~EventScheduler() = default;
 
 template <class Processor, typename Arg1>
-EventScheduler::Handle EventScheduler::createProcessor(Arg1 arg1)
+const EventScheduler::ProcessorHandle EventScheduler::createProcessor(Arg1 arg1)
 {
     return pimpl_->createProcessor<Processor>(arg1);
 }
 
 template <typename T>
-void EventScheduler::queueEvent(Handle handle, T event)
+void EventScheduler::queueEvent(ProcessorHandle processorHandle)
 {
-    pimpl_->queueEvent(handle, event);
+    pimpl_->queueEvent<T>(processorHandle);
 }
 
-void EventScheduler::startTimer(Handle handle, uint32_t msecs)
+const EventScheduler::TimerHandle EventScheduler::startTimer(ProcessorHandle processorHandle,
+                                                             uint32_t msecs)
 {
-    pimpl_->startTimer(handle, msecs);
+    return pimpl_->startTimer(processorHandle, msecs);
+}
+
+void EventScheduler::stopTimer(EventScheduler::TimerHandle timerHandle)
+{
+    pimpl_->stopTimer(timerHandle);
 }
 
 void EventScheduler::run(void)

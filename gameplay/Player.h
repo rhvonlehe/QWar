@@ -2,18 +2,23 @@
 
 #include <Deck.h>
 #include <Card.h>
-#include <boost/statechart/asynchronous_state_machine.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <EventScheduler.h>
 #include <string>
 #include <vector>
-#include <memory>
-#include <thread>
 #include <functional>
+#include <cassert>
+
+#if 0 // todo remove
+#include <boost/statechart/asynchronous_state_machine.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #define ASIO_STANDALONE
 #include <boost/asio.hpp>
-
+#include <thread>
 
 namespace ba = boost::asio;
+
+#endif
+
 
 namespace gameplay {
 
@@ -38,7 +43,7 @@ public:
     };
 
     Player(void) = delete;
-    Player(const std::string name);
+    Player(const std::string name, EventScheduler &scheduler);
     ~Player(void);
     void reset(void);
     void acceptRoundCards(const Pile pile, const std::vector<Card> cards);
@@ -83,7 +88,7 @@ private:
     friend void setEvalCard(Player& player);
     friend void notifyObservers(Player& player, ObservableEvent event);
     friend void resetRoundData(Player& player);
-    friend void startTimer(Player& player, const boost::posix_time::milliseconds ms);
+    friend void startTimer(Player& player, const uint32_t ms);
     friend void cancelTimer(Player& player);
 
     std::string         name_;
@@ -96,6 +101,11 @@ private:
     // Observer variable - simplified for just one observer
     std::vector<std::function<void(ObservableEvent)>> observerFuncs_;
 
+    EventScheduler::ProcessorHandle procHandle_;
+    EventScheduler::TimerHandle     timerHandle_;
+    EventScheduler&                 scheduler_;
+
+#if 0 // todo remove
     // StateChart variables
     using FifoScheduler = boost::statechart::fifo_scheduler<>;
     FifoScheduler                   scheduler_;
@@ -107,6 +117,7 @@ private:
     std::unique_ptr<ba::deadline_timer>                     timer_;
     ba::io_context                                          io_;
     std::thread                                             ioCtxThread_;
+#endif
 };
 
 

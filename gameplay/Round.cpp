@@ -8,8 +8,8 @@ namespace gameplay {
 
 Round::Round(std::vector<Player *>& players,
              const std::function<void ()> callback)
-    : _players(players),
-    _observerFunc(callback),
+    : players_(players),
+    observerFunc_(callback),
     _scheduler(true)
 {
     // Set up event processor
@@ -51,24 +51,24 @@ void Round::winnerReqCards(Player* player)
 
 void Round::handlePlayerWaiting(Player* player)
 {
-    assert(_players.size());
+    assert(players_.size());
 
     // Guaranteed that each player only does this once, so just count up to the total
     // player count
-    if (++_playersWaiting == _players.size())
+    if (++playersWaiting_ == players_.size())
     {
-        std::cout << _playersWaiting <<" players waiting" << std::endl;
+        std::cout << playersWaiting_ <<" players waiting" << std::endl;
         evaluate();
     }
 }
 
 void Round::handlePlayerEliminated(Player* player)
 {
-    assert(_players.size());
+    assert(players_.size());
 
     // remove this player from _players, add to _losers
-    _losers.push_back(player);
-    _players.erase(std::remove(_players.begin(), _players.end(), player));
+    losers_.push_back(player);
+    players_.erase(std::remove(players_.begin(), players_.end(), player));
 }
 
 
@@ -80,11 +80,11 @@ void Round::evaluate(void)
     findWinner();
 
     // Winner(s) remain in _players vector
-    if (_players.size() > 1)
+    if (players_.size() > 1)
     {
-        _playersWaiting = 0;
+        playersWaiting_ = 0;
 
-        for (auto winner : _players)
+        for (auto winner : players_)
         {
             winner->tie();
         }
@@ -92,7 +92,7 @@ void Round::evaluate(void)
     else // exactly 1 winner
     {
         printf("one winner found");
-        auto winner = _players.front();
+        auto winner = players_.front();
 
         _scheduler.queue_event(_processor,
                                boost::intrusive_ptr<EvWinner>(new EvWinner(winner)));
@@ -102,51 +102,51 @@ void Round::evaluate(void)
 void Round::findWinner(void)
 {
     // max_element should be more efficient than doing a full sort
-    auto maxIt = std::max_element(_players.begin(),
-                                  _players.end(),
+    auto maxIt = std::max_element(players_.begin(),
+                                  players_.end(),
                                   [](Player* p1, Player* p2)
                                   { return (p1->evalCard() < p2->evalCard()); } );
 
     auto highestValue = (*maxIt)->evalCard();
 
-    auto backHalfIt = std::stable_partition(_players.begin(),
-                                            _players.end(),
+    auto backHalfIt = std::stable_partition(players_.begin(),
+                                            players_.end(),
                                             [highestValue](Player* p)
                                             { return (highestValue == p->evalCard()); } );
 
-    _losers.insert(_losers.end(), backHalfIt, _players.end());
-    _players.erase(backHalfIt, _players.end());
+    losers_.insert(losers_.end(), backHalfIt, players_.end());
+    players_.erase(backHalfIt, players_.end());
 }
 
 void Round::cullLoserList(void)
 {
     // This now culls loser list only
-    _losers.erase(std::remove_if(
-                      _losers.begin(), _losers.end(),
+    losers_.erase(std::remove_if(
+                      losers_.begin(), losers_.end(),
                       [](const Player* p)
                       {
                           return p->outOfCards();
-                      }), _losers.end());
+                      }), losers_.end());
 }
 
 void Round::initializeRound(void)
 {
-    assert(_players.size());
+    assert(players_.size());
 
-    _playersWaiting = 0;
+    playersWaiting_ = 0;
     cullLoserList();
 
     // Put losers back with players
-    _players.insert(_players.end(), _losers.begin(), _losers.end());
-    _losers.clear();
+    players_.insert(players_.end(), losers_.begin(), losers_.end());
+    losers_.clear();
 }
 
 void Round::distributeCards(Player* winner)
 {
-    assert(_players.size());
+    assert(players_.size());
     std::vector<Card> allLoserCards;
 
-    for (auto loser : _losers)
+    for (auto loser : losers_)
     {
         auto oneLoserCards = loser->lost();
         allLoserCards.insert(allLoserCards.end(), oneLoserCards.begin(), oneLoserCards.end());
@@ -155,7 +155,7 @@ void Round::distributeCards(Player* winner)
     winner->acceptRoundCards(Player::PILE_PLAYED, allLoserCards);
 
     // Notify the game object the round is done.
-    _observerFunc();
+    observerFunc_();
 }
 
 } // gameplay

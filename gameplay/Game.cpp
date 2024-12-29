@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <Card.h>
 #include <Round.h>
+#include <EventScheduler.h>
 #include <map>
 #include <functional>
 #include <iostream>
@@ -38,7 +39,7 @@ Game::Game(std::vector<std::string>& playerNames)
 
     for_each(playerNames.begin(), playerNames.end(),
              [&](std::string name) {
-        allPlayers_[name] = std::make_unique<Player>(name);
+        allPlayers_[name] = std::make_unique<Player>(name, eventScheduler_);
         Player* player = allPlayers_[name].get();
         activePlayers_.push_back(player);
         roundPlayers.push_back(player);

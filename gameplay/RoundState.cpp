@@ -8,7 +8,7 @@ RoundSM::RoundSM(my_context ctx, Round& round)
     _round(round)
 
 {
-    assert(_round._players.size());
+    assert(_round.players_.size());
 }
 
 EvWinner::EvWinner(Player *player)

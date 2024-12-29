@@ -41,7 +41,7 @@ AcceptingCards::AcceptingCards(my_context ctx)
 {
     auto& player = context<PlayerSM>().player_;
     cancelTimer(player);
-    startTimer(player, boost::posix_time::milliseconds(500));
+    startTimer(player, 500);
     notifyObservers(player, Player::EV_WINNER);
     notifyObservers(player, Player::EV_PLAYER_ACTIVE);
     TEMP_LOG("AcceptingCards state entered");

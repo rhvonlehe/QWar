@@ -1,7 +1,5 @@
 #include "Player.h"
 #include <PlayerState.h>
-#include <assert.h>
-#include <thread>
 
 // If I had really wanted to abstract away Boost::StateChart types here, I could have gone
 // with an abstract factory for the creation of the event types. This would be huge overkill
@@ -9,10 +7,13 @@
 
 namespace gameplay {
 
-Player::Player(const std::string name)
+Player::Player(const std::string name, EventScheduler& scheduler)
     : name_(name),
-      scheduler_(true)
+      scheduler_(scheduler)
 {
+    scheduler_.createProcessor<PlayerSM>(std::ref(*this));
+
+#if 0 // todo remove
     // NOTE: It might be a better idea to have 2-stage initialization of Player
     // and start the thread during the 2nd stage outside of the construction.
 
@@ -30,10 +31,13 @@ Player::Player(const std::string name)
         std::cout << "starting player asio thread" << std::endl;
         io_.run();
     });
+#endif
 }
 
 Player::~Player(void)
 {
+
+#if 0 // todo remove
     // Caution: one can't delete a deadline timer if the io object it is using
     // is gone.  It stores that internally as a reference.  Calling cancel here
     // makes sure that it won't try to use the _io it references when it is
@@ -43,6 +47,7 @@ Player::~Player(void)
     stateThread_.join();
     work_->reset();
     ioCtxThread_.join();
+#endif
 }
 
 void Player::reset(void)
@@ -50,14 +55,22 @@ void Player::reset(void)
     unplayedPile_.clear();
     playedPile_.clear();
 
+    scheduler_.queueEvent<EvReset>(procHandle_);
+
+#if 0 // todo remove
     scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvReset>(new EvReset()));
+#endif
 }
 
 void Player::action(void)
 {
+    scheduler_.queueEvent<EvAction>(procHandle_);
+
+#if 0 // todo remove
     scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvAction>(new EvAction()));
+#endif
 }
 
 Card& Player::evalCard(void)
@@ -68,21 +81,34 @@ Card& Player::evalCard(void)
 
 void Player::tie(void)
 {
+    scheduler_.queueEvent<EvTie>(procHandle_);
+
+#if 0 // todo remove
     scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvTie>(new EvTie()));
+#endif
 }
 
 void Player::won()
 {
+    scheduler_.queueEvent<EvWon>(procHandle_);
+
+#if 0 // todo remove
     scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvWon>(new EvWon()));
+#endif
 }
 
 std::vector<Card> Player::lost(void)
 {
     auto retVal = activeRoundCards_;
+
+    scheduler_.queueEvent<EvLost>(procHandle_);
+
+#if 0 //todo remove
     scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvLost>(new EvLost()));
+#endif
     return retVal;
 }
 
@@ -124,8 +150,12 @@ void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)
 
     notifyObservers(*this, EV_CARDS_CHANGED);
 
+    scheduler_.queueEvent<EvAcceptCards>(procHandle_);
+
+#if 0 // todo remove
     scheduler_.queue_event(processor_,
                            boost::intrusive_ptr<EvAcceptCards>(new EvAcceptCards()));
+#endif
 }
 
 void Player::acceptDealtCard(const Pile pile, const Card card)
@@ -164,21 +194,22 @@ void playCard(Player& player, Card::Face face)
     notifyObservers(player, Player::EV_CARDS_CHANGED);
 }
 
-void startTimer(Player& player, const boost::posix_time::milliseconds ms)
+void startTimer(Player& player, const uint32_t ms)
 {
+    player.timerHandle_ = player.scheduler_.startTimer(player.procHandle_, ms);
+
+#if 0
     player.timer_ = std::make_unique<ba::deadline_timer>(player.io_, ms);
     player.timer_->async_wait([&](const boost::system::error_code&) {
         player.scheduler_.queue_event(player.processor_,
                                boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
     });
+#endif
 }
 
 void cancelTimer(Player& player)
 {
-    if (player.timer_)
-    {
-        player.timer_->cancel();
-    }
+    player.scheduler_.stopTimer(player.timerHandle_);
 }
 
 void setEvalCard(Player& player)
