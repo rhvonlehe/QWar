@@ -28,7 +28,7 @@ public:
     const ProcessorHandle createProcessor(Arg1 arg1);
 
     template <typename T>
-    void queueEvent(ProcessorHandle);
+    void queueEvent(ProcessorHandle processorHandle, T& event);
 
     const TimerHandle startTimer(ProcessorHandle handle, uint32_t msecs);
     void stopTimer(TimerHandle handle);

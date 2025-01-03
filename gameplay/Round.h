@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Player.h>
+#include <EventScheduler.h>
 // #include <boost/statechart/asynchronous_state_machine.hpp> // todo remove
 #include <vector>
 
@@ -10,6 +11,7 @@ class Round
 {
 public:
     Round(std::vector<Player*>& players,
+          EventScheduler& scheduler,
           const std::function<void(void)> callback);
 
     ~Round(void);

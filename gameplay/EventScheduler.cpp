@@ -1,5 +1,5 @@
 #include "EventScheduler.h"
-// #include "PlayerEvents.h"
+#include "PlayerEvents.h"
 
 #include <boost/statechart/asynchronous_state_machine.hpp>
 #define ASIO_STANDALONE
@@ -40,11 +40,11 @@ struct EventScheduler::Pimpl
     }
 
     template<class T>
-    void queueEvent(ProcessorHandle handle) {
+    void queueEvent(ProcessorHandle handle, T& event) {
         auto processor = processors_[handle];
 
         scheduler_.queue_event(processor,
-                               boost::intrusive_ptr<T>(new T()));
+                               boost::intrusive_ptr<T>(boost::intrusive_ptr<T>(event)));
     }
 
     const TimerHandle startTimer(ProcessorHandle procHandle, uint32_t msecs) {
@@ -52,9 +52,10 @@ struct EventScheduler::Pimpl
         auto processor = processors_[procHandle];
         TimerHandle timerHandle = nextTimerHandle_++;
 
-        timers_.emplace(std::make_pair(timerHandle, ba::deadline_timer(io_, boost_ms)));
+        const auto [iter, success] = timers_.insert({timerHandle, ba::deadline_timer(io_, boost_ms)});
 
-        timers_[timerHandle].async_wait([this, timerHandle, processor](const boost::system::error_code&) {
+        assert(success);
+        iter->second.async_wait([this, timerHandle, processor](const boost::system::error_code&) {
             timers_.erase(timerHandle);
             this->scheduler_.queue_event(processor, boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
         });
@@ -66,7 +67,8 @@ struct EventScheduler::Pimpl
     {
         if (timers_.find(timerHandle) != timers_.end())
         {
-            timers_[timerHandle].cancel();
+            auto& item = timers_.at(timerHandle);
+            item.cancel();
         }
     }
 
@@ -99,7 +101,10 @@ struct EventScheduler::Pimpl
 // Must specify compiler-defined constructor & destructor in cpp file to avoid
 // compiler error about undefined type for pimpl.
 //
-EventScheduler::EventScheduler() = default;
+EventScheduler::EventScheduler() :
+    pimpl_(std::make_unique<Pimpl>())
+{
+}
 EventScheduler::~EventScheduler() = default;
 
 template <class Processor, typename Arg1>
@@ -109,9 +114,9 @@ const EventScheduler::ProcessorHandle EventScheduler::createProcessor(Arg1 arg1)
 }
 
 template <typename T>
-void EventScheduler::queueEvent(ProcessorHandle processorHandle)
+void EventScheduler::queueEvent(ProcessorHandle processorHandle, T& event)
 {
-    pimpl_->queueEvent<T>(processorHandle);
+    pimpl_->queueEvent<T>(processorHandle, event);
 }
 
 const EventScheduler::TimerHandle EventScheduler::startTimer(ProcessorHandle processorHandle,

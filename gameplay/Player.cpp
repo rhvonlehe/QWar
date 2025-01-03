@@ -1,5 +1,6 @@
 #include "Player.h"
 #include <PlayerState.h>
+#include <PlayerEvents.h>
 
 // If I had really wanted to abstract away Boost::StateChart types here, I could have gone
 // with an abstract factory for the creation of the event types. This would be huge overkill
@@ -11,7 +12,7 @@ Player::Player(const std::string name, EventScheduler& scheduler)
     : name_(name),
       scheduler_(scheduler)
 {
-    scheduler_.createProcessor<PlayerSM>(std::ref(*this));
+    procHandle_ = scheduler_.createProcessor<PlayerSM>(std::ref(*this));
 
 #if 0 // todo remove
     // NOTE: It might be a better idea to have 2-stage initialization of Player
@@ -55,7 +56,8 @@ void Player::reset(void)
     unplayedPile_.clear();
     playedPile_.clear();
 
-    scheduler_.queueEvent<EvReset>(procHandle_);
+    EvReset evReset;
+    scheduler_.queueEvent(procHandle_, evReset);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,
@@ -65,7 +67,8 @@ void Player::reset(void)
 
 void Player::action(void)
 {
-    scheduler_.queueEvent<EvAction>(procHandle_);
+    EvAction evAction;
+    scheduler_.queueEvent(procHandle_, evAction);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,
@@ -81,7 +84,8 @@ Card& Player::evalCard(void)
 
 void Player::tie(void)
 {
-    scheduler_.queueEvent<EvTie>(procHandle_);
+    EvTie evTie;
+    scheduler_.queueEvent(procHandle_, evTie);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,
@@ -91,7 +95,8 @@ void Player::tie(void)
 
 void Player::won()
 {
-    scheduler_.queueEvent<EvWon>(procHandle_);
+    EvWon evWon;
+    scheduler_.queueEvent(procHandle_, evWon);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,
@@ -103,7 +108,8 @@ std::vector<Card> Player::lost(void)
 {
     auto retVal = activeRoundCards_;
 
-    scheduler_.queueEvent<EvLost>(procHandle_);
+    EvLost evLost;
+    scheduler_.queueEvent(procHandle_, evLost);
 
 #if 0 //todo remove
     scheduler_.queue_event(processor_,
@@ -150,7 +156,8 @@ void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)
 
     notifyObservers(*this, EV_CARDS_CHANGED);
 
-    scheduler_.queueEvent<EvAcceptCards>(procHandle_);
+    EvAcceptCards event;
+    scheduler_.queueEvent(procHandle_, event);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,

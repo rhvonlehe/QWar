@@ -4,6 +4,7 @@
 #include <EventScheduler.h>
 #include <map>
 #include <functional>
+#include <algorithm>
 #include <iostream>
 
 namespace gameplay {
@@ -49,7 +50,7 @@ Game::Game(std::vector<std::string>& playerNames)
         } );
     });
 
-    round_ = std::make_unique<Round>(roundPlayers, [&]() { handleRoundComplete(); }); // TODO make use of this
+    round_ = std::make_unique<Round>(roundPlayers, eventScheduler_, [&]() { handleRoundComplete(); }); // TODO make use of this
 }
 
 Player& Game::getPlayer(const std::string name)
