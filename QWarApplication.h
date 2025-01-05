@@ -2,7 +2,7 @@
 
 #include <QGuiApplication>
 #include <QtQml/qqmlapplicationengine.h>
-#include <QGameController.h>
+#include "QGameController.h"
 #include <QGameModel.h>
 
 class QWarApplication : public QGuiApplication
