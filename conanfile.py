@@ -5,7 +5,7 @@ class QWar(ConanFile):
     name = "QWar"
     version = "0.1"
     settings = "os", "compiler", "build_type", "arch"
-    requires = "boost/1.77.0", "qt/6.5.2"
+    requires = "boost/1.77.0", "qt/6.5.3"
     generators = "CMakeToolchain", "CMakeDeps"
 
 

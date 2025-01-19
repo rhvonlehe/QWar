@@ -1,8 +1,8 @@
 #pragma once
 
+#include <EventSchedulerDefs.h>
 #include <Deck.h>
 #include <Card.h>
-#include <EventScheduler.h>
 #include <string>
 #include <vector>
 #include <functional>
@@ -20,7 +20,10 @@ namespace ba = boost::asio;
 #endif
 
 
+
 namespace gameplay {
+
+class EventScheduler;
 
 class Player
 {
@@ -101,9 +104,14 @@ private:
     // Observer variable - simplified for just one observer
     std::vector<std::function<void(ObservableEvent)>> observerFuncs_;
 
+    ProcessorHandle             procHandle_;
+    TimerHandle                 timerHandle_;
+    EventScheduler&             scheduler_;
+#if 0 // todo remove
     EventScheduler::ProcessorHandle procHandle_;
     EventScheduler::TimerHandle     timerHandle_;
     EventScheduler&                 scheduler_;
+#endif
 
 #if 0 // todo remove
     // StateChart variables

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <PlayerState.h>
 #include <PlayerEvents.h>
+#include <EventScheduler.h>
 
 // If I had really wanted to abstract away Boost::StateChart types here, I could have gone
 // with an abstract factory for the creation of the event types. This would be huge overkill
@@ -57,7 +58,7 @@ void Player::reset(void)
     playedPile_.clear();
 
     EvReset evReset;
-    scheduler_.queueEvent(procHandle_, evReset);
+    scheduler_.queueEvent(procHandle_, &evReset);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,
@@ -68,7 +69,7 @@ void Player::reset(void)
 void Player::action(void)
 {
     EvAction evAction;
-    scheduler_.queueEvent(procHandle_, evAction);
+    scheduler_.queueEvent(procHandle_, &evAction);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,
@@ -85,7 +86,7 @@ Card& Player::evalCard(void)
 void Player::tie(void)
 {
     EvTie evTie;
-    scheduler_.queueEvent(procHandle_, evTie);
+    scheduler_.queueEvent(procHandle_, &evTie);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,
@@ -96,7 +97,7 @@ void Player::tie(void)
 void Player::won()
 {
     EvWon evWon;
-    scheduler_.queueEvent(procHandle_, evWon);
+    scheduler_.queueEvent(procHandle_, &evWon);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,
@@ -109,7 +110,7 @@ std::vector<Card> Player::lost(void)
     auto retVal = activeRoundCards_;
 
     EvLost evLost;
-    scheduler_.queueEvent(procHandle_, evLost);
+    scheduler_.queueEvent(procHandle_, &evLost);
 
 #if 0 //todo remove
     scheduler_.queue_event(processor_,
@@ -157,7 +158,7 @@ void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)
     notifyObservers(*this, EV_CARDS_CHANGED);
 
     EvAcceptCards event;
-    scheduler_.queueEvent(procHandle_, event);
+    scheduler_.queueEvent(procHandle_, &event);
 
 #if 0 // todo remove
     scheduler_.queue_event(processor_,

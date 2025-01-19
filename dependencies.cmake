@@ -34,12 +34,23 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(msgpackc-cxx)
 
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest
+    GIT_TAG v1.15.2
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    OVERRIDE_FIND_PACKAGE
+)
+FetchContent_MakeAvailable(googletest)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS thread system REQUIRED)
 find_package(Threads)
 find_package(Qt6 COMPONENTS Core Gui Quick Qml  REQUIRED)
+find_package(googletest)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake ${CMAKE_MODULE_PATH})
 

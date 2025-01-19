@@ -1,7 +1,11 @@
 get_property(propVal TARGET Boost::boost PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 message(STATUS "Boost::boost include dirs: ${propVal}")
 
-add_library(gameplay STATIC)
+
+# Define target
+#
+add_library(gameplay STATIC
+    EventSchedulerDefs.h)
 
 target_include_directories(gameplay
     PUBLIC
@@ -13,7 +17,7 @@ target_sources(gameplay
     Card.cpp
     Deck.cpp
     EventScheduler.h
-    EventScheduler.cpp
+    # EventScheduler.cpp
     Game.cpp
     Player.cpp
     PlayerEvents.h
@@ -28,9 +32,13 @@ target_compile_definitions(gameplay PUBLIC BOOST_BIND_GLOBAL_PLACEHOLDERS)
 target_link_libraries(gameplay
     PUBLIC
     Boost::boost
-    PRIVATE
     Boost::system
     Boost::thread
     )
 
+# Testing
+#
+if (GAMEPLAY_ENABLE_TESTING OR PROJECT_IS_TOP_LEVEL)
+    add_subdirectory(test)
 
+endif()

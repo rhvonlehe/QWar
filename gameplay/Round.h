@@ -39,7 +39,7 @@ private:
     std::function<void()>           observerFunc_;
 
     EventScheduler&                 scheduler_;
-    EventScheduler::ProcessorHandle procHandle_;
+    ProcessorHandle                 procHandle_;
 
 
 #if 0   // todo remove

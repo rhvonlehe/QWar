@@ -43,7 +43,7 @@ Round::~Round(void)
 void Round::playerWaiting(Player* player)
 {
     EvPlayerWaiting event(player);
-    scheduler_.queueEvent(procHandle_, event);
+    scheduler_.queueEvent(procHandle_, &event);
 
 
 #if 0 // todo rmeove
@@ -55,7 +55,7 @@ void Round::playerWaiting(Player* player)
 void Round::playerEliminated(Player* player)
 {
     EvPlayerEliminated event(player);
-    scheduler_.queueEvent(procHandle_, event);
+    scheduler_.queueEvent(procHandle_, &event);
 
 
 #if 0 // todo remove
@@ -68,7 +68,7 @@ void Round::winnerReqCards(Player* player)
 {
     EvDistributeCards event(player);
 
-    scheduler_.queueEvent(procHandle_, event);
+    scheduler_.queueEvent(procHandle_, &event);
 
 #if 0 // todo remove
     _scheduler.queue_event(_processor,
@@ -122,7 +122,7 @@ void Round::evaluate(void)
         auto winner = players_.front();
 
         EvWinner event(winner);
-        scheduler_.queueEvent(procHandle_, event);
+        scheduler_.queueEvent(procHandle_, &event);
 #if 0 // todo remove
         _scheduler.queue_event(_processor,
                                boost::intrusive_ptr<EvWinner>(new EvWinner(winner)));
