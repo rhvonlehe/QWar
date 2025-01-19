@@ -17,7 +17,6 @@ target_sources(gameplay
     Card.cpp
     Deck.cpp
     EventScheduler.h
-    # EventScheduler.cpp
     Game.cpp
     Player.cpp
     PlayerEvents.h
