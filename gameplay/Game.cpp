@@ -35,6 +35,7 @@ Game::Game(std::vector<std::unique_ptr<Player> >& players)
 
 Game::Game(std::vector<std::string>& playerNames)
 {
+    srand(static_cast<unsigned int>(time(nullptr)));
 
     std::vector<Player*> roundPlayers;
 
@@ -50,12 +51,14 @@ Game::Game(std::vector<std::string>& playerNames)
         } );
     });
 
-    round_ = std::make_unique<Round>(roundPlayers, eventScheduler_, [&]() { handleRoundComplete(); }); // TODO make use of this
+    round_ = std::make_unique<Round>(roundPlayers, eventScheduler_, [&]() { handleRoundComplete(); });
+
+    eventScheduler_.run();
 }
 
-Player& Game::getPlayer(const std::string name)
+Player* Game::getPlayer(const std::string name)
 {
-    return *allPlayers_[name];
+    return allPlayers_[name].get();
 }
 
 
@@ -65,6 +68,11 @@ void Game::autoPlay()
 {
 }
 #endif
+
+void Game::addObserverCallback(const std::function<void (Game::ObservableEvent)> func)
+{
+    observerFuncs_.push_back(func);
+}
 
 void Game::deal()
 {
@@ -91,9 +99,12 @@ void Game::deal()
     }
 }
 
-// todo - do something?
 void Game::handleRoundComplete(void)
 {
+    if (isFinished())
+    {
+        notifyObservers(EV_GAME_FINISHED);
+    }
 }
 
 void Game::handlePlayerUpdate(Player* player,
@@ -112,6 +123,12 @@ void Game::handlePlayerUpdate(Player* player,
         break;        
     default: break;
     }
+}
+
+void Game::notifyObservers(Game::ObservableEvent event)
+{
+    std::for_each(observerFuncs_.begin(), observerFuncs_.end(),
+                  [event](std::function<void(ObservableEvent)> f) { f(event); });
 }
 
 } // gameplay

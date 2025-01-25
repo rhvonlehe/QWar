@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EventSchedulerDefs.h"
-#include "PlayerEvents.h"
 
 #include <boost/statechart/asynchronous_state_machine.hpp>
 #define ASIO_STANDALONE
@@ -10,6 +9,7 @@
 #include <thread>
 #include <map>
 #include <memory>
+#include <mutex>
 
 namespace sc = boost::statechart;
 namespace ba = boost::asio;
@@ -26,12 +26,13 @@ namespace gameplay
 class EventScheduler
 {
 public:
-    EventScheduler() = default;
+    EventScheduler();
     ~EventScheduler() = default;
 
     template <class Processor, typename Arg1>
     const ProcessorHandle createProcessor(Arg1 arg1)
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         auto procHandle = nextProcHandle_++;
         auto processor = scheduler_.create_processor<Processor>(arg1);
 
@@ -42,62 +43,34 @@ public:
     }
 
     template <typename T>
-    void queueEvent(ProcessorHandle handle, T* event)
+    void queueEvent(ProcessorHandle handle, T& event)
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         auto processor = processors_[handle];
 
-        scheduler_.queue_event(processor, boost::intrusive_ptr<T>(event));
+        scheduler_.queue_event(processor, boost::intrusive_ptr<T>(new T(event)));
     }
 
-    const TimerHandle startTimer(ProcessorHandle handle, uint32_t msecs)
-    {
-        boost::posix_time::milliseconds boost_ms(msecs);
-        auto processor = processors_[handle];
-        TimerHandle timerHandle = nextTimerHandle_++;
+    const TimerHandle startTimer(ProcessorHandle handle, uint32_t msecs);
 
-        const auto [iter, success] = timers_.insert({timerHandle, ba::deadline_timer(io_, boost_ms)});
+    void stopTimer(TimerHandle handle);
 
-        assert(success);
-        iter->second.async_wait([this, timerHandle, processor](const boost::system::error_code&) {
-            timers_.erase(timerHandle);
-            this->scheduler_.queue_event(processor, boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
-        });
-
-        return timerHandle;
-
-    }
-    void stopTimer(TimerHandle handle)
-    {
-        if (timers_.find(handle) != timers_.end())
-        {
-            auto& item = timers_.at(handle);
-            item.cancel();
-        }
-    }
-
-    void run(void)
-    {
-        schedulerThread_ = std::thread( [&]() {
-            scheduler_();
-        });
-        ioCtxThread_ = std::thread( [&]() {
-            work_ = std::make_unique<ba::executor_work_guard<ba::io_context::executor_type>>(ba::make_work_guard(io_));
-            io_.run();
-        });
-    }
+    void run(void);
 
 private:
-    std::atomic<uint64_t>   nextProcHandle_ = 0;
-    std::atomic<uint64_t>   nextTimerHandle_ = 0;
-    FifoScheduler           scheduler_;
-    std::thread             schedulerThread_;
-    ba::io_context          io_;
-    std::thread             ioCtxThread_;
+    static std::atomic<uint64_t>    nextProcHandle_;
+    static std::atomic<uint64_t>    nextTimerHandle_;
+    std::mutex                      mutex_;
+    FifoScheduler                   scheduler_;
+    std::thread                     schedulerThread_;
+    ba::io_context                  io_;
+    std::thread                     ioCtxThread_;
 
     std::map<uint64_t, FifoScheduler::processor_handle>                     processors_;
     std::map<uint64_t, ba::deadline_timer>                                  timers_;
     std::unique_ptr<ba::executor_work_guard<ba::io_context::executor_type>> work_;
 };
+
 
 
 } // gameplay

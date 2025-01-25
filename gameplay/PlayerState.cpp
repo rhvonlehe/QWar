@@ -160,6 +160,9 @@ WaitFlip::WaitFlip(my_context ctx)
     : my_base(ctx)
 {
     TEMP_LOG("WaitFlip state entered");
+    auto& player = context<PlayerSM>().player_;
+
+    notifyObservers(player, Player::EV_PLAYER_ACTIVE);
 }
 
 WaitFlip::~WaitFlip(void)

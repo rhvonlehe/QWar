@@ -12,16 +12,23 @@ namespace gameplay {
 class Game
 {
 public:
+    enum ObservableEvent
+    {
+        EV_GAME_FINISHED
+    };
+
     Game(std::vector<std::string>& playerNames);
 #if 0
     void autoPlay();
 #endif
 
-    Player& getPlayer(const std::string name);
+    Player* getPlayer(const std::string name);
 
 //    std::vector<Player>& players(void) {return activePlayers_; } // todo reimplement or remove
 
-    bool isOver(void) const
+    void addObserverCallback(const std::function<void (Game::ObservableEvent)> callback);
+
+    bool isFinished(void) const
     {
         return (activePlayers_.size() == 1);
     }
@@ -29,12 +36,14 @@ public:
     // Deal is similar to 'init' or 'reset' on the game
     void deal();
 
+private:
     void handleRoundComplete(void);
 
     void handlePlayerUpdate(Player *player,
                             Player::ObservableEvent event);
 
-private:
+    void notifyObservers(Game::ObservableEvent event);
+
 
     std::vector<Player*>                            activePlayers_;
     std::map<std::string, std::unique_ptr<Player>>  allPlayers_;
@@ -43,6 +52,8 @@ private:
     uint32_t                                        roundNumber_;
 
     EventScheduler                                  eventScheduler_;
+
+    std::vector<std::function<void(ObservableEvent)>> observerFuncs_;
 };
 
 }

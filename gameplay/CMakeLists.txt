@@ -1,11 +1,13 @@
 get_property(propVal TARGET Boost::boost PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 message(STATUS "Boost::boost include dirs: ${propVal}")
 
+option(GAMEPLAY_ENABLE_TESTING "enable tests for gameplay library" false)
 
 # Define target
 #
 add_library(gameplay STATIC
-    EventSchedulerDefs.h)
+    EventSchedulerDefs.h
+    EventScheduler.cpp)
 
 target_include_directories(gameplay
     PUBLIC
