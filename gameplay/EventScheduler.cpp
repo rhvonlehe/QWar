@@ -39,6 +39,7 @@ void EventScheduler::stopTimer(TimerHandle handle)
     {
         auto& item = timers_.at(handle);
         item.cancel();
+        timers_.erase(handle);
     }
 }
 

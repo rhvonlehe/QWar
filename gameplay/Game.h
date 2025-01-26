@@ -30,14 +30,14 @@ public:
 
     bool isFinished(void) const
     {
-        return (activePlayers_.size() == 1);
+        return (round_->activePlayers() == 1);
     }
 
     // Deal is similar to 'init' or 'reset' on the game
     void deal();
 
 private:
-    void handleRoundComplete(void);
+    void handleRoundComplete(Round::ObservableEvent event);
 
     void handlePlayerUpdate(Player *player,
                             Player::ObservableEvent event);

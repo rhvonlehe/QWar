@@ -8,7 +8,7 @@ namespace gameplay {
 
 Round::Round(std::vector<Player *>& players,
              EventScheduler& scheduler,
-             const std::function<void ()> callback) :
+             const std::function<void (ObservableEvent)> callback) :
     players_(players),
     scheduler_(scheduler),
     observerFunc_(callback)
@@ -74,6 +74,11 @@ void Round::winnerReqCards(Player* player)
     _scheduler.queue_event(_processor,
                            boost::intrusive_ptr<EvDistributeCards>(new EvDistributeCards(player)));
 #endif
+}
+
+int Round::activePlayers(void) const
+{
+    return players_.size();
 }
 
 void Round::handlePlayerWaiting(Player* player)
@@ -170,6 +175,11 @@ void Round::initializeRound(void)
     // Put losers back with players
     players_.insert(players_.end(), losers_.begin(), losers_.end());
     losers_.clear();
+
+    if (1 == players_.size())
+    {
+        observerFunc_(EV_ROUND_ONE_PLAYER_LEFT);
+    }
 }
 
 void Round::distributeCards(Player* winner)
@@ -186,7 +196,7 @@ void Round::distributeCards(Player* winner)
     winner->acceptRoundCards(Player::PILE_PLAYED, allLoserCards);
 
     // Notify the game object the round is done.
-    observerFunc_();
+    observerFunc_(EV_ROUND_COMPLETE);
 }
 
 } // gameplay

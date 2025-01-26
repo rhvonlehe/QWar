@@ -10,15 +10,22 @@ namespace gameplay {
 class Round
 {
 public:
+    enum ObservableEvent
+    {
+        EV_ROUND_COMPLETE,
+        EV_ROUND_ONE_PLAYER_LEFT
+    };
+
     Round(std::vector<Player*>& players,
           EventScheduler& scheduler,
-          const std::function<void(void)> callback);
+          const std::function<void (ObservableEvent)> callback);
 
     ~Round(void);
 
     void playerWaiting(Player* player);
     void playerEliminated(Player* player);
     void winnerReqCards(Player* player);
+    int  activePlayers(void) const;
 
 private:
     friend class RoundSM;
@@ -36,7 +43,7 @@ private:
     std::vector<Player*>            losers_;
     std::vector<Player*>            players_;
 
-    std::function<void()>           observerFunc_;
+    std::function<void(Round::ObservableEvent event)>   observerFunc_;
 
     EventScheduler&                 scheduler_;
     ProcessorHandle                 procHandle_;

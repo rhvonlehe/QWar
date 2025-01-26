@@ -51,7 +51,9 @@ Game::Game(std::vector<std::string>& playerNames)
         } );
     });
 
-    round_ = std::make_unique<Round>(roundPlayers, eventScheduler_, [&]() { handleRoundComplete(); });
+    round_ = std::make_unique<Round>(roundPlayers,
+                                     eventScheduler_,
+                                     [&](Round::ObservableEvent e) { handleRoundComplete(e); });
 
     eventScheduler_.run();
 }
@@ -99,10 +101,13 @@ void Game::deal()
     }
 }
 
-void Game::handleRoundComplete(void)
+void Game::handleRoundComplete(Round::ObservableEvent event)
 {
-    if (isFinished())
+    std::cout << "players still playing: " << round_->activePlayers() << std::endl;
+
+    if (Round::EV_ROUND_ONE_PLAYER_LEFT == event)
     {
+        std::cout << "Game was notified there's 1 player left" << std::endl;
         notifyObservers(EV_GAME_FINISHED);
     }
 }
