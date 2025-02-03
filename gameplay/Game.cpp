@@ -103,8 +103,6 @@ void Game::deal()
 
 void Game::handleRoundComplete(Round::ObservableEvent event)
 {
-    std::cout << "players still playing: " << round_->activePlayers() << std::endl;
-
     if (Round::EV_ROUND_ONE_PLAYER_LEFT == event)
     {
         std::cout << "Game was notified there's 1 player left" << std::endl;

@@ -15,7 +15,7 @@ EventScheduler::EventScheduler(void) :
 
 const TimerHandle EventScheduler::startTimer(ProcessorHandle handle, uint32_t msecs)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(timersMutex_);
     boost::posix_time::milliseconds boost_ms(msecs);
     auto processor = processors_[handle];
     TimerHandle timerHandle = nextTimerHandle_++;
@@ -24,9 +24,16 @@ const TimerHandle EventScheduler::startTimer(ProcessorHandle handle, uint32_t ms
 
     assert(success);
     iter->second.async_wait([this, timerHandle, processor](const boost::system::error_code&) {
+        std::lock_guard<std::mutex> lock(timersMutex_);
         timers_.erase(timerHandle);
         this->scheduler_.queue_event(processor, boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
     });
+
+    std::cout << "current timer handles in startTimer: " << endl;
+    for (auto& pair : timers_)
+    {
+        std::cout << pair.first << std::endl;
+    }
 
     return timerHandle;
 
@@ -34,7 +41,14 @@ const TimerHandle EventScheduler::startTimer(ProcessorHandle handle, uint32_t ms
 
 void EventScheduler::stopTimer(TimerHandle handle)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(timersMutex_);
+
+    std::cout << "current timer handles in stopTimer: " << endl;
+    for (auto& pair : timers_)
+    {
+        std::cout << pair.first << std::endl;
+    }
+
     if (timers_.find(handle) != timers_.end())
     {
         auto& item = timers_.at(handle);

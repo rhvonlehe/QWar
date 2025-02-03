@@ -32,7 +32,6 @@ public:
     template <class Processor, typename Arg1>
     const ProcessorHandle createProcessor(Arg1 arg1)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
         auto procHandle = nextProcHandle_++;
         auto processor = scheduler_.create_processor<Processor>(arg1);
 
@@ -45,7 +44,6 @@ public:
     template <typename T>
     void queueEvent(ProcessorHandle handle, T& event)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
         auto processor = processors_[handle];
 
         scheduler_.queue_event(processor, boost::intrusive_ptr<T>(new T(event)));
@@ -60,7 +58,7 @@ public:
 private:
     static std::atomic<uint64_t>    nextProcHandle_;
     static std::atomic<uint64_t>    nextTimerHandle_;
-    std::mutex                      mutex_;
+    std::mutex                      timersMutex_;
     FifoScheduler                   scheduler_;
     std::thread                     schedulerThread_;
     ba::io_context                  io_;

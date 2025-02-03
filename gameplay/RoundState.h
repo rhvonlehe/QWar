@@ -7,7 +7,6 @@
 #include <boost/statechart/custom_reaction.hpp>
 
 #include <iostream>
-#include <memory>
 
 #define TEMP_LOG(X) { std::cout << X << std::endl; }
 
@@ -22,6 +21,7 @@ class Player;
 //
 struct EvWinner;
 struct EvPlayerWaiting;
+struct EvPlayerEliminated;
 struct EvDistributeCards;
 
 // Round State
@@ -34,7 +34,7 @@ struct RoundSM : sc::asynchronous_state_machine<RoundSM, Active>
     RoundSM(my_context ctx, Round& round);
     ~RoundSM(void) { terminate(); }
 
-    Round& _round;
+    Round& round_;
 };
 
 // More definition for events
@@ -78,7 +78,8 @@ struct Active : sc::state<Active, RoundSM>
 {
     typedef boost::mpl::list<
     sc::custom_reaction< EvPlayerWaiting >,
-    sc::custom_reaction< EvWinner > > reactions;
+    sc::custom_reaction< EvWinner >,
+    sc::custom_reaction< EvPlayerEliminated> > reactions;
 
     Active(my_context ctx);
     ~Active(void);

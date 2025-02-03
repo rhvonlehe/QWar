@@ -150,18 +150,18 @@
      <entry brief="setTimeout"/>
      <tran trig="ACTION">
       <action brief="send event to Round"/>
-      <tran_glyph conn="17,16,3,-1,20">
+      <tran_glyph conn="17,18,3,-1,21">
        <action box="0,-2,35,3"/>
       </tran_glyph>
      </tran>
      <tran trig="ACCEPT_CARDS" target="../../1">
-      <tran_glyph conn="17,21,3,3,42">
+      <tran_glyph conn="17,23,3,3,42">
        <action box="0,-2,18,2"/>
       </tran_glyph>
      </tran>
      <tran trig="TIMEOUT">
       <action brief="postAction"/>
-      <tran_glyph conn="17,18,3,-1,20">
+      <tran_glyph conn="17,20,3,-1,21">
        <action box="0,-2,19,2"/>
       </tran_glyph>
      </tran>

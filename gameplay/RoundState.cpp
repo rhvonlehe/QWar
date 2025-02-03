@@ -5,10 +5,10 @@ namespace gameplay {
 
 RoundSM::RoundSM(my_context ctx, Round& round)
     : my_base(ctx),
-    _round(round)
+    round_(round)
 
 {
-    assert(_round.players_.size());
+    assert(round_.players_.size());
 }
 
 EvWinner::EvWinner(Player *player)
@@ -20,8 +20,8 @@ EvWinner::EvWinner(Player *player)
 Active::Active(my_context ctx)
     : my_base(ctx)
 {
-    context<RoundSM>()._round.initializeRound();
-    TEMP_LOG("Normal state entered");
+    context<RoundSM>().round_.initializeRound();
+    TEMP_LOG("Active state entered");
 }
 
 Active::~Active(void)
@@ -29,7 +29,8 @@ Active::~Active(void)
 
 sc::result Active::react( const EvPlayerWaiting& event )
 {
-    auto& round = context<RoundSM>()._round;
+    TEMP_LOG("rcvd EvPlayerWaiting in Active state");
+    auto& round = context<RoundSM>().round_;
 
     round.handlePlayerWaiting(event.player);
 
@@ -38,10 +39,11 @@ sc::result Active::react( const EvPlayerWaiting& event )
 
 sc::result Active::react(const EvPlayerEliminated& event)
 {
-    auto& round = context<RoundSM>()._round;
+    TEMP_LOG("rcvd EvPlayerEliminated in Active state");
+    auto& round = context<RoundSM>().round_;
 
     round.handlePlayerEliminated(event.player);
-    round.evaluate();  // Need this in the Active state in case he's the last player left
+// TODO remove    // round.evaluate();  // Need this in the Active state in case he's the last player left
 
     return discard_event();
 }
@@ -49,6 +51,7 @@ sc::result Active::react(const EvPlayerEliminated& event)
 
 sc::result Active::react(const EvWinner& event)
 {
+    TEMP_LOG("rcvd EvWinner in Active state");
     event.player->won();
 
     return transit<Done>();
@@ -65,14 +68,16 @@ Done::~Done(void)
 
 sc::result Done::react(const EvDistributeCards& event)
 {
-    context<RoundSM>()._round.distributeCards(event.player);
+    TEMP_LOG("rcvd EvDistributeCards in Done state");
+    context<RoundSM>().round_.distributeCards(event.player);
 
     return transit<Active>();
 }
 
 sc::result Done::react(const EvPlayerEliminated& event)
 {
-    auto& round = context<RoundSM>()._round;
+    TEMP_LOG("rcvd EvPlayerEliminated in Done state");
+    auto& round = context<RoundSM>().round_;
 
     round.handlePlayerEliminated(event.player);
 

@@ -54,6 +54,8 @@ void Round::playerWaiting(Player* player)
 
 void Round::playerEliminated(Player* player)
 {
+    std::cout << "in Round::playerEliminated" << std::endl;
+
     EvPlayerEliminated event(player);
     scheduler_.queueEvent(procHandle_, event);
 
@@ -66,6 +68,7 @@ void Round::playerEliminated(Player* player)
 
 void Round::winnerReqCards(Player* player)
 {
+    std::cout << "in Round::winnerReqCards" << std::endl;
     EvDistributeCards event(player);
 
     scheduler_.queueEvent(procHandle_, event);
@@ -83,6 +86,7 @@ int Round::activePlayers(void) const
 
 void Round::handlePlayerWaiting(Player* player)
 {
+    std::cout << "in Round::handlePlayerWaiting" << std::endl;
     assert(players_.size());
 
     // Guaranteed that each player only does this once, so just count up to the total
@@ -96,11 +100,18 @@ void Round::handlePlayerWaiting(Player* player)
 
 void Round::handlePlayerEliminated(Player* player)
 {
+    std::cout << "in Round::handlePlayerEliminated" << std::endl;
     assert(players_.size());
 
     // remove this player from _players, add to _losers
     losers_.push_back(player);
     players_.erase(std::remove(players_.begin(), players_.end(), player));
+
+    // if (playersWaiting_ == players_.size())
+    // {
+        std::cout << playersWaiting_ << " players waiting" << std::endl;
+        evaluate();
+    // }
 }
 
 
@@ -175,6 +186,8 @@ void Round::initializeRound(void)
     // Put losers back with players
     players_.insert(players_.end(), losers_.begin(), losers_.end());
     losers_.clear();
+
+    std::cout << "players still playing: " << players_.size() << std::endl;
 
     if (1 == players_.size())
     {

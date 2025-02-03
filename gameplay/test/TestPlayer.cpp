@@ -16,11 +16,11 @@ TestPlayer::TestPlayer(Player* const player) :
 
 void TestPlayer::onPlayerEvent(Player* player, Player::ObservableEvent event)
 {
-    auto name = player->name();
     cout << player->name() << " TestPlayer::onPlayerEvent event type " << event << endl;
 
     if (Player::EV_PLAYER_ACTIVE == event)
     {
+        cout << player->name() << " action called by TestPlayer" << endl;
         player->action();
     }
 }
