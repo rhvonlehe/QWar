@@ -27,7 +27,7 @@ class EventScheduler
 {
 public:
     EventScheduler();
-    ~EventScheduler() = default;
+    ~EventScheduler();
 
     template <class Processor, typename Arg1>
     const ProcessorHandle createProcessor(Arg1 arg1)

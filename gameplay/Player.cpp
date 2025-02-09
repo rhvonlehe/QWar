@@ -79,6 +79,10 @@ void Player::action(void)
 
 Card& Player::evalCard(void)
 {
+    if (activeRoundCards_.size() <= evalCard_)
+    {
+        std::cout << "bogus" << std::endl;
+    }
     assert(activeRoundCards_.size() > evalCard_);
     return activeRoundCards_[evalCard_];
 }

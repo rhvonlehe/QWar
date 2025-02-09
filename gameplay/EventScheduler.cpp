@@ -13,6 +13,19 @@ EventScheduler::EventScheduler(void) :
     scheduler_(true)
 {}
 
+EventScheduler::~EventScheduler(void)
+{
+    for(auto& pair : timers_)
+    {
+        pair.second.cancel();
+    }
+
+    scheduler_.terminate();
+    schedulerThread_.join();
+    work_.reset();
+    ioCtxThread_.join();
+}
+
 const TimerHandle EventScheduler::startTimer(ProcessorHandle handle, uint32_t msecs)
 {
     std::lock_guard<std::mutex> lock(timersMutex_);

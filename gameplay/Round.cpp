@@ -103,15 +103,25 @@ void Round::handlePlayerEliminated(Player* player)
     std::cout << "in Round::handlePlayerEliminated" << std::endl;
     assert(players_.size());
 
-    // remove this player from _players, add to _losers
-    losers_.push_back(player);
-    players_.erase(std::remove(players_.begin(), players_.end(), player));
+    // It's possible due to timing that this event came from a previous round
+    // and that player was removed when the new round started. Check if player
+    // is in the players_ list and if not, discard and do nothing.
+    if (std::find(players_.begin(), players_.end(), player) == players_.end())
+    {
+        return;
+    }
 
-    // if (playersWaiting_ == players_.size())
-    // {
-        std::cout << playersWaiting_ << " players waiting" << std::endl;
-        evaluate();
-    // }
+    // remove this player from _players, add to _losers. Need to check each
+    // operation to make sure it's valid first, though.
+
+    if (std::find(losers_.begin(), losers_.end(), player) != losers_.end())
+    {
+        losers_.push_back(player);
+    }
+    players_.erase(std::remove(players_.begin(), players_.end(), player), players_.end());
+
+    std::cout << playersWaiting_ << " players waiting" << std::endl;
+    evaluate();
 }
 
 
@@ -119,7 +129,6 @@ void Round::evaluate(void)
 {
     // Idea: keep winners in the _players vector and move losers into a
     // loser vector.  This way the evaluation will always be on remaining players.
-
     findWinner();
 
     // Winner(s) remain in _players vector
