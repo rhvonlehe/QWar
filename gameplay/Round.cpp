@@ -14,42 +14,16 @@ Round::Round(std::vector<Player *>& players,
     observerFunc_(callback)
 {
     procHandle_ = scheduler_.createProcessor<RoundSM>(std::ref(*this));
-
-
-#if 0 // todo remove
-
-    // Set up event processor
-    _processor = _scheduler.create_processor<RoundSM>(std::ref(*this));
-    _scheduler.initiate_processor(_processor);
-
-    _processorThread =
-        std::make_unique<std::thread>(
-            [&]()    {
-                std::cout << "starting round SM thread" << std::endl;
-                _scheduler();
-            }
-            );
-#endif
 }
 
 Round::~Round(void)
 {
-#if 0 // todo remove
-    _scheduler.terminate();
-    _processorThread->join();
-#endif
 }
 
 void Round::playerWaiting(Player* player)
 {
     EvPlayerWaiting event(player);
     scheduler_.queueEvent(procHandle_, event);
-
-
-#if 0 // todo rmeove
-    _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvPlayerWaiting>(new EvPlayerWaiting(player)));
-#endif
 }
 
 void Round::playerEliminated(Player* player)
@@ -58,12 +32,6 @@ void Round::playerEliminated(Player* player)
 
     EvPlayerEliminated event(player);
     scheduler_.queueEvent(procHandle_, event);
-
-
-#if 0 // todo remove
-    _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvPlayerEliminated>(new EvPlayerEliminated(player)));
-#endif
 }
 
 void Round::winnerReqCards(Player* player)
@@ -72,11 +40,6 @@ void Round::winnerReqCards(Player* player)
     EvDistributeCards event(player);
 
     scheduler_.queueEvent(procHandle_, event);
-
-#if 0 // todo remove
-    _scheduler.queue_event(_processor,
-                           boost::intrusive_ptr<EvDistributeCards>(new EvDistributeCards(player)));
-#endif
 }
 
 int Round::activePlayers(void) const
@@ -113,7 +76,6 @@ void Round::handlePlayerEliminated(Player* player)
 
     // remove this player from _players, add to _losers. Need to check each
     // operation to make sure it's valid first, though.
-
     if (std::find(losers_.begin(), losers_.end(), player) != losers_.end())
     {
         losers_.push_back(player);
@@ -148,10 +110,6 @@ void Round::evaluate(void)
 
         EvWinner event(winner);
         scheduler_.queueEvent(procHandle_, event);
-#if 0 // todo remove
-        _scheduler.queue_event(_processor,
-                               boost::intrusive_ptr<EvWinner>(new EvWinner(winner)));
-#endif
     }
 }
 

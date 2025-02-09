@@ -64,13 +64,6 @@ Player* Game::getPlayer(const std::string name)
 }
 
 
-#if 0 // todo
-// For test purposes - todo update with latest changes that better support view support
-void Game::autoPlay()
-{
-}
-#endif
-
 void Game::addObserverCallback(const std::function<void (Game::ObservableEvent)> func)
 {
     observerFuncs_.push_back(func);

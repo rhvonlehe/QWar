@@ -18,9 +18,6 @@ public:
     };
 
     Game(std::vector<std::string>& playerNames);
-#if 0
-    void autoPlay();
-#endif
 
     Player* getPlayer(const std::string name);
 

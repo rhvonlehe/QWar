@@ -8,18 +8,6 @@
 #include <functional>
 #include <cassert>
 
-#if 0 // todo remove
-#include <boost/statechart/asynchronous_state_machine.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#define ASIO_STANDALONE
-#include <boost/asio.hpp>
-#include <thread>
-
-namespace ba = boost::asio;
-
-#endif
-
-
 
 namespace gameplay {
 
@@ -107,25 +95,6 @@ private:
     ProcessorHandle             procHandle_;
     TimerHandle                 timerHandle_;
     EventScheduler&             scheduler_;
-#if 0 // todo remove
-    EventScheduler::ProcessorHandle procHandle_;
-    EventScheduler::TimerHandle     timerHandle_;
-    EventScheduler&                 scheduler_;
-#endif
-
-#if 0 // todo remove
-    // StateChart variables
-    using FifoScheduler = boost::statechart::fifo_scheduler<>;
-    FifoScheduler                   scheduler_;
-    FifoScheduler::processor_handle processor_;
-    std::thread                     stateThread_;
-
-    // Asio stuff
-    std::unique_ptr<ba::executor_work_guard<ba::io_context::executor_type>>  work_;
-    std::unique_ptr<ba::deadline_timer>                     timer_;
-    ba::io_context                                          io_;
-    std::thread                                             ioCtxThread_;
-#endif
 };
 
 

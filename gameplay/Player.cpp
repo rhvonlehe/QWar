@@ -14,42 +14,10 @@ Player::Player(const std::string name, EventScheduler& scheduler)
       scheduler_(scheduler)
 {
     procHandle_ = scheduler_.createProcessor<PlayerSM>(std::ref(*this));
-
-#if 0 // todo remove
-    // NOTE: It might be a better idea to have 2-stage initialization of Player
-    // and start the thread during the 2nd stage outside of the construction.
-
-    // Set up event processor
-    processor_ = scheduler_.create_processor<PlayerSM>(std::ref(*this));
-    scheduler_.initiate_processor(processor_);
-
-    stateThread_ = std::thread( [&]() {
-        std::cout << "starting player SM thread" << std::endl;
-        scheduler_();
-    } );
-
-    ioCtxThread_ = std::thread( [&]() {
-        work_ = std::make_unique<ba::executor_work_guard<ba::io_context::executor_type>>(ba::make_work_guard(io_));
-        std::cout << "starting player asio thread" << std::endl;
-        io_.run();
-    });
-#endif
 }
 
 Player::~Player(void)
 {
-
-#if 0 // todo remove
-    // Caution: one can't delete a deadline timer if the io object it is using
-    // is gone.  It stores that internally as a reference.  Calling cancel here
-    // makes sure that it won't try to use the _io it references when it is
-    // destroyed at the end of this destructor.
-    if (timer_) timer_->cancel();
-    scheduler_.terminate();
-    stateThread_.join();
-    work_->reset();
-    ioCtxThread_.join();
-#endif
 }
 
 void Player::reset(void)
@@ -59,22 +27,12 @@ void Player::reset(void)
 
     EvReset evReset;
     scheduler_.queueEvent(procHandle_, evReset);
-
-#if 0 // todo remove
-    scheduler_.queue_event(processor_,
-                           boost::intrusive_ptr<EvReset>(new EvReset()));
-#endif
 }
 
 void Player::action(void)
 {
     EvAction evAction;
     scheduler_.queueEvent(procHandle_, evAction);
-
-#if 0 // todo remove
-    scheduler_.queue_event(processor_,
-                           boost::intrusive_ptr<EvAction>(new EvAction()));
-#endif
 }
 
 Card& Player::evalCard(void)
@@ -91,22 +49,12 @@ void Player::tie(void)
 {
     EvTie evTie;
     scheduler_.queueEvent(procHandle_, evTie);
-
-#if 0 // todo remove
-    scheduler_.queue_event(processor_,
-                           boost::intrusive_ptr<EvTie>(new EvTie()));
-#endif
 }
 
 void Player::won()
 {
     EvWon evWon;
     scheduler_.queueEvent(procHandle_, evWon);
-
-#if 0 // todo remove
-    scheduler_.queue_event(processor_,
-                           boost::intrusive_ptr<EvWon>(new EvWon()));
-#endif
 }
 
 std::vector<Card> Player::lost(void)
@@ -116,10 +64,6 @@ std::vector<Card> Player::lost(void)
     EvLost evLost;
     scheduler_.queueEvent(procHandle_, evLost);
 
-#if 0 //todo remove
-    scheduler_.queue_event(processor_,
-                           boost::intrusive_ptr<EvLost>(new EvLost()));
-#endif
     return retVal;
 }
 
@@ -163,11 +107,6 @@ void Player::acceptRoundCards(const Pile pile, const std::vector<Card> cards)
 
     EvAcceptCards event;
     scheduler_.queueEvent(procHandle_, event);
-
-#if 0 // todo remove
-    scheduler_.queue_event(processor_,
-                           boost::intrusive_ptr<EvAcceptCards>(new EvAcceptCards()));
-#endif
 }
 
 void Player::acceptDealtCard(const Pile pile, const Card card)
@@ -212,14 +151,6 @@ void playCard(Player& player, Card::Face face)
 void startTimer(Player& player, const uint32_t ms)
 {
     player.timerHandle_ = player.scheduler_.startTimer(player.procHandle_, ms);
-
-#if 0
-    player.timer_ = std::make_unique<ba::deadline_timer>(player.io_, ms);
-    player.timer_->async_wait([&](const boost::system::error_code&) {
-        player.scheduler_.queue_event(player.processor_,
-                               boost::intrusive_ptr<EvTimeout>(new EvTimeout()));
-    });
-#endif
 }
 
 void cancelTimer(Player& player)

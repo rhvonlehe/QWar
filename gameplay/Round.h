@@ -2,7 +2,6 @@
 
 #include <Player.h>
 #include <EventScheduler.h>
-// #include <boost/statechart/asynchronous_state_machine.hpp> // todo remove
 #include <vector>
 
 namespace gameplay {
@@ -47,16 +46,6 @@ private:
 
     EventScheduler&                 scheduler_;
     ProcessorHandle                 procHandle_;
-
-
-#if 0   // todo remove
-    // StateChart variables
-    using FifoScheduler = boost::statechart::fifo_scheduler<>;
-    FifoScheduler                   _scheduler;
-    FifoScheduler::processor_handle _processor;
-    std::unique_ptr<std::thread>    _processorThread;
-#endif
-
 };
 
 } // gameplay
