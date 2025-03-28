@@ -43,7 +43,6 @@ sc::result Active::react(const EvPlayerEliminated& event)
     auto& round = context<RoundSM>().round_;
 
     round.handlePlayerEliminated(event.player);
-// TODO remove    // round.evaluate();  // Need this in the Active state in case he's the last player left
 
     return discard_event();
 }
